@@ -7,6 +7,8 @@ django.setup()
 from arc_app.models import UserProfile
 from django.contrib.auth.models import User
 
+#Generate user based on a list of first_name and last_name 
+#specify whether this list of users is tutor or tutee
 def generate_user_info(first_name, last_name, is_tutor=False, is_tutee=False): 
 	username = []
 	password = []
@@ -26,6 +28,7 @@ def generate_user_info(first_name, last_name, is_tutor=False, is_tutee=False):
 				}
 	return user_db
 
+#Populate the database with our 5 tutor and 5 tutee
 def populate(): 
 	tutor_first_name = ["Hiep", "Khanh", "Khue", "Meg", "Quang"]
 	tutor_last_name = ["Phan", "Tran", "Le", "Jaffy", "Nguyen"]
@@ -38,7 +41,8 @@ def populate():
 	tutee_db = generate_user_info(tutee_first_name, tutee_last_name, False, True)
 	create_user_db(tutee_db, size)
 	
-
+#Create a User and UserProfile models based on a user info and 
+#save User and UserProfile into the database. 
 def create_user_db(user_db, size): 
 	for i in range(size): 
 		username = user_db['username'][i]
