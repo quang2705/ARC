@@ -15,7 +15,7 @@ The Git Procedure for effective code management for the ARC verification system 
   -  `git push -u origin user-story-<nameofthefeature>` (option for adding your local `user-story<nameofthefeature>` branch to remote)
 - Bring your branch together with the `develop` branch
   - switch to develop `git checkout develop`
-  - pull from develop `git pull origin develop`
+  - pull from develop `git fetch origin develop`
   - merge your feature branch with the `develop` branch `git merge --no-ff user-story-<nameofthefeature>`
   - delete the branch `git branch -d user-story-<nameofthefeature>`
   - push changes to `develop` `git push origin develop` 
