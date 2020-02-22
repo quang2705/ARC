@@ -26,7 +26,8 @@ This is optional. If you skip this section, please use `pip install` to install 
 
 <b>For MacOS and Unix.</b> Do `pip install virtualenv` and `pip install virtualenvwrapper` to install `vitualenv` and `virtualenvwrapper` packages. Then `python3 -m venv ARC` to create environment named `ARC`. Activate it using `source ARC/bin/activate`.
 #### Setting up Django
-In the command-line, type `conda install --name ARC django`. Then `conda install --name ARC djangorestframework`.
+In the command-line, type `conda install --name ARC django`. Then `conda install --name ARC djangorestframework`. 
+Another way is to use `pip install django`.
 #### Installing npm packages and Reactjs
 `cd arc_projects/frontend` then `npm install`.
 #### Getting the database for development
