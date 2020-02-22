@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { render } from "react-dom";
 
+import Login from "./Login/login";
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -33,15 +35,16 @@ class App extends Component {
 
   render() {
     return (
-      <ul>
-        {this.state.data.map(contact => {
-          return (
-            <li key={contact.id}>
-              {contact.first_name} - {contact.last_name} - {contact.email}
-            </li>
-          );
-        })}
-      </ul>
+      // <ul>
+      //   {this.state.data.map(contact => {
+      //     return (
+      //       <li key={contact.id}>
+      //         {contact.first_name} - {contact.last_name} - {contact.email}
+      //       </li>
+      //     );
+      //   })}
+      // </ul>
+      <Login/>
     );
   }
 }
