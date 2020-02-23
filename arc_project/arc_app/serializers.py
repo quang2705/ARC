@@ -1,8 +1,34 @@
 from rest_framework import serializers
-from arc_app.models import UserProfile
+from arc_app.models import UserProfile, Contract, Session, ContractMeeting
+from django.contrib.auth.models import User
+
+class UserProfileSerializer(serializers.HyperlinkedModelSerializer):
+	class Meta:
+		model = UserProfile
+		fields = ('url','id', 'user', 'first_name', 'last_name', 'email',
+			'd_number', 'phone', 'is_tutor', 'is_tutee', 'is_admin')
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = UserProfile
-        fields = ('id', 'user', 'first_name', 'last_name', 'email',
-       			'd_number', 'phone', 'is_tutor', 'is_tutee', 'is_admin')
+        model = User
+        fields = ('id', 'first_name', 'last_name', 'email')
+
+
+class ContractSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = Contract
+        fields = ('url', 'id', 'tutor', 'tutee', 'class_name', 
+        			'subject', 'professor_name')
+
+class SessionSerializer(serializers.ModelSerializer): 
+	class Meta: 
+		model = Session
+		fields = ('id', 'contract', 'date', 'start', 'end', 'summary')
+
+class ContractMeetingSerializer(serializers.ModelSerializer): 
+	class Meta: 
+		model = ContractMeeting
+		fields = ('id', 'contract', 'date', 'start', 'end', 'location')
+
+		
