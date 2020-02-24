@@ -141,7 +141,7 @@ def populate():
 	tutor_last_name = ["Phan", "Tran", "Le", "Jaffy", "Nguyen"]
 	size = len(tutor_first_name)
 	tutor_db = generate_user_info(tutor_first_name, tutor_last_name, True, False)
-	# create_user_db(tutor_db, size)
+	create_user_db(tutor_db, size)
 
 	tutee_first_name = ["John", "Yuri", "Wang", "Sam", "Jake"]
 	tutee_last_name = ["Doe", "Kuro", "Shei", "Smith", "Perata"]
