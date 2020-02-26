@@ -15,6 +15,15 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
+            name='Contract',
+            fields=[
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('class_name', models.CharField(max_length=100)),
+                ('subject', models.CharField(max_length=100)),
+                ('professor_name', models.CharField(max_length=100)),
+            ],
+        ),
+        migrations.CreateModel(
             name='UserProfile',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
@@ -29,5 +38,37 @@ class Migration(migrations.Migration):
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
+        ),
+        migrations.CreateModel(
+            name='Session',
+            fields=[
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('date', models.DateField()),
+                ('start', models.TimeField()),
+                ('end', models.TimeField()),
+                ('summary', models.TextField()),
+                ('contract', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='sessions', to='arc_app.Contract')),
+            ],
+        ),
+        migrations.CreateModel(
+            name='ContractMeeting',
+            fields=[
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('date', models.DateField()),
+                ('start', models.TimeField()),
+                ('end', models.TimeField()),
+                ('location', models.CharField(max_length=100)),
+                ('contract', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='contract_meetings', to='arc_app.Contract')),
+            ],
+        ),
+        migrations.AddField(
+            model_name='contract',
+            name='tutee',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='tutee_contracts', to='arc_app.UserProfile'),
+        ),
+        migrations.AddField(
+            model_name='contract',
+            name='tutor',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='tutor_contracts', to='arc_app.UserProfile'),
         ),
     ]
