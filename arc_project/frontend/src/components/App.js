@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import { render } from "react-dom";
 
 import Login from './Login/login';
+//import TutorContracts from "./Main/TutorContracts/tutor-contracts";
+import TutorContractForm from './Main/TutorContracts/TutorContractForm/tutor-contract-form';
 
 class App extends Component {
   constructor(props) {
@@ -44,7 +46,11 @@ class App extends Component {
       //     );
       //   })}
       // </ul>
-      <Login/>
+      <div>
+        <h1>HELLO</h1>
+        <TutorContractForm/>
+        <Login/>
+      </div>
     );
   }
 }
