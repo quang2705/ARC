@@ -26,8 +26,9 @@ This is optional. If you skip this section, please use `pip install` to install 
 
 <b>For MacOS and Unix.</b> Do `pip install virtualenv` and `pip install virtualenvwrapper` to install `vitualenv` and `virtualenvwrapper` packages. Then `python3 -m venv ARC` to create environment named `ARC`. Activate it using `source ARC/bin/activate`.
 #### Setting up Django
-In the command-line, type `conda install --name ARC django`. Then `conda install --name ARC djangorestframework`. 
-Another way is to use `pip install django`.
+In the command-line, type `conda install --name ARC django`. Then `conda install --name ARC djangorestframework`. The commands will install those packages in the `ARC` environment and can only be used if the `ARC` environment is activated.
+
+<i>Note.</i> If the virtual environment does not work for some reason, use `pip install _package_name_` to install the package in the global environment. However, this may create conflicts with packages not used by this project.
 #### Installing npm packages and Reactjs
 `cd arc_projects/frontend` then `npm install`.
 #### Getting the database for development
@@ -35,7 +36,7 @@ Download the file [`db.sqlite3`](https://drive.google.com/file/d/1mAsVOUegNK4_nz
 
 <i>Optional.</i> To generate a database, delete `migrations` folder in `arc_app` and delete `db.sqlite3` file in `arc_projects`. In `arc_projects` folder, run `python manage.py makemigrations arc_app` and `python manage.py migrate`. And finally run `python populate_users.py`. 
 #### Running the app
-Go to `arc_projects/frontend`, run `npm run dev`.
+Go to `arc_projects/frontend`, run `npm run dev`. Use `npm run dev -- --watch` if you want `webpack` to monitor file changes without having to re-run the command.
 
 At `arc_projects` folder while in command-line, use `python manage.py runserver` to run the server. The address should be listed after "Starting development server at". The default address is `http://127.0.0.1:8000`.
 #### Debugging
@@ -43,10 +44,10 @@ If encounter issues with `django` or `djangorestframework` package not found, us
 ## Authors
 Meg Jaffy - jaffy_m1@denison.edu
 
-Hiep Phan - phan_h1@denison.edu
+Khue Le - le_k1@denison.edu
 
 Quang Nguyen - nguyen_q1@denison.edu
 
-Khue Le - le_k1@denison.edu
+Hiep Phan - phan_h1@denison.edu
 
 Khanh Tran - tran_k1@denison.edu
