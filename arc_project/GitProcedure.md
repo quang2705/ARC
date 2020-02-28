@@ -8,7 +8,9 @@ The Git Procedure for effective code management for the ARC verification system 
 - Make sure that your local develop branch is upto date with the remote develop branch `git fetch origin`
 
 ## Developing
-- From the `develop` branch, switch to `user-story-<nameofthefeature>` branch to start developing by using `git checkout user-story-<nameofthefeature>`
+- From the `develop` branch, switch to `user-story-<nameofthefeature>` branch to start developing by using
+ `git branch user-story-<nameofthefeature>`
+ `git checkout user-story-<nameofthefeature>`
 - After you finish develop
   - `git add` to add to stage 
   -  `git commit -m "<commit message>"` to add stage to commit 
