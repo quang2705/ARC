@@ -34,13 +34,30 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self): 
     	user= self.request.user
+    	
+
     	return UserProfile.objects.filter(user = user)
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet): 
     #This viewset automatically provide 'list' and 'detail' action
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+	queryset = User.objects.all()
+	serializer_class = UserSerializer
+	permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+	def get_queryset(self): 
+		first_name = self.request.query_params.get('first_name', None)
+		last_name = self.request.query_params.get('last_name', None)
+		email = self.request.query_params.get('email', None)
+		users = User.objects.all()
+
+		if first_name is not None: 
+			users = users.filter(first_name=first_name)
+		if last_name is not None: 
+			users = users.filter(last_name=last_name)
+		if email is not None: 
+			users = users.filter(email=email)
+			
+		return users
 
 class ContractViewSet(viewsets.ModelViewSet): 
     #This viewset automatically provides 'list', 'create', 'retrieve', 
@@ -73,7 +90,7 @@ class ContractViewSet(viewsets.ModelViewSet):
     	    	
     	#query by location if possible 
     	location = self.request.query_params.get('location', None)
-    	if location != None: 
+    	if location is not None: 
     		contracts = contracts.filter(location=location)
     	#query the contracts based on the user loging in
     	return contracts.filter(tutor = userprofile)
