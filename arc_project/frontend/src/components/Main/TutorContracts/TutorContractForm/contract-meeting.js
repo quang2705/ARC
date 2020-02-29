@@ -26,7 +26,6 @@ export default class ContractMeeting extends Component {
     this.run;
     return (
       <div className={css.container}>
-        <form>
 
           <label>
             Location:<br/>
@@ -53,7 +52,6 @@ export default class ContractMeeting extends Component {
             <input type='time' name='end' onChange={this.onTimeChangeHandler}/><br/>
           </label>
 
-        </form>
       </div>
     );
   }

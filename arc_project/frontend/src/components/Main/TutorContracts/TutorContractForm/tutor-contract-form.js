@@ -18,6 +18,7 @@ export default class TutorContractForm extends Component {
       subject: '',
       class: '',
       instructor: '',
+      meetings: [],
       tutorSig: false,
       tuteeSig: false,
     }
@@ -29,16 +30,22 @@ export default class TutorContractForm extends Component {
     onTextChangeHandler = (event) => {
       this.setState({ [event.target.name]: event.target.value });
     }
-    onNumberChangeHandler = (event) => {
-      this.setState({ [event.target.name]: event.target.value });
-    }
     onCheckBoxChangeHandler = (event) => {
       this.setState({ [event.target.name]: event.target.checked });
     }
 
+    addHandler = () => {
+      let newMeets = this.state.meetings;
+      let newObj = {};
+      newMeets.append(newObj);
+      this.setState({ meetings: newMeets });
+    }
 
     render() {
-      this.run;
+      let meetings = this.state.meetings.map(meet => {
+        <ContractMeeting data={meet}/>
+      });
+
   		return (
   			<div className={css.container}>
   				<h1>Make a New Contract</h1>
@@ -54,7 +61,7 @@ export default class TutorContractForm extends Component {
             </label>
             <label>
               Tutor Phone Number:<br/>
-              <input type='phone' name='tutorPhone' onChange={this.onNumberChangeHandler}/><br/>
+              <input type='phone' name='tutorPhone' onChange={this.onTextChangeHandler}/><br/>
             </label>
 
             <br/>
@@ -69,7 +76,7 @@ export default class TutorContractForm extends Component {
             </label>
             <label>
               Tutee Phone Number:<br/>
-              <input type='phone' name='tuteePhone' onChange={this.onNumberChangeHandler}/><br/>
+              <input type='phone' name='tuteePhone' onChange={this.onTextChangeHandler}/><br/>
             </label>
 
             <br/>
@@ -94,6 +101,7 @@ export default class TutorContractForm extends Component {
             <br/>
             <h2>Add a meeting time</h2>
             <ContractMeeting/>
+            {meetings}
             <br/>
 
             <label>
