@@ -2,6 +2,7 @@ from arc_app import views
 from rest_framework import renderers
 from rest_framework.routers import DefaultRouter
 from django.urls import path, include
+from django.conf.urls import url 
 
 #Create a router and register our viewsets 
 router = DefaultRouter()
@@ -11,9 +12,11 @@ router.register(r'contracts', views.ContractViewSet)
 router.register(r'sessions', views.SessionViewSet)
 router.register(r'contractmeetings', views.ContractMeetingViewSet)
 
-
 urlpatterns = [
-    path('api/', include(router.urls)),
+    path(r'api/', include(router.urls)),
+    url(r'^api/userprofiles\$q(?:first_name:(?P<first_name>[\w]+)&last_name:(?P<last_name>[\w]+))/$', 
+    	views.query_userprofile, 
+    	name='query-userprofile')
 ]
 
 
