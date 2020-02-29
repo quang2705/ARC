@@ -13,9 +13,19 @@ class UserProfileSerializer(serializers.HyperlinkedModelSerializer):
 			'email','d_number','phone', 'is_tutor', 
 			'is_tutee', 'is_admin')
 
+class MiniSessionSerializer(serializers.HyperlinkedModelSerializer):
+	class Meta: 
+		model = Session
+		fields = ('id', 'url')
+
+class MiniContractMeetingSerializer(serializers.HyperlinkedModelSerializer):
+	class Meta: 
+		model = ContractMeeting
+		fields = ('id', 'url')
+
 class ContractSerializer(serializers.HyperlinkedModelSerializer):
-	sessions = serializers.HyperlinkedRelatedField(many=True, view_name='session-detail', read_only=True)
-	contract_meetings = serializers.HyperlinkedRelatedField(many=True, view_name='contractmeeting-detail', read_only=True)
+	sessions = MiniSessionSerializer(many=True, read_only=True)
+	contract_meetings = MiniContractMeetingSerializer(many=True, read_only=True)
 	class Meta:
 		model = Contract
 		fields = ('url', 'id', 'tutor', 'tutee','sessions',

@@ -21,21 +21,8 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     #user can only have 'read' operation
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
-    @action(methods=['get'], detail=True)
-    def get_contracts(self, request, pk=None):
-    	user = self.get_object()
-    	serializer = UserProfileSerializer(user, many=False, context={'request':request})
-    	print("SERIALIZER DATA ", serializer.data)
-    	contracts = {
-    	'as_tutor': serializer.data['tutor_contracts'],
-    	'as_tutee': serializer.data['tutee_contracts']
-    	}
-    	return Response(contracts)
-
     def get_queryset(self): 
     	user= self.request.user
-    	
-
     	return UserProfile.objects.filter(user = user)
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet): 
@@ -45,10 +32,12 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 	permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 	def get_queryset(self): 
+		#get the params from url and filter it with 
+		#the users objects
 		first_name = self.request.query_params.get('first_name', None)
 		last_name = self.request.query_params.get('last_name', None)
 		email = self.request.query_params.get('email', None)
-		users = User.objects.all()
+		users = self.queryset
 
 		if first_name is not None: 
 			users = users.filter(first_name=first_name)
@@ -76,7 +65,7 @@ class ContractViewSet(viewsets.ModelViewSet):
     	tutor_name = self.request.query_params.get('tutor_name', None)
 
     	userprofile = self.request.user.userprofiles
-    	contracts = Contract.objects.all()
+    	contracts = self.queryset
 
     	#if the params is not Null, query it
     	if class_name is not None: 
@@ -95,6 +84,40 @@ class ContractViewSet(viewsets.ModelViewSet):
     	#query the contracts based on the user loging in
     	return contracts.filter(tutor = userprofile)
 
+    @action(methods=['get'], detail=True)
+    def get_sessions(self, request, pk=None): 
+    	contract = self.get_object()
+    	serializer = ContractSerializer(contract, many=False, context={'request':request})
+    	sessions = serializer.data['sessions']
+    	sessions_all = Session.objects.all()
+
+    	query = Q(id = sessions[0]['id'])
+    	for i in range (1, len(sessions)): 
+    		session_id = sessions[i]['id']
+    		query.add(Q(id=session_id), Q.OR)
+
+    	contract_sessions = sessions_all.filter(query)
+    	contract_sessions_serializer = SessionSerializer(contract_sessions, many=True , context={'request':request})
+
+    	return Response(contract_sessions_serializer.data)
+
+    @action(methods=['get'], detail=True)
+    def get_contractmeetings(self, request, pk=None): 
+    	contract = self.get_object()
+    	serializer = ContractSerializer(contract, many=False, context={'request':request})
+    	cmeetings = serializer.data['contract_meetings']
+    	cmeetings_all = ContractMeeting.objects.all()
+
+    	query = Q(id = cmeetings[0]['id'])
+    	for i in range (1, len(cmeetings)): 
+    		session_id = cmeetings[i]['id']
+    		query.add(Q(id=session_id), Q.OR)
+
+    	contract_cmeetings = cmeetings_all.filter(query)
+    	contract_cmeetings_serializer = ContractMeetingSerializer(contract_cmeetings, many=True , context={'request':request})
+
+    	return Response(contract_cmeetings_serializer.data)
+
 class ContractMeetingViewSet(viewsets.ModelViewSet): 
     queryset = ContractMeeting.objects.all()
     serializer_class = ContractMeetingSerializer
@@ -112,7 +135,7 @@ class ContractMeetingViewSet(viewsets.ModelViewSet):
     	for i in range(1,len(contracts)): 
     		query.add(Q(contact = contracts[i]), Q.OR)
 
-    	contract_meetings = ContractMeeting.objects.all()
+    	contract_meetings = self.queryset
     	return contract_meetings.filter(query)
 
 
@@ -133,7 +156,7 @@ class SessionViewSet(viewsets.ModelViewSet):
     	for i in range(1,len(contracts)): 
     		query.add(Q(contact = contracts[i]), Q.OR)
 
-    	sessions = Session.objects.all()
+    	sessions = self.queryset
     	return sessions.filter(query)
 
 @api_view(['GET'])
