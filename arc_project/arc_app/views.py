@@ -23,6 +23,9 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self): 
     	user= self.request.user
+    	if not user.is_authenticated:
+    		return []
+
     	return UserProfile.objects.filter(user = user)
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet): 
@@ -32,6 +35,9 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 	permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 	def get_queryset(self): 
+		user= self.request.user
+		if not user.is_authenticated:
+			return []
 		#get the params from url and filter it with 
 		#the users objects
 		first_name = self.request.query_params.get('first_name', None)
@@ -58,14 +64,19 @@ class ContractViewSet(viewsets.ModelViewSet):
     #query contract based on the tutor of the contract and 
     #any parameter that is added onto the url 
     def get_queryset(self): 
+    	user= self.request.user
+    	if not user.is_authenticated:
+    		return []
+
     	#get all the params from the url 
     	class_name = self.request.query_params.get('class_name', None)
     	subject = self.request.query_params.get('subject', None)
     	professor_name = self.request.query_params.get('professor_name', None)
     	tutor_name = self.request.query_params.get('tutor_name', None)
 
-    	userprofile = self.request.user.userprofiles
+    	userprofile = user.userprofiles
     	contracts = self.queryset
+
 
     	#if the params is not Null, query it
     	if class_name is not None: 
@@ -121,12 +132,16 @@ class ContractViewSet(viewsets.ModelViewSet):
 class ContractMeetingViewSet(viewsets.ModelViewSet): 
     queryset = ContractMeeting.objects.all()
     serializer_class = ContractMeetingSerializer
-    permisson_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get_queryset(self): 
+    	user = self.request.user
+    	if not user.is_authenticated:
+    		return []
+
     	#get all contracts that contract meetings is belong to
     	#based on user that is currently log in
-    	userprofile = self.request.user.userprofiles
+    	userprofile = user.userprofiles
     	contracts = Contract.objects.filter(tutor = userprofile)
     	
     	#create a query variable that allow us to query all the 
@@ -142,9 +157,13 @@ class ContractMeetingViewSet(viewsets.ModelViewSet):
 class SessionViewSet(viewsets.ModelViewSet): 
     queryset = Session.objects.all()
     serializer_class = SessionSerializer
-    permisson_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
+    	user = self.request.user
+    	if not user.is_authenticated:
+    		return []
+
     	#get all contracts that sessions is belong to
     	#based on user that is currently log in
     	userprofile = self.request.user.userprofiles
@@ -158,12 +177,3 @@ class SessionViewSet(viewsets.ModelViewSet):
 
     	sessions = self.queryset
     	return sessions.filter(query)
-
-@api_view(['GET'])
-#view function that return userprofile based on first_name and last_name
-def query_userprofile(request, first_name, last_name):
-	if (request.method == 'GET'):
-		userprofile = UserProfile.objects.get(first_name=first_name, last_name=last_name)
-		serializer = UserProfileSerializer(userprofile, many=False, context={'request': request})
-		return Response(serializer.data)
-

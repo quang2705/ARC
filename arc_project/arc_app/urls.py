@@ -14,9 +14,6 @@ router.register(r'contractmeetings', views.ContractMeetingViewSet)
 
 urlpatterns = [
     path(r'api/', include(router.urls)),
-    url(r'^api/userprofiles\$q(?:first_name:(?P<first_name>[\w]+)&last_name:(?P<last_name>[\w]+))/$', 
-    	views.query_userprofile, 
-    	name='query-userprofile')
 ]
 
 
