@@ -23,7 +23,6 @@ export default class ContractMeeting extends Component {
   }
 
   render() {
-    this.run;
     return (
       <div className={css.container}>
 

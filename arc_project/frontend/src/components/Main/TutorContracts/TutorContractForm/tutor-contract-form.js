@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
+
 import ContractMeeting from './contract-meeting'
 
 import css from './tutor-contract-form.module.css';
@@ -34,16 +35,18 @@ export default class TutorContractForm extends Component {
       this.setState({ [event.target.name]: event.target.checked });
     }
 
-    addHandler = () => {
-      let newMeets = this.state.meetings;
-      let newObj = {};
-      newMeets.append(newObj);
-      this.setState({ meetings: newMeets });
+    addMeeting = () => {
+      let newMeetings = this.state.meetings;
+      let newMeeting = { loc: '',
+                         day: '',
+                         start: Date()};
+      newMeetings.push(newMeeting);
+      this.setState({ meetings: newMeetings });
     }
 
     render() {
-      let meetings = this.state.meetings.map(meet => {
-        <ContractMeeting data={meet}/>
+      let meetings = this.state.meetings.map((meeting, index) => {
+        return <ContractMeeting key={index}/>;
       });
 
   		return (
@@ -100,8 +103,11 @@ export default class TutorContractForm extends Component {
             </label>
             <br/>
             <h2>Add a meeting time</h2>
-            <ContractMeeting/>
             {meetings}
+            <button onClick={this.addMeeting}>
+              Add a meeting time
+            </button>
+
             <br/>
 
             <label>
