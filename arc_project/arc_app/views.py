@@ -1,13 +1,11 @@
-from django.shortcuts import render
 from django.contrib.auth.models import User
 from arc_app.models import UserProfile, Contract
 from arc_app.models import Session, ContractMeeting
 from arc_app.serializers import UserSerializer, UserProfileSerializer, ContractSerializer
 from arc_app.serializers import SessionSerializer, ContractMeetingSerializer
-from rest_framework import generics, permissions
-from rest_framework.decorators import api_view, action
+from rest_framework import permissions
+from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.reverse import reverse
 from rest_framework import viewsets
 from django.db.models import Q
 
@@ -72,7 +70,7 @@ class ContractViewSet(viewsets.ModelViewSet):
     	class_name = self.request.query_params.get('class_name', None)
     	subject = self.request.query_params.get('subject', None)
     	professor_name = self.request.query_params.get('professor_name', None)
-    	tutor_name = self.request.query_params.get('tutor_name', None)
+    	tutee_email = self.request.query_params.get('tutee_email', None)
 
     	userprofile = user.userprofiles
     	contracts = self.queryset
@@ -85,45 +83,53 @@ class ContractViewSet(viewsets.ModelViewSet):
     		contracts = contracts.filter(subject = subject)
     	if professor_name is not None: 
     		contracts = contracts.filter(professor_name = professor_name)
-    	if tutor_name is not None: 
-    		contracts = contracts.filter(tutor_name = tutor_name)
+    	if tutee_email is not None: 
+    		tutee = UserProfile.objects.get(email=tutee_email)
+    		contracts = contracts.filter(tutee = tutee)
     	    	
-    	#query by location if possible 
-    	location = self.request.query_params.get('location', None)
-    	if location is not None: 
-    		contracts = contracts.filter(location=location)
+
     	#query the contracts based on the user loging in
+    	#right now only show contract if user is a tutor, does not show 
+    	#contract when the user is a tutee
     	return contracts.filter(tutor = userprofile)
 
+    #Return all the sessions of the current contract
     @action(methods=['get'], detail=True)
     def get_sessions(self, request, pk=None): 
+    	#get the contract and the sessions that belong to this contract
     	contract = self.get_object()
     	serializer = ContractSerializer(contract, many=False, context={'request':request})
     	sessions = serializer.data['sessions']
     	sessions_all = Session.objects.all()
 
+    	#query the sessions based on the id
     	query = Q(id = sessions[0]['id'])
     	for i in range (1, len(sessions)): 
     		session_id = sessions[i]['id']
     		query.add(Q(id=session_id), Q.OR)
 
+    	#return the query of the sessions
     	contract_sessions = sessions_all.filter(query)
     	contract_sessions_serializer = SessionSerializer(contract_sessions, many=True , context={'request':request})
 
     	return Response(contract_sessions_serializer.data)
 
+    #Return all the contracts meeting of the current contract
     @action(methods=['get'], detail=True)
     def get_contractmeetings(self, request, pk=None): 
+    	#get the contract and the contract meetings belong to this contract
     	contract = self.get_object()
     	serializer = ContractSerializer(contract, many=False, context={'request':request})
     	cmeetings = serializer.data['contract_meetings']
     	cmeetings_all = ContractMeeting.objects.all()
 
+    	#query the contract meetings based on the id 
     	query = Q(id = cmeetings[0]['id'])
     	for i in range (1, len(cmeetings)): 
     		session_id = cmeetings[i]['id']
     		query.add(Q(id=session_id), Q.OR)
 
+    	#return the query of the contract meetings
     	contract_cmeetings = cmeetings_all.filter(query)
     	contract_cmeetings_serializer = ContractMeetingSerializer(contract_cmeetings, many=True , context={'request':request})
 
@@ -134,6 +140,7 @@ class ContractMeetingViewSet(viewsets.ModelViewSet):
     serializer_class = ContractMeetingSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
+    #filter contract meeting based on the user
     def get_queryset(self): 
     	user = self.request.user
     	if not user.is_authenticated:
@@ -151,6 +158,12 @@ class ContractMeetingViewSet(viewsets.ModelViewSet):
     		query.add(Q(contact = contracts[i]), Q.OR)
 
     	contract_meetings = self.queryset
+    	#query by location if possible 
+    	
+    	location = self.request.query_params.get('location', None)
+    	if location is not None: 
+    		contract_meetings = contract_meetings.filter(location=location)
+    		
     	return contract_meetings.filter(query)
 
 
@@ -159,6 +172,7 @@ class SessionViewSet(viewsets.ModelViewSet):
     serializer_class = SessionSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
+    #filter session based on users
     def get_queryset(self):
     	user = self.request.user
     	if not user.is_authenticated:
