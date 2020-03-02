@@ -23,9 +23,11 @@ export default class TutorContractForm extends Component {
       tutorSig: false,
       tuteeSig: false,
     }
+
   }
     onSubmitHandler = (event) => {
       event.preventDefault();
+
     }
 
     onTextChangeHandler = (event) => {
@@ -37,18 +39,22 @@ export default class TutorContractForm extends Component {
 
     addMeeting = () => {
       let newMeetings = this.state.meetings;
-      let newMeeting = { loc: '',
+      let newMeeting = { location: '',
                          day: '',
-                         start: Date()};
+                         start: Date(),
+                         end: Date(),};
       newMeetings.push(newMeeting);
       this.setState({ meetings: newMeetings });
+    }
+    onMeetingChangeHandler=(data)=> {
+      this.state.meetings[data.index][data.name] = data.value;
+      // this.forceUpdate();
     }
 
     render() {
       let meetings = this.state.meetings.map((meeting, index) => {
-        return <ContractMeeting key={index}/>;
+        return <ContractMeeting key={index} index={index} onChange={this.onMeetingChangeHandler}/>;
       });
-
   		return (
   			<div className={css.container}>
   				<h1>Make a New Contract</h1>
@@ -120,7 +126,7 @@ export default class TutorContractForm extends Component {
               <input type='checkbox' name='tuteeSig' onChange={this.onCheckBoxChangeHandler} style={{ margin: 0 }}/><br/>
             </label>
 
-            <input type='submit' value="Submit"/>
+            <input type='submit' value="Submit" onClick={this.onSubmitHandler}/>
           </form>
   			</div>
   		);

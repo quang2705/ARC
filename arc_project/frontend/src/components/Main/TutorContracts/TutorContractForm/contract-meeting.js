@@ -16,7 +16,7 @@ export default class ContractMeeting extends Component {
   }
 
   onTextChangeHandler = (event) => {
-    this.setState({ [event.target.name]: event.target.value });
+    this.props.onChange({ index: this.props.index, name: event.target.name, value: event.target.value});
   }
   onTimeChangeHandler = (event) => {
     this.setState({ [event.target.name]: event.target.value });
@@ -44,11 +44,11 @@ export default class ContractMeeting extends Component {
           </label>
           <label>
             Start Time:<br/>
-            <input type='time' name='start' onChange={this.onTimeChangeHandler}/><br/>
+            <input type='time' name='start' onChange={this.onTextChangeHandler}/><br/>
           </label>
           <label>
             End Time:<br/>
-            <input type='time' name='end' onChange={this.onTimeChangeHandler}/><br/>
+            <input type='time' name='end' onChange={this.onTextChangeHandler}/><br/>
           </label>
 
       </div>
