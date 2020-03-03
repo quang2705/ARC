@@ -49,7 +49,7 @@ class App extends Component {
       aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\
       aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'} style={{ width: '500px' }}/>
       <button onClick={this.toggleModal}>Click</button>
-      // <Main/>
+      <Main/>
       </>
     );
   }

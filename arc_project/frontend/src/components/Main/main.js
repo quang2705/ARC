@@ -12,11 +12,11 @@ export default class Main extends Component {
     return (
       <div className={css.container}>
         <div style={{ width: '100%', height: '200px', backgroundColor: '#c8032b' }}/>
-        <ContentContainer tabs={['Sessions', 'Contracts']}>
-          <div>
-              Trolol item
-          </div>
-        </ContentContainer>
+        <div className={css.contentWrapper}>
+          <ContentContainer tabs={['Sessions', 'Contracts']} className={css.content}>
+
+          </ContentContainer>
+        </div>
       </div>
     );
   }

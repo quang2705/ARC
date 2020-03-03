@@ -12,6 +12,7 @@ of a page. This component supports multi-tabs sections.
   onTabChangeCallback: callback function when another tab is selected. The corresponding index
   in `tabs` is passed into the callback.
 @class
+  className: whole container
   classNameTab: for each tab
   classNameSelectedTab: for selected tab
   classNameContent: for content section
@@ -43,7 +44,7 @@ export default class ContentContainer extends Component {
     });
 
     return (
-      <div className={css.container}>
+      <div className={css.container+' '+this.props.className}>
         <div className={css.wrapper}>
         <div className={css.tabsContainer}>
           {tabs}
