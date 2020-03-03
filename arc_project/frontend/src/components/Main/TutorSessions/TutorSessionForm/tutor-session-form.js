@@ -35,10 +35,10 @@ export default class TutorSessionForm extends Component {
     console.log(this.state.sessSummary)
 
     return (
-      <form>
+      <form onSubmit={this.onSubmitHandler}>
         <label>
           Tutee: <br/>
-          <select name='contract' value={this.state.contract} onChange={this.onTextChangeHandler}>
+          <select id='contract' name='contract' onChange={this.onTextChangeHandler}>
             {options}
           </select>
         </label><br/>

@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { render } from "react-dom";
 
 import Login from './Login/login';
+import TutorSessionForm from './Main/TutorSessions/TutorSessionForm/tutor-session-form.js'
 
 class App extends Component {
   constructor(props) {
@@ -44,7 +45,10 @@ class App extends Component {
       //     );
       //   })}
       // </ul>
+      <>
       <Login/>
+      <TutorSessionForm/>
+      </>
     );
   }
 }
