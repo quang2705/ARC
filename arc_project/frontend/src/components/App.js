@@ -6,6 +6,7 @@ import Login from './Login/login';
 import Modal from './DefaultUI/Modal/modal';
 import Collapsible from './DefaultUI/Collapsible/collapsible';
 import Main from './Main/main';
+import MyAPI from './Api'
 
 class App extends Component {
   constructor(props) {
@@ -16,6 +17,13 @@ class App extends Component {
   componentDidMount() {
     // Override the default margin of 8px
     document.body.style.margin = '0';
+    MyAPI.get_userprofile()
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      console.log(data);
+    });
   }
 
   toggleModal = () => {
