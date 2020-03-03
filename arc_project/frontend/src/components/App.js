@@ -3,9 +3,14 @@ import { render } from 'react-dom';
 import { library } from '@fortawesome/fontawesome-svg-core';
 
 import Login from './Login/login';
+<<<<<<< HEAD
 import Modal from './DefaultUI/Modal/modal';
 import Collapsible from './DefaultUI/Collapsible/collapsible';
 import Main from './Main/main';
+=======
+//import TutorContracts from "./Main/TutorContracts/tutor-contracts";
+import TutorContractForm from './Main/TutorContracts/TutorContractForm/tutor-contract-form';
+>>>>>>> contractform
 
 class App extends Component {
   constructor(props) {
