@@ -3,11 +3,16 @@ import { render } from 'react-dom';
 import { library } from '@fortawesome/fontawesome-svg-core';
 
 import Login from './Login/login';
+<<<<<<< HEAD
 import Modal from './DefaultUI/Modal/modal';
 import Collapsible from './DefaultUI/Collapsible/collapsible';
 import Main from './Main/main';
 import MyAPI from './Api'
 
+=======
+import TutorContractItem from './Main/TutorContracts/TutorContractItem/tutor-contract-item.js';
+import TutorSessionItem from './Main/TutorSessions/TutorSessionItem/tutor-session-item.js';
+>>>>>>> 1f830d2b0bfea7d86696830c685e0c9cce1a65b3
 class App extends Component {
   constructor(props) {
     super(props);
@@ -43,6 +48,7 @@ class App extends Component {
       //     );
       //   })}
       // </ul>
+<<<<<<< HEAD
       <>
       <Modal isVisible={this.state.showModal} toggle={this.toggleModal}
              title={'Create new contract'}>
@@ -59,6 +65,14 @@ class App extends Component {
       <button onClick={this.toggleModal}>Click</button>
       // <Main/>
       </>
+=======
+      <div>
+        <Login/>
+        <TutorContractItem/>
+        <TutorSessionItem/>
+
+      </div>
+>>>>>>> 1f830d2b0bfea7d86696830c685e0c9cce1a65b3
     );
   }
 }
