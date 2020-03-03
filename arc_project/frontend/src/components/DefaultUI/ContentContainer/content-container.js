@@ -41,7 +41,9 @@ export default class ContentContainer extends Component {
         </span>
       );
     });
-
+		console.log("children",this.props.children);
+		console.log("children",this.props.classNameContent);
+		console.log("current index", this.state.currentTab);
     return (
       <div className={css.container}>
         <div className={css.wrapper}>

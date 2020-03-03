@@ -5,7 +5,7 @@ const SESSION_URL = '/api/sessions/';
 const CONTRACT_MEETING_URL = '/api/contractmeetings/';
 
 export default class MyAPI{
-	static get(url,index){
+	static get(url, index){
 		return url + index.toString()+"/";
 	}
 	static get_userprofile(index){
@@ -29,5 +29,4 @@ export default class MyAPI{
 	static get_contractmeeting(index){
 		fetch(this.get(CONTRACT_MEETING_URL, index));
 	}
-
 }

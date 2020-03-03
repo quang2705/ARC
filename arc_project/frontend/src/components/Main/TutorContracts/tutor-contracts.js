@@ -10,28 +10,19 @@ export default class TutorContracts extends Component {
     this.state = {
 			data:[]
 		};
-
-		this.getDataPromise = new Promise(function(resolve, reject){
-		    function getData(){
-		      var data = {
-		        class: 'cs111',
-		        tutee: 'quang',
-		        phone: '1234567',
-		        email: 'quang@gmail.com',
-		        meeting: [],
-		      };
-					resolve(data);
-		    };
-				getData();
-		  });
   }
 
   componentDidMount(){
+		//get all the contract of this user, then put it
+		//into this.state.data. Check MyAPI class for more
+		//functionality
 		MyAPI.get_contract()
 		.then((response) => {
+			//TODO: check for error response here
 			return response.json();
 		})
 		.then((data) => {
+			//set this.state.data 
 			return this.setState(() => {
 				return ({data: data.results});
 			});
@@ -40,12 +31,14 @@ export default class TutorContracts extends Component {
 
 
   render() {
+		//pass the contract data from this.state.data to the TutorContractItem
+		//child, the data can be accessed through this.props.contract in
+		//TutorContractItem
 		let contracts = this.state.data.map((contract, index) => {
 			return(
 				<TutorContractItem key={index} contract={contract}/>
 			);
 		});
-
     return (
       <>
 				{contracts}

@@ -23,20 +23,22 @@ export default class TutorContractItem extends Component {
   }
 
   render() {
-		console.log(this.props.contract);
+		console.log("inside contact item", this.props.contract);
 		var class_name = this.props.contract.class_name;
 		var professor_name = this.props.contract.professor_name;
 		var subject = this.props.contract.subject;
-		var tutor = this.props.contract.tutor;
-		var tutee = this.props.contract.tutee;
+		var tutor = this.props.contract.tutor.first_name + " " + this.props.contract.tutor.last_name;
+		var tutee = this.props.contract.tutee.first_name + " " + this.props.contract.tutee.last_name;
+		var tutor_email = this.props.contract.tutor.email;
+		var tutee_email = this.props.contract.tutee.email;
 
     let data = {class_name: class_name,
                 tutee: tutee,
 								tutor: tutor,
                 tutor_phone: '740 281 9394',
 								tutee_phone: '740 123 1231',
-                tutee_email:' ',
-								tutor_email:' ',
+                tutee_email:tutee_email,
+								tutor_email:tutor_email,
                 heademail:' ',
                 meetings:
                 [
@@ -69,8 +71,8 @@ export default class TutorContractItem extends Component {
       <div>Class: {data.class_name}</div>
       <div>Tutee: {data.tutee}</div>
 			<div>Tutee: {data.tutor}</div>
-      <div>Phone: {data.tutee_phone}</div>
-			<div>Phone: {data.tutor_phone}</div>
+      <div>Tutor Phone: {data.tutee_phone}</div>
+			<div>Tutee Phone: {data.tutor_phone}</div>
       <div>Tutee Email: {data.tutee_email}</div>
 			<div>Tutor Email: {data.tutor_email}</div>
       <div>Head Tutor Email: {data.heademail}</div>

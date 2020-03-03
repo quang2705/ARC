@@ -18,13 +18,15 @@ class App extends Component {
   componentDidMount() {
     // Override the default margin of 8px
     document.body.style.margin = '0';
+
+
     MyAPI.get_userprofile()
     .then((response) => {
-			console.log(response)
+			console.log("App.js response", response)
       return response.json();
     })
     .then((data) => {
-      console.log(data);
+      console.log("App.js data", data);
     });
   }
 
@@ -36,15 +38,6 @@ class App extends Component {
 
   render() {
     return (
-      // <ul>
-      //   {this.state.data.map(contact => {
-      //     return (
-      //       <li key={contact.id}>
-      //         {contact.first_name} - {contact.last_name} - {contact.email}
-      //       </li>
-      //     );
-      //   })}
-      // </ul>
       <>
       <Modal isVisible={this.state.showModal} toggle={this.toggleModal}
              title={'Create new contract'}>
@@ -59,7 +52,7 @@ class App extends Component {
       aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\
       aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'} style={{ width: '500px' }}/>
       <button onClick={this.toggleModal}>Click</button>
-      // <Main/>
+      <Main/>
       <TutorContracts/>
       </>
     );
