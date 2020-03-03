@@ -1,5 +1,10 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
+<<<<<<< HEAD
+=======
+import TutorContractForm from './TutorContractForm/tutor-contract-form';
+
+>>>>>>> 0718e989321fe0c4944b895d65af494c45ba1fee
 import css from './tutor-contracts.module.css';
 import TutorContractItem from './TutorContractItem/tutor-contract-item';
 import MyAPI from '../../Api'
@@ -40,9 +45,13 @@ export default class TutorContracts extends Component {
 			);
 		});
     return (
+<<<<<<< HEAD
       <>
 				{contracts}
       </>
+=======
+      <TutorContractForm/>
+>>>>>>> 0718e989321fe0c4944b895d65af494c45ba1fee
     );
   }
 }
