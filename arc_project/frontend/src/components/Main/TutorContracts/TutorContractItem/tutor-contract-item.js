@@ -20,25 +20,24 @@ export default class TutorContractItem extends Component {
   }
 
   componentDidMount(){
-    this.props.getData
-    .then((data) => {
-      console.log(data)
-      return this.setState((data) => {
-          return
-          {
-            data:
-          };
-        });
-    });
   }
 
   render() {
+		console.log(this.props.contract);
+		var class_name = this.props.contract.class_name;
+		var professor_name = this.props.contract.professor_name;
+		var subject = this.props.contract.subject;
+		var tutor = this.props.contract.tutor;
+		var tutee = this.props.contract.tutee;
 
-    let data = {class: 'CS 111',
-                tutee: 'Khue Le',
-                phone: '740 281 9394',
-                email: 'le_k1@denison.edu',
-                heademail: '',
+    let data = {class_name: class_name,
+                tutee: tutee,
+								tutor: tutor,
+                tutor_phone: '740 281 9394',
+								tutee_phone: '740 123 1231',
+                tutee_email:' ',
+								tutor_email:' ',
+                heademail:' ',
                 meetings:
                 [
                   {loc: 'Knapp',
@@ -50,6 +49,8 @@ export default class TutorContractItem extends Component {
                   starttime : '10:00 pm',
                   endtime: '10:30 pm'}
                 ],
+								subject: subject,
+								professor_name: professor_name,
                 };
 
     let meetings = data.meetings.map((meeting, index) => {
@@ -65,12 +66,17 @@ export default class TutorContractItem extends Component {
 
     return (
     <div>
-      <div>Class: {data.class}</div>
+      <div>Class: {data.class_name}</div>
       <div>Tutee: {data.tutee}</div>
-      <div>Phone: {data.phone}</div>
-      <div>Email: {data.email}</div>
+			<div>Tutee: {data.tutor}</div>
+      <div>Phone: {data.tutee_phone}</div>
+			<div>Phone: {data.tutor_phone}</div>
+      <div>Tutee Email: {data.tutee_email}</div>
+			<div>Tutor Email: {data.tutor_email}</div>
       <div>Head Tutor Email: {data.heademail}</div>
-      {meetings}
+			<div>Professor Name: {data.professor_name}</div>
+
+			{meetings}
     </div>
     );
   }

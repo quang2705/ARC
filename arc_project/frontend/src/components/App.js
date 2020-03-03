@@ -20,6 +20,7 @@ class App extends Component {
     document.body.style.margin = '0';
     MyAPI.get_userprofile()
     .then((response) => {
+			console.log(response)
       return response.json();
     })
     .then((data) => {
