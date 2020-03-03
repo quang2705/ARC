@@ -3,6 +3,22 @@ from arc_app.models import UserProfile, Contract, Session, ContractMeeting
 from django.contrib.auth.models import User
 
 #TODO: need testing
+
+class MiniSessionSerializer(serializers.ModelSerializer):
+	class Meta: 
+		model = Session
+		fields = ('id', 'url')
+
+class MiniContractMeetingSerializer(serializers.ModelSerializer):
+	class Meta: 
+		model = ContractMeeting
+		fields = ('id', 'url')
+
+class MiniUserProfileSerializer(serializers.ModelSerializer): 
+	class Meta: 
+		model = UserProfile
+		fields = ('id', 'url', 'email', 'first_name', 'last_name')
+
 class UserProfileSerializer(serializers.HyperlinkedModelSerializer):
 	tutor_contracts = serializers.HyperlinkedRelatedField(many=True, view_name='contract-detail', read_only=True)
 	tutee_contracts = serializers.HyperlinkedRelatedField(many=True, view_name='contract-detail', read_only=True)
@@ -14,8 +30,10 @@ class UserProfileSerializer(serializers.HyperlinkedModelSerializer):
 			'is_tutee', 'is_admin')
 
 class ContractSerializer(serializers.HyperlinkedModelSerializer):
-	sessions = serializers.HyperlinkedRelatedField(many=True, view_name='session-detail', read_only=True)
-	contract_meetings = serializers.HyperlinkedRelatedField(many=True, view_name='contractmeeting-detail', read_only=True)
+	sessions = MiniSessionSerializer(many=True, read_only=True)
+	contract_meetings = MiniContractMeetingSerializer(many=True, read_only=True)
+	tutor = MiniUserProfileSerializer(many=False, read_only=True)
+	tutee = MiniUserProfileSerializer(many=False, read_only=True)
 	class Meta:
 		model = Contract
 		fields = ('url', 'id', 'tutor', 'tutee','sessions',

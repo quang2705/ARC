@@ -127,3 +127,6 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10
 }
+
+#Login redirect url 
+LOGIN_REDIRECT_URL = '/api'
