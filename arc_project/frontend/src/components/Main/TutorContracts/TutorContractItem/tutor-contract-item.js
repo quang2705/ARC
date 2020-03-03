@@ -4,8 +4,36 @@ import { render } from 'react-dom';
 import css from './tutor-contract-item.module.css';
 
 export default class TutorContractItem extends Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      data: {
+        class: '',
+        tutee: '',
+        phone: '',
+        email: '',
+        heademail: '',
+        meetings:
+        []
+      },
+    };
+  }
+
+  componentDidMount(){
+    this.props.getData
+    .then((data) => {
+      console.log(data)
+      return this.setState((data) => {
+          return
+          {
+            data:
+          };
+        });
+    });
+  }
 
   render() {
+
     let data = {class: 'CS 111',
                 tutee: 'Khue Le',
                 phone: '740 281 9394',

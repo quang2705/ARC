@@ -20,4 +20,5 @@ export default class MyAPI{
 	static get_contractmeeting(){
 		return fetch(CONTRACT_MEETING_URL);
 	}
+
 }
