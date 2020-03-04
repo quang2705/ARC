@@ -8,6 +8,7 @@ Refer to the [README](https://github.com/quang2705/ARC/blob/develop/README.md) f
 - Remove the migration folder: `rm -r arc_app/migrations`
 - Run migrations for your project: `python manage.py makemigrations arc_app`
 - Run migrate: `python manage.py migrate` 
+- Generate the fake database: `python populate_users.py`
 - Create a superuser: `python manage.py createsuperuser`
 - Run server: `python manage.py runserver`
 
