@@ -71,18 +71,15 @@ class ContractViewSet(viewsets.ModelViewSet):
 			professor_name = request.data['professor_name']
 			subject = request.data['subject']
 		except:
-			print(request.data)
 			return Response("missing parameter")
 
 		try:
-			print("tutor email ", tutor_email)
 			tutor = UserProfile.objects.get(email=tutor_email)
 			#TODO: check to see if the tutor is the user sending
 			#the request and if he is a tutor
 			try:
 				tutee = UserProfile.objects.get(email=tutee_email)
 			except:
-				print("no tutee exist, create new tutee")
 				#incase there is not tutee with this name in the database
 				tutee = UserProfile(first_name=tutee_first_name,
 									last_name=tutee_last_name,
@@ -90,9 +87,7 @@ class ContractViewSet(viewsets.ModelViewSet):
 									phone=tutee_phone,
 									d_number=tutee_dnumber,
 									is_tutee=True)
-				print(tutee)
 				tutee.save()
-				print("tutee", tutee)
 		except Exception as e:
 			print(e)
 			return Response("Your information about tutor or tutee is not correct, check the parameter again")
@@ -184,6 +179,45 @@ class ContractMeetingViewSet(viewsets.ModelViewSet):
 	serializer_class = ContractMeetingSerializer
 	permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
+	def create(self, request):
+		#Get all the required parameters for the POST request
+		#contract_id, date, start, end, location
+		try:
+			contract_id = request.data['contract_id']
+		except:
+			return Response('You dont have the params `contract_id`')
+		try:
+			week_day = request.data['week_day']
+		except:
+			return Response('You dont have the params `date`')
+		try:
+			start = request.data['start']
+		except:
+			return Response('You dont have the params `start`')
+		try:
+			end = request.data['end']
+		except:
+			return Response('You dont have the params `end`')
+		try:
+			location = request.data['location']
+		except:
+			return Response('You dont have the params `location`')
+
+		#get the contract that this meeting is associated to
+		try:
+			contract = Contract.objects.get(pk=contract_id)
+		except:
+			return Reponse('You dont have contract with this id')
+
+		#create a new contract and save to the database
+		contract_meeting = ContractMeeting(contract=contract,
+											date=week_day,
+											start=start,
+											end=end,
+											location=location)
+		contract_meeting.save()
+		return Response(ContractMeetingSerializer(contract_meeting, context={'request': request}).data)
+
 	#filter contract meeting based on the user
 	def get_queryset(self):
 		user = self.request.user
@@ -199,7 +233,7 @@ class ContractMeetingViewSet(viewsets.ModelViewSet):
 		#contract meeting of that user
 		query = Q(contract= contracts[0])
 		for i in range(1,len(contracts)):
-			query.add(Q(contact = contracts[i]), Q.OR)
+			query.add(Q(contract = contracts[i]), Q.OR)
 
 		contract_meetings = self.queryset
 		#query by location if possible
@@ -215,6 +249,47 @@ class SessionViewSet(viewsets.ModelViewSet):
 	queryset = Session.objects.all()
 	serializer_class = SessionSerializer
 	permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+	#create our own action in handling post request
+	def create(self, request):
+		#Get all the required parameter for the POST request
+		#contract_id, date, start, end, summary
+		try:
+			contract_id = request.data['contract_id']
+		except KeyError:
+			return Response('You dont have the params `contract_id`')
+		try:
+			date = request.data['date']
+		except KeyError:
+			return Response('You dont have the params `date`')
+		try:
+			start = request.data['start']
+		except KeyError:
+			return Response('You dont have the params `start`')
+		try:
+			end = request.data['end']
+		except KeyError:
+			return Response('You dont have the params `end`')
+		try:
+			summary = request.data['summary']
+		except KeyError:
+			return Response('You dont have the params `summary`')
+
+		#get the contract that this session is associated to
+		try:
+			contract = Contract.objects.get(pk=contract_id)
+		except:
+			return Response("you dont have a contract with this id")
+
+		#create and save the session into the database
+		session = Session(contract=contract,
+						date=date,
+						start=start,
+						end=end,
+						summary=summary)
+		session.save()
+		return Response(SessionSerializer(session, context={'request': request}).data)
+
 
 	#filter session based on users
 	def get_queryset(self):
