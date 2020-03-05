@@ -65,6 +65,8 @@ class ContractViewSet(viewsets.ModelViewSet):
 			tutee_first_name = request.data['tutee_first_name']
 			tutee_last_name = request.data['tutee_last_name']
 			tutee_email = request.data['tutee_email']
+			tutee_phone = request.data['tutee_phone']
+			tutee_dnumber = request.data['tutee_dnumber']
 			class_name = request.data['class_name']
 			professor_name = request.data['professor_name']
 			subject = request.data['subject']
@@ -73,9 +75,10 @@ class ContractViewSet(viewsets.ModelViewSet):
 			return Response("missing parameter")
 
 		try:
-			print(tutor_email)
+			print("tutor email ", tutor_email)
 			tutor = UserProfile.objects.get(email=tutor_email)
-			print(tutor)
+			#TODO: check to see if the tutor is the user sending
+			#the request and if he is a tutor
 			try:
 				tutee = UserProfile.objects.get(email=tutee_email)
 			except:
@@ -83,12 +86,16 @@ class ContractViewSet(viewsets.ModelViewSet):
 				#incase there is not tutee with this name in the database
 				tutee = UserProfile(first_name=tutee_first_name,
 									last_name=tutee_last_name,
-									email=tutee_email)
-				tutee_serializer = UserProfileSerializer(tuttee, many=False, context={'request': request})
-				if tutee_serializer.is_valid():
-					tutee_serializer.save()
-		except:
-			return Response("Your information about tutor is not right, check again")
+									email=tutee_email,
+									phone=tutee_phone,
+									d_number=tutee_dnumber,
+									is_tutee=True)
+				print(tutee)
+				tutee.save()
+				print("tutee", tutee)
+		except Exception as e:
+			print(e)
+			return Response("Your information about tutor or tutee is not correct, check the parameter again")
 		contract = Contract(tutor=tutor, tutee=tutee,
 							class_name=class_name, subject=subject,
 							professor_name=professor_name)
