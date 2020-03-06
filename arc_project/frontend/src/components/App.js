@@ -6,8 +6,10 @@ import Login from './Login/login';
 import Modal from './DefaultUI/Modal/modal';
 import Collapsible from './DefaultUI/Collapsible/collapsible';
 import Main from './Main/main';
-import MyAPI from './Api'
+import MyAPI from './Api';
 import TutorContracts from './Main/TutorContracts/tutor-contracts';
+import AdminSummary from './Main/AdminSummary/admin-summary';
+
 
 class App extends Component {
   constructor(props) {
@@ -53,7 +55,7 @@ class App extends Component {
       aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'} style={{ width: '500px' }}/>
       <button onClick={this.toggleModal}>Click</button>
       <Main/>
-      <TutorContracts/>
+      <AdminSummary/>
       </>
     );
   }

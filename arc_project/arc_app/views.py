@@ -20,11 +20,17 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 	permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 	def get_queryset(self):
-		user= self.request.user
+		user = self.request.user
 		if not user.is_authenticated:
 			return []
+		elif user.is_staff:
+			return self.queryset
+		else:
+			return UserProfile.objects.filter(user=user)
 
-		return UserProfile.objects.filter(user = user)
+	def retrieve(self, request, pk=None):
+		contract_id = self.request.query_params.get('contract_id', None)
+		return super().retrieve(request, pk)
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
 	#This viewset automatically provide 'list' and 'detail' action
@@ -36,6 +42,8 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 		user= self.request.user
 		if not user.is_authenticated:
 			return []
+		elif user.is_staff:
+			return self.queryset
 		#get the params from url and filter it with
 		#the users objects
 		first_name = self.request.query_params.get('first_name', None)
@@ -49,8 +57,9 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 			users = users.filter(last_name=last_name)
 		if email is not None:
 			users = users.filter(email=email)
-
 		return users
+
+
 
 class ContractViewSet(viewsets.ModelViewSet):
 	#This viewset automatically provides 'list', 'create', 'retrieve',
@@ -104,7 +113,8 @@ class ContractViewSet(viewsets.ModelViewSet):
 		user= self.request.user
 		if not user.is_authenticated:
 			return []
-
+		elif user.is_staff:
+			return self.queryset
 		#get all the params from the url
 		class_name = self.request.query_params.get('class_name', None)
 		subject = self.request.query_params.get('subject', None)
@@ -223,7 +233,8 @@ class ContractMeetingViewSet(viewsets.ModelViewSet):
 		user = self.request.user
 		if not user.is_authenticated:
 			return []
-
+		elif user.is_staff:
+			return queryset
 		#get all contracts that contract meetings is belong to
 		#based on user that is currently log in
 		userprofile = user.userprofiles
@@ -296,7 +307,8 @@ class SessionViewSet(viewsets.ModelViewSet):
 		user = self.request.user
 		if not user.is_authenticated:
 			return []
-
+		elif user.is_staff:
+			return self.queryset
 		#get all contracts that sessions is belong to
 		#based on user that is currently log in
 		userprofile = self.request.user.userprofiles
