@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
+import MyAPI from '../../../Api'
 
 import ContractMeeting from './contract-meeting'
 
@@ -10,10 +11,12 @@ export default class TutorContractForm extends Component {
   constructor(props) {
 		super(props);
     this.state = {
-      tutorName: '',
+      tutorFirstName: '',
+      tutorLastName: '',
       tutorEmail: '',
       tutorPhone: '',
-      tuteeName: '',
+      tuteeFirstName: '',
+      tuteeLastName: '',
       tuteeEmail: '',
       tuteePhone: '',
       subject: '',
@@ -27,7 +30,7 @@ export default class TutorContractForm extends Component {
   }
     onSubmitHandler = (event) => {
       event.preventDefault();
-
+      MyAPI.create_contract(this.index, this.state, callback);
     }
 
     onTextChangeHandler = (event) => {
@@ -61,8 +64,12 @@ export default class TutorContractForm extends Component {
           <form onSubmit={this.onSubmitHandler}>
 
             <label>
-              Tutor Name:<br/>
-              <input type='text' name='tutorName' onChange={this.onTextChangeHandler}/><br/>
+              Tutor First Name:<br/>
+              <input type='text' name='tutorFirstName' onChange={this.onTextChangeHandler}/><br/>
+            </label>
+            <label>
+              Tutor Last Name:<br/>
+              <input type='text' name='tutorLastName' onChange={this.onTextChangeHandler}/><br/>
             </label>
             <label>
               Tutor Email:<br/>
@@ -76,8 +83,12 @@ export default class TutorContractForm extends Component {
             <br/>
 
             <label>
-              Tutee Name:<br/>
-              <input type='text' name='tuteeName' onChange={this.onTextChangeHandler}/><br/>
+              Tutee First Name:<br/>
+              <input type='text' name='tuteeFirstName' onChange={this.onTextChangeHandler}/><br/>
+            </label>
+            <label>
+              Tutee Last Name:<br/>
+              <input type='text' name='tuteeLastName' onChange={this.onTextChangeHandler}/><br/>
             </label>
             <label>
               Tutee Email:<br/>

@@ -29,4 +29,49 @@ export default class MyAPI{
 	static get_contractmeeting(index){
 		fetch(this.get(CONTRACT_MEETING_URL, index));
 	}
+	static create_contract(index, data, callback)
+	{
+		fetch(CONTRACT_URL + index.toString()+"/",
+			{
+				method: "post",
+				headers: {
+					'Accept': 'application/json',
+	    		'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					"class_name": data.class,
+		      "subject": data.subject,
+		      "professor_name": data.instructor,
+					"tutor_email": data.tutorEmail,
+					"tutee_email": data.tuteeEmail,
+					"tutee_first_name": data.tuteeFirstName,
+					"tutee_last_name": data.tuteeLastName,
+ 				})
+				}).then(res => {
+					callback(res);
+				});
+var i;
+for (i = 0; i < data.meetings.length; i++) {
+	let contractMeeting = data.meetings[i]
+	fetch(CONTRACT_MEETING_URL,
+	{
+		method: "post",
+		headers: {
+			'Accept': 'application/json',
+			'Content-Type': 'application/json'
+		},
+
+		body: JSON.stringify({
+			"contract": CONTRACT_URL + index.toString()+"/",
+			"date": contractMeeting[day],
+			"start": contractMeeting[start],
+			"end": contractMeeting[end],
+			"location": contractMeeting[location],
+		})
+		}).then(res => {
+			callback(res);
+		});
+	}
+
+	}
 }

@@ -3,16 +3,13 @@ import { render } from 'react-dom';
 import { library } from '@fortawesome/fontawesome-svg-core';
 
 import Login from './Login/login';
-<<<<<<< HEAD
-//import TutorContracts from "./Main/TutorContracts/tutor-contracts";
-import TutorContractForm from './Main/TutorContracts/TutorContractForm/tutor-contract-form';
-=======
+
 import Modal from './DefaultUI/Modal/modal';
 import Collapsible from './DefaultUI/Collapsible/collapsible';
 import Main from './Main/main';
 import MyAPI from './Api'
 import TutorContracts from './Main/TutorContracts/tutor-contracts';
->>>>>>> 41c689c1d60fef0bec62d5ef6f2fe288568ef066
+
 
 class App extends Component {
   constructor(props) {
@@ -43,22 +40,7 @@ class App extends Component {
 
   render() {
     return (
-<<<<<<< HEAD
-      // <ul>
-      //   {this.state.data.map(contact => {
-      //     return (
-      //       <li key={contact.id}>
-      //         {contact.first_name} - {contact.last_name} - {contact.email}
-      //       </li>
-      //     );
-      //   })}
-      // </ul>
-      <div>
-        <h1>HELLO</h1>
-        <TutorContractForm/>
-        <Login/>
-      </div>
-=======
+
       <>
       <Modal isVisible={this.state.showModal} toggle={this.toggleModal}
              title={'Create new contract'}>
@@ -76,7 +58,6 @@ class App extends Component {
       <Main/>
       <TutorContracts/>
       </>
->>>>>>> 41c689c1d60fef0bec62d5ef6f2fe288568ef066
     );
   }
 }

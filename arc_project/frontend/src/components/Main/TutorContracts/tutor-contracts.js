@@ -1,10 +1,6 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
-<<<<<<< HEAD
 import TutorContractForm from './TutorContractForm/tutor-contract-form';
-
-=======
->>>>>>> 41c689c1d60fef0bec62d5ef6f2fe288568ef066
 import css from './tutor-contracts.module.css';
 import TutorContractItem from './TutorContractItem/tutor-contract-item';
 import MyAPI from '../../Api'
@@ -27,7 +23,7 @@ export default class TutorContracts extends Component {
 			return response.json();
 		})
 		.then((data) => {
-			//set this.state.data 
+			//set this.state.data
 			return this.setState(() => {
 				return ({data: data.results});
 			});
@@ -45,13 +41,12 @@ export default class TutorContracts extends Component {
 			);
 		});
     return (
-<<<<<<< HEAD
-      <TutorContractForm/>
-=======
-      <>
-				{contracts}
-      </>
->>>>>>> 41c689c1d60fef0bec62d5ef6f2fe288568ef066
+      <div>
+        <TutorContractForm/>
+        <>
+				  {contracts}
+        </>
+      </div>
     );
   }
 }
