@@ -97,11 +97,7 @@ def create_contract_meeting():
 	for i in range(len(contracts)):
 		contract = contracts[i]
 		for j in range(no_meeting_per_contract):
-<<<<<<< HEAD
-			date = datetime.now()
-=======
 			date = 'Monday'
->>>>>>> ebabc8dad884f4be32afa3893f06f75a3815ac21
 			start = datetime.now()
 			end = datetime.now()
 			location = "Olin " + str(i)

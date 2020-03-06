@@ -55,7 +55,7 @@ class App extends Component {
       aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'} style={{ width: '500px' }}/>
       <button onClick={this.toggleModal}>Click</button>
       <Main/>
-      <AdminSummary/>
+      <TutorContracts/>
       </>
     );
   }
