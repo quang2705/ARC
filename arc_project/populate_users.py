@@ -97,7 +97,11 @@ def create_contract_meeting():
 	for i in range(len(contracts)):
 		contract = contracts[i]
 		for j in range(no_meeting_per_contract):
+<<<<<<< HEAD
 			date = datetime.now()
+=======
+			date = 'Monday'
+>>>>>>> ebabc8dad884f4be32afa3893f06f75a3815ac21
 			start = datetime.now()
 			end = datetime.now()
 			location = "Olin " + str(i)
@@ -140,13 +144,21 @@ def populate():
 	tutor_first_name = ["Hiep", "Khanh", "Khue", "Meg", "Quang"]
 	tutor_last_name = ["Phan", "Tran", "Le", "Jaffy", "Nguyen"]
 	size = len(tutor_first_name)
-	tutor_db = generate_user_info(tutor_first_name, tutor_last_name, True, False)
-	create_user_db(tutor_db, size)
-
 	tutee_first_name = ["John", "Yuri", "Wang", "Sam", "Jake"]
 	tutee_last_name = ["Doe", "Kuro", "Shei", "Smith", "Perata"]
-	tutee_db = generate_user_info(tutee_first_name, tutee_last_name, False, True)
-	create_user_db(tutee_db, size)
+
+	try:
+		tutor_db = generate_user_info(tutor_first_name, tutor_last_name, True, False)
+		create_user_db(tutor_db, size)
+	except:
+		print("already have tutor with similar name")
+
+	try:
+		tutee_db = generate_user_info(tutee_first_name, tutee_last_name, False, True)
+		create_user_db(tutee_db, size)
+	except:
+		print("already have tutee with similar name")
+
 	print("================================================")
 	create_contract_db(tutor_first_name, tutor_last_name, \
 						tutee_first_name, tutee_last_name)

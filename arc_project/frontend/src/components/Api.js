@@ -15,7 +15,10 @@ export default class MyAPI{
 			return fetch(this.get(USERPROFILE_URL, index));
 	}
 	static get_user(index){
-		return fetch(this.get(USER_URL, index));
+		if (index === undefined)
+			return fetch(USER_URL);
+		else
+			return fetch(this.get(USER_URL, index));
 	}
 	static get_contract(index){
 		if (index === undefined)
@@ -24,10 +27,16 @@ export default class MyAPI{
 			return fetch(this.get(CONTRACT_URL, index));
 	}
 	static get_session(index){
-		return fetch(this.get(SESSION_URL, index));
+		if (index === undefined)
+			return fetch(SESSION_URL);
+		else
+			return fetch(this.get(SESSION_URL, index));
 	}
 	static get_contractmeeting(index){
-		fetch(this.get(CONTRACT_MEETING_URL, index));
+		if (index === undefined)
+			return fetch(CONTRACT_MEETING_URL);
+		else
+			fetch(this.get(CONTRACT_MEETING_URL, index));
 	}
 	static create_contract(index, data, callback)
 	{
