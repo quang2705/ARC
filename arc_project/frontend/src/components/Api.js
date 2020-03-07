@@ -48,8 +48,6 @@ export default class MyAPI{
 		headers.append('Accept', 'application/json')
 		headers.append('Content-Type', 'application/json')
 		headers.append('X-CSRFToken', csrftoken)
-
-		console.log(headers)
 		return fetch(CONTRACT_URL,
 			{
 				method: "post",
