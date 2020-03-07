@@ -8,6 +8,7 @@ import Collapsible from './DefaultUI/Collapsible/collapsible';
 import Main from './Main/main';
 import MyAPI from './Api';
 import TutorContracts from './Main/TutorContracts/tutor-contracts';
+import TutorContractForm from './Main/TutorContracts/TutorContractForm/tutor-contract-form';
 import AdminSummary from './Main/AdminSummary/admin-summary';
 
 
@@ -55,7 +56,6 @@ class App extends Component {
       aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'} style={{ width: '500px' }}/>
       <button onClick={this.toggleModal}>Click</button>
       <Main/>
-      <TutorContracts/>
       </>
     );
   }

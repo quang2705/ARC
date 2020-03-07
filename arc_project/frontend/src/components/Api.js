@@ -40,47 +40,50 @@ export default class MyAPI{
 	}
 	static create_contract(index, data, callback)
 	{
-		fetch(CONTRACT_URL + index.toString()+"/",
+		let headers = new Headers();
+		//headers.append("Authorization", "Basic "+base64.encode("MegJaffy:Jaffy@123"));
+		return fetch(CONTRACT_URL,
 			{
 				method: "post",
 				headers: {
 					'Accept': 'application/json',
-	    		'Content-Type': 'application/json'
+	    		'Content-Type': 'application/json',
 				},
 				body: JSON.stringify({
-					"class_name": data.class,
-		      "subject": data.subject,
-		      "professor_name": data.instructor,
 					"tutor_email": data.tutorEmail,
 					"tutee_email": data.tuteeEmail,
 					"tutee_first_name": data.tuteeFirstName,
 					"tutee_last_name": data.tuteeLastName,
+					"tutee_phone": data.tuteePhone,
+					"tutee_dnumber": data.tuteeDnumber,
+					"class_name": data.class,
+					"professor_name": data.instructor,
+					"subject": data.subject,
  				})
-				}).then(res => {
-					callback(res);
-				});
-var i;
-for (i = 0; i < data.meetings.length; i++) {
-	let contractMeeting = data.meetings[i]
-	fetch(CONTRACT_MEETING_URL,
-	{
-		method: "post",
-		headers: {
-			'Accept': 'application/json',
-			'Content-Type': 'application/json'
-		},
+			})
+//var i;
 
-		body: JSON.stringify({
-			"contract": CONTRACT_URL + index.toString()+"/",
-			"date": contractMeeting[day],
-			"start": contractMeeting[start],
-			"end": contractMeeting[end],
-			"location": contractMeeting[location],
-		})
-		}).then(res => {
-			callback(res);
-		});
-	}
+// for (i = 0; i < data.meetings.length; i++) {
+// 	let contractMeeting = data.meetings[i]
+// 	fetch(CONTRACT_MEETING_URL,
+// 	{
+// 		method: "post",
+// 		headers: {
+// 			'Accept': 'application/json',
+// 			'Content-Type': 'application/json'
+// 		},
+//
+// 		body: JSON.stringify({
+// 			"contract_id": CONTRACT_URL,
+// 			"week_day": contractMeeting['day'],
+// 			"start": contractMeeting['start'],
+// 			"end": contractMeeting['end'],
+// 			"location": contractMeeting['location'],
+// 		})
+// 	}).then(res => {
+// 			callback(res);
+// 		});
+// 	}
 
 	}
 }

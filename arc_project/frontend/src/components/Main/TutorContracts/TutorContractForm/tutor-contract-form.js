@@ -19,6 +19,7 @@ export default class TutorContractForm extends Component {
       tuteeLastName: '',
       tuteeEmail: '',
       tuteePhone: '',
+      tuteeDnumber: '',
       subject: '',
       class: '',
       instructor: '',
@@ -28,9 +29,17 @@ export default class TutorContractForm extends Component {
     }
 
   }
+    callback = (data)=>{console.log(data)}
     onSubmitHandler = (event) => {
       event.preventDefault();
-      MyAPI.create_contract(this.index, this.state, callback);
+      console.log("Submit");
+      console.log("aaaa");
+      MyAPI.create_contract(this.index, this.state, this.callback).then((response)=> {
+        console.log('here');
+        console.log(response.json());
+        return(response.json());
+      });
+      console.log("aaaa");
     }
 
     onTextChangeHandler = (event) => {
@@ -41,6 +50,7 @@ export default class TutorContractForm extends Component {
     }
 
     addMeeting = () => {
+      console.log('add meeting');
       let newMeetings = this.state.meetings;
       let newMeeting = { location: '',
                          day: '',
@@ -49,7 +59,9 @@ export default class TutorContractForm extends Component {
       newMeetings.push(newMeeting);
       this.setState({ meetings: newMeetings });
     }
+
     onMeetingChangeHandler=(data)=> {
+      event.preventDefault();
       this.state.meetings[data.index][data.name] = data.value;
       // this.forceUpdate();
     }
@@ -98,9 +110,11 @@ export default class TutorContractForm extends Component {
               Tutee Phone Number:<br/>
               <input type='phone' name='tuteePhone' onChange={this.onTextChangeHandler}/><br/>
             </label>
-
+            <label>
+              Tutee D-Number:<br/>
+              <input type='text' name='tuteeDnumber' onChange={this.onTextChangeHandler}/><br/>
+            </label>
             <br/>
-
             <label>
               Subject:<br/>
               <select id = "subjects" name='subject' onChange={this.onTextChangeHandler}>
@@ -121,9 +135,9 @@ export default class TutorContractForm extends Component {
             <br/>
             <h2>Add a meeting time</h2>
             {meetings}
-            <button onClick={this.addMeeting}>
+            <div onClick={this.addMeeting}>
               Add a meeting time
-            </button>
+            </div>
 
             <br/>
 
