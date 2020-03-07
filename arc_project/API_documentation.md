@@ -38,7 +38,7 @@ Refer to the [README](https://github.com/quang2705/ARC/blob/develop/README.md) f
   - `http://localhost:/api/contracts/<pk>/get_contractmeetings/`: query all the contract meetings of this contract
 - POST request: 
   - url: `http://localhost:/api/contracts`
-  - body: {tutor_email: , tutee_first_name: , tutee_last_name: , tutee_phone: , tutee_dnumber: , class_name: , professor_name: , subject: }
+  - body: {tutor_email: ,tutee_email: ,tutee_first_name: , tutee_last_name: , tutee_phone: , tutee_dnumber: , class_name: , professor_name: , subject: }
   - header: basic authentical with login
   
 ### Session 
