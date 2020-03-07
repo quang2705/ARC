@@ -259,7 +259,7 @@ class ContractMeetingViewSet(viewsets.ModelViewSet):
 class SessionViewSet(viewsets.ModelViewSet):
 	queryset = Session.objects.all()
 	serializer_class = SessionSerializer
-	permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+	#permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 	#create our own action in handling post request
 	def create(self, request):

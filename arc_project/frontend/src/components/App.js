@@ -66,6 +66,7 @@ class App extends Component {
       <button onClick={this.toggleModal}>Click</button>
       <Main/>
       <AdminSummary/>
+      <TutorSessionForm/>
       </>
     );
   }

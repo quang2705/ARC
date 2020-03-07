@@ -38,4 +38,22 @@ export default class MyAPI{
 		else
 			fetch(this.get(CONTRACT_MEETING_URL, index));
 	}
+	static create_session(data){
+		fetch(SESSION_URL, {
+        method: 'POST',
+				headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+					'contract_id': data.contract_id,
+					'date': data.sessDate,
+					'start': data.sessStart,
+					'end': data.sessEnd,
+					'summary': data.sessSummary
+				})
+
+    }).then(res => {
+        return res;
+    }).catch(err => err);
+	}
 }
