@@ -44,7 +44,7 @@ export default class TutorContracts extends Component {
       <div>
         <TutorContractForm/>
         <>
-				  {contracts}
+			  {contracts}
         </>
       </div>
     );

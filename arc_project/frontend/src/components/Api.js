@@ -1,3 +1,5 @@
+import Cookies from 'js-cookie'
+
 const USERPROFILE_URL = '/api/userprofiles/';
 const USER_URL = '/api/users/';
 const CONTRACT_URL = '/api/contracts/';
@@ -38,16 +40,24 @@ export default class MyAPI{
 		else
 			fetch(this.get(CONTRACT_MEETING_URL, index));
 	}
-	static create_contract(index, data, callback)
+	static create_contract(data, callback)
 	{
-		let headers = new Headers();
-		//headers.append("Authorization", "Basic "+base64.encode("MegJaffy:Jaffy@123"));
+		var csrftoken = Cookies.get('csrftoken');
+		var headers = new Headers();
+		// headers.append('Authorization', 'Basic '+ btoa('MegJaffy:Jaffy@123'));
+		headers.append('Accept', 'application/json')
+		headers.append('Content-Type', 'application/json')
+		headers.append('X-CSRFToken', csrftoken)
+
+		console.log(headers)
 		return fetch(CONTRACT_URL,
 			{
 				method: "post",
 				headers: {
+					'X-CSRFToken': csrftoken,
+					'Authorization': 'Basic ' + btoa('MegJaffy:Jaffy@123'),
 					'Accept': 'application/json',
-	    		'Content-Type': 'application/json',
+					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({
 					"tutor_email": data.tutorEmail,
@@ -84,6 +94,5 @@ export default class MyAPI{
 // 			callback(res);
 // 		});
 // 	}
-
 	}
 }

@@ -21,16 +21,6 @@ class App extends Component {
   componentDidMount() {
     // Override the default margin of 8px
     document.body.style.margin = '0';
-
-
-    MyAPI.get_userprofile()
-    .then((response) => {
-			console.log("App.js response", response)
-      return response.json();
-    })
-    .then((data) => {
-      console.log("App.js data", data);
-    });
   }
 
   toggleModal = () => {
@@ -56,6 +46,7 @@ class App extends Component {
       aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'} style={{ width: '500px' }}/>
       <button onClick={this.toggleModal}>Click</button>
       <Main/>
+      <TutorContractForm/>
       </>
     );
   }
