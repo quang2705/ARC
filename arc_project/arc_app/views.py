@@ -66,7 +66,7 @@ class ContractViewSet(viewsets.ModelViewSet):
 	#'update', and 'destroy' actions
 	queryset = Contract.objects.all()
 	serializer_class = ContractSerializer
-	permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+	#permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 	def create(self, request):
 		try:
