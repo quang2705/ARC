@@ -34,11 +34,11 @@ export default class TutorContractItem extends Component {
 
     let data = {class_name: class_name,
                 tutee: tutee,
-								tutor: tutor,
+                tutor: tutor,
                 tutor_phone: '740 281 9394',
-								tutee_phone: '740 123 1231',
+                tutee_phone: '740 123 1231',
                 tutee_email:tutee_email,
-								tutor_email:tutor_email,
+                tutor_email:tutor_email,
                 heademail:' ',
                 meetings:
                 [
@@ -51,8 +51,8 @@ export default class TutorContractItem extends Component {
                   starttime : '10:00 pm',
                   endtime: '10:30 pm'}
                 ],
-								subject: subject,
-								professor_name: professor_name,
+                subject: subject,
+                professor_name: professor_name,
                 };
 
     let meetings = data.meetings.map((meeting, index) => {
@@ -70,15 +70,14 @@ export default class TutorContractItem extends Component {
     <div>
       <div>Class: {data.class_name}</div>
       <div>Tutee: {data.tutee}</div>
-			<div>Tutee: {data.tutor}</div>
+      <div>Tutee: {data.tutor}</div>
       <div>Tutor Phone: {data.tutee_phone}</div>
-			<div>Tutee Phone: {data.tutor_phone}</div>
+      <div>Tutee Phone: {data.tutor_phone}</div>
       <div>Tutee Email: {data.tutee_email}</div>
-			<div>Tutor Email: {data.tutor_email}</div>
+      <div>Tutor Email: {data.tutor_email}</div>
       <div>Head Tutor Email: {data.heademail}</div>
-			<div>Professor Name: {data.professor_name}</div>
-
-			{meetings}
+      <div>Professor Name: {data.professor_name}</div>
+    	{meetings}
     </div>
     );
   }

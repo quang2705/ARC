@@ -22,7 +22,7 @@ export default class TutorContracts extends Component {
 			return response.json();
 		})
 		.then((data) => {
-			//set this.state.data 
+			//set this.state.data
 			return this.setState(() => {
 				return ({data: data.results});
 			});
