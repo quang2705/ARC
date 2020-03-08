@@ -33,13 +33,7 @@ export default class TutorContractForm extends Component {
     onSubmitHandler = (event) => {
       event.preventDefault();
       console.log("Submit");
-      MyAPI.create_contract(this.state, this.callback)
-      .then((response) => {
-        return(response.json());
-    }).then((data) =>{
-        console.log("NEW CONTRACT DATA", data);
-        return data;
-    });
+      MyAPI.create_contract(this.state, this.callback);
     }
 
     onTextChangeHandler = (event) => {

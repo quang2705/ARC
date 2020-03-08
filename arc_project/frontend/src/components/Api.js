@@ -40,57 +40,53 @@ export default class MyAPI{
 		else
 			fetch(this.get(CONTRACT_MEETING_URL, index));
 	}
-	static create_contract(data, callback)
-	{
+	static create_contract(data, callback){
 		var csrftoken = Cookies.get('csrftoken');
 		var headers = new Headers();
 		// headers.append('Authorization', 'Basic '+ btoa('MegJaffy:Jaffy@123'));
 		headers.append('Accept', 'application/json')
 		headers.append('Content-Type', 'application/json')
 		headers.append('X-CSRFToken', csrftoken)
-		return fetch(CONTRACT_URL,
-			{
-				method: "post",
-				headers: {
-					'X-CSRFToken': csrftoken,
-					'Authorization': 'Basic ' + btoa('MegJaffy:Jaffy@123'),
-					'Accept': 'application/json',
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({
-					"tutor_email": data.tutorEmail,
-					"tutee_email": data.tuteeEmail,
-					"tutee_first_name": data.tuteeFirstName,
-					"tutee_last_name": data.tuteeLastName,
-					"tutee_phone": data.tuteePhone,
-					"tutee_dnumber": data.tuteeDnumber,
-					"class_name": data.class,
-					"professor_name": data.instructor,
-					"subject": data.subject,
- 				})
-			})
-//var i;
+		var contract_id;
+		fetch(CONTRACT_URL,{
+			method: "post",
+			headers: headers,
+			body: JSON.stringify({
+				"tutor_email": data.tutorEmail,
+				"tutee_email": data.tuteeEmail,
+				"tutee_first_name": data.tuteeFirstName,
+				"tutee_last_name": data.tuteeLastName,
+				"tutee_phone": data.tuteePhone,
+				"tutee_dnumber": data.tuteeDnumber,
+				"class_name": data.class,
+				"professor_name": data.instructor,
+				"subject": data.subject,
+				})
+		}).then((response) => {
+			console.log(response);
+			return response.json();
+		}).then((response_data) => {
+			contract_id = response_data.id;
+			for (var i = 0; i < data.meetings.length; i++) {
+				let contractMeeting = data.meetings[i]
+				fetch(CONTRACT_MEETING_URL,{
+					method: "post",
+					headers: headers,
+					body: JSON.stringify({
+						"contract_id": contract_id,
+						"week_day": contractMeeting['day'],
+						"start": contractMeeting['start'],
+						"end": contractMeeting['end'],
+						"location": contractMeeting['location'],
+					})
+				}).then(response => {
+						return response.json();
+					}).then((data) => {
+						console.log("MEETING DATA ", data);
+					});
+				}
+			callback(response_data);
+		});
 
-// for (i = 0; i < data.meetings.length; i++) {
-// 	let contractMeeting = data.meetings[i]
-// 	fetch(CONTRACT_MEETING_URL,
-// 	{
-// 		method: "post",
-// 		headers: {
-// 			'Accept': 'application/json',
-// 			'Content-Type': 'application/json'
-// 		},
-//
-// 		body: JSON.stringify({
-// 			"contract_id": CONTRACT_URL,
-// 			"week_day": contractMeeting['day'],
-// 			"start": contractMeeting['start'],
-// 			"end": contractMeeting['end'],
-// 			"location": contractMeeting['location'],
-// 		})
-// 	}).then(res => {
-// 			callback(res);
-// 		});
-// 	}
 	}
 }
