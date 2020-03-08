@@ -143,8 +143,7 @@ class ContractViewSet(viewsets.ModelViewSet):
 		tutee_email = self.request.query_params.get('tutee_email', None)
 
 		userprofile = user.userprofiles
-		contracts = self.queryset
-
+		contracts = userprofile.tutor_contracts.all()
 
 		#if the params is not Null, query it
 		if class_name is not None:
@@ -157,11 +156,10 @@ class ContractViewSet(viewsets.ModelViewSet):
 			tutee = UserProfile.objects.get(email=tutee_email)
 			contracts = contracts.filter(tutee = tutee)
 
-
 		#query the contracts based on the user loging in
 		#right now only show contract if user is a tutor, does not show
 		#contract when the user is a tutee
-		return contracts.filter(tutor = userprofile)
+		return contracts
 
 	#Return all the sessions of the current contract
 	@action(methods=['get'], detail=True)
@@ -259,22 +257,13 @@ class ContractMeetingViewSet(viewsets.ModelViewSet):
 		#get all contracts that contract meetings is belong to
 		#based on user that is currently log in
 		userprofile = user.userprofiles
-		contracts = Contract.objects.filter(tutor = userprofile)
-
-		#create a query variable that allow us to query all the
-		#contract meeting of that user
-		query = Q(contract= contracts[0])
-		for i in range(1,len(contracts)):
-			query.add(Q(contract = contracts[i]), Q.OR)
-
-		contract_meetings = self.queryset
-		#query by location if possible
+		contracts = userprofile.tutor_contracts.all()
+		contract_meetings = [cmeeting for contract in contracts for cmeeting in contract.contract_meetings.all()]
 
 		location = self.request.query_params.get('location', None)
 		if location is not None:
-			contract_meetings = contract_meetings.filter(location=location)
-
-		return contract_meetings.filter(query)
+			contract_meetings = [cmeeting for cmeeting in contract_meetings if cmeeting.location == location]
+		return contract_meetings
 
 
 class SessionViewSet(viewsets.ModelViewSet):
@@ -333,13 +322,7 @@ class SessionViewSet(viewsets.ModelViewSet):
 		#get all contracts that sessions is belong to
 		#based on user that is currently log in
 		userprofile = self.request.user.userprofiles
-		contracts = Contract.objects.filter(tutor = userprofile)
-
-		#create a query variable that allow us to query all the
-		#sessions of that user
-		query = Q(contract= contracts[0])
-		for i in range(1,len(contracts)):
-			query.add(Q(contract = contracts[i]), Q.OR)
-
-		sessions = self.queryset
-		return sessions.filter(query)
+		contracts = userprofile.tutor_contracts.all()
+		sessions = [session for contract in contracts for session in contract.sessions.all()]
+		
+		return sessions
