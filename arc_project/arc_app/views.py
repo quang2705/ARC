@@ -39,7 +39,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 	permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 	def get_queryset(self):
-		user= self.request.user
+		user = self.request.user
 		if not user.is_authenticated:
 			return []
 		elif user.is_staff:
@@ -58,6 +58,27 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 		if email is not None:
 			users = users.filter(email=email)
 		return users
+
+	@action(methods=['get'], detail=True)
+	def get_sessions(self, request, pk=None):
+		user = User.objects.get(pk=pk)
+		#if the user is staff return nothing
+		if (user.is_staff):
+			return Response({"Staff does not have sessions"})
+		else:
+			#get the userprofile of this users
+			userprofile = user.userprofiles
+			#get the contracts of this tutor
+			tutor_contracts = userprofile.tutor_contracts.all()
+			#create an empty sessions
+			sessions=[]
+			if (len(tutor_contracts) > 0):
+				#for each contract, get the sessions of this contract
+				#for each session in sessions, append to the list
+				for contract in tutor_contracts:
+					for session in contract.sessions.all():
+						sessions.append(session)
+		return Response(SessionSerializer(sessions, many=True, context={'request': request}).data)
 
 
 

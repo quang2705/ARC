@@ -12,6 +12,7 @@ export default class AdminSummaryItem extends Component {
                 tutor_last_name: this.props.tutor.last_name,
                 tutor_phone: this.props.tutor.phone,
                 tutor_email: this.props.tutor.email,
+                
             }
         };
     }
