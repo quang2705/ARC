@@ -1,5 +1,4 @@
 import Cookies from 'js-cookie'
-
 const USERPROFILE_URL = '/api/userprofiles/';
 const USER_URL = '/api/users/';
 const CONTRACT_URL = '/api/contracts/';
@@ -10,11 +9,28 @@ export default class MyAPI{
 	static get(url, index){
 		return url + index.toString()+"/";
 	}
-	static get_userprofile(index){
+	static query(url, query_params) {
+		if (query_params === undefined)
+			return url;
+		else if (Object.keys(query_params).length == 0)
+			return url;
+		else {
+			url += "?";
+			var query_url = []
+			Object.keys(query_params).forEach((key, index) => {
+				query_url.push(key + "=" + query_params[key].toString());
+			});
+			query_url = query_url.join('&')
+			console.log(url+query_url);
+			return url + query_url;
+		}
+	}
+	static get_userprofile(index, query_params){
 		if (index === undefined)
-			return fetch(USERPROFILE_URL);
+			return fetch(this.query(USERPROFILE_URL, query_params));
 		else
 			return fetch(this.get(USERPROFILE_URL, index));
+
 	}
 	static get_user(index){
 		if (index === undefined)
@@ -33,6 +49,9 @@ export default class MyAPI{
 			return fetch(SESSION_URL);
 		else
 			return fetch(this.get(SESSION_URL, index));
+	}
+	static get_user_session(user_id){
+		return fetch(this.get(USER_URL, user_id)+'get_sessions/')
 	}
 	static get_contractmeeting(index){
 		if (index === undefined)

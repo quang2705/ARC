@@ -6,13 +6,13 @@ import css from './tutor-session-form.module.css';
 export default class TutorSessionForm extends Component {
   constructor(props) {
 		super(props);
-    this.state = {
-      contract: '',
-      sessDate: '',
-      sessStart: '',
-      sessEnd: '',
-      sessSummary:''
-    };
+        this.state = {
+          contract: '',
+          sessDate: '',
+          sessStart: '',
+          sessEnd: '',
+          sessSummary:''
+        };
 	}
 
   onSubmitHandler = (event) => {

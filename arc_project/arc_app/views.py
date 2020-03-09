@@ -24,7 +24,24 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 		if not user.is_authenticated:
 			return []
 		elif user.is_staff:
-			return self.queryset
+			is_tutor = self.request.query_params.get('is_tutor', None)
+			first_name = self.request.query_params.get('first_name', None)
+			last_name = self.request.query_params.get('last_name', None)
+			email = self.request.query_params.get('email', None)
+			userprofiles = UserProfile.objects.all()
+			if is_tutor is not None:
+				if is_tutor == 'true':
+					is_tutor = 'True'
+				elif is_tutor == 'false':
+					is_tutor = 'False'
+				userprofiles = userprofiles.filter(is_tutor=is_tutor)
+			if first_name is not None:
+				userprofiles = userprofiles.filter(first_name=first_name)
+			if last_name is not None:
+				userprofiles = userprofiles.filter(last_name=last_name)
+			if email is not None:
+				userprofiles = userprofiles.filter(email=email)
+			return userprofiles
 		else:
 			return UserProfile.objects.filter(user=user)
 
@@ -69,18 +86,9 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 			#get the userprofile of this users
 			userprofile = user.userprofiles
 			#get the contracts of this tutor
-			tutor_contracts = userprofile.tutor_contracts.all()
-			#create an empty sessions
-			sessions=[]
-			if (len(tutor_contracts) > 0):
-				#for each contract, get the sessions of this contract
-				#for each session in sessions, append to the list
-				for contract in tutor_contracts:
-					for session in contract.sessions.all():
-						sessions.append(session)
+			contracts = userprofile.tutor_contracts.all()
+			sessions = [session for contract in contracts for session in contract.sessions.all()]
 		return Response(SessionSerializer(sessions, many=True, context={'request': request}).data)
-
-
 
 class ContractViewSet(viewsets.ModelViewSet):
 	#This viewset automatically provides 'list', 'create', 'retrieve',
@@ -131,7 +139,7 @@ class ContractViewSet(viewsets.ModelViewSet):
 	#query contract based on the tutor of the contract and
 	#any parameter that is added onto the url
 	def get_queryset(self):
-		user= self.request.user
+		user = self.request.user
 		if not user.is_authenticated:
 			return []
 		elif user.is_staff:
@@ -324,5 +332,5 @@ class SessionViewSet(viewsets.ModelViewSet):
 		userprofile = self.request.user.userprofiles
 		contracts = userprofile.tutor_contracts.all()
 		sessions = [session for contract in contracts for session in contract.sessions.all()]
-		
+
 		return sessions
