@@ -42,7 +42,6 @@ export default class ContentContainer extends Component {
         </span>
       );
     });
-
     return (
       <div className={css.container+' '+this.props.className}>
         <div className={css.wrapper}>

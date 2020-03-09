@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
+import MyAPI from '../../../Api'
 
 import ContractMeeting from './contract-meeting'
 
@@ -10,12 +11,15 @@ export default class TutorContractForm extends Component {
   constructor(props) {
 		super(props);
     this.state = {
-      tutorName: '',
+      tutorFirstName: '',
+      tutorLastName: '',
       tutorEmail: '',
       tutorPhone: '',
-      tuteeName: '',
+      tuteeFirstName: '',
+      tuteeLastName: '',
       tuteeEmail: '',
       tuteePhone: '',
+      tuteeDnumber: '',
       subject: '',
       class: '',
       instructor: '',
@@ -25,9 +29,10 @@ export default class TutorContractForm extends Component {
     }
 
   }
+    callback = (data)=>{console.log(data)}
     onSubmitHandler = (event) => {
       event.preventDefault();
-
+      MyAPI.create_contract(this.state, this.callback);
     }
 
     onTextChangeHandler = (event) => {
@@ -46,9 +51,10 @@ export default class TutorContractForm extends Component {
       newMeetings.push(newMeeting);
       this.setState({ meetings: newMeetings });
     }
+
     onMeetingChangeHandler=(data)=> {
+      event.preventDefault();
       this.state.meetings[data.index][data.name] = data.value;
-      // this.forceUpdate();
     }
 
     render() {
@@ -61,8 +67,12 @@ export default class TutorContractForm extends Component {
           <form onSubmit={this.onSubmitHandler}>
 
             <label>
-              Tutor Name:<br/>
-              <input type='text' name='tutorName' onChange={this.onTextChangeHandler}/><br/>
+              Tutor First Name:<br/>
+              <input type='text' name='tutorFirstName' onChange={this.onTextChangeHandler}/><br/>
+            </label>
+            <label>
+              Tutor Last Name:<br/>
+              <input type='text' name='tutorLastName' onChange={this.onTextChangeHandler}/><br/>
             </label>
             <label>
               Tutor Email:<br/>
@@ -76,8 +86,12 @@ export default class TutorContractForm extends Component {
             <br/>
 
             <label>
-              Tutee Name:<br/>
-              <input type='text' name='tuteeName' onChange={this.onTextChangeHandler}/><br/>
+              Tutee First Name:<br/>
+              <input type='text' name='tuteeFirstName' onChange={this.onTextChangeHandler}/><br/>
+            </label>
+            <label>
+              Tutee Last Name:<br/>
+              <input type='text' name='tuteeLastName' onChange={this.onTextChangeHandler}/><br/>
             </label>
             <label>
               Tutee Email:<br/>
@@ -87,9 +101,11 @@ export default class TutorContractForm extends Component {
               Tutee Phone Number:<br/>
               <input type='phone' name='tuteePhone' onChange={this.onTextChangeHandler}/><br/>
             </label>
-
+            <label>
+              Tutee D-Number:<br/>
+              <input type='text' name='tuteeDnumber' onChange={this.onTextChangeHandler}/><br/>
+            </label>
             <br/>
-
             <label>
               Subject:<br/>
               <select id = "subjects" name='subject' onChange={this.onTextChangeHandler}>
@@ -110,10 +126,7 @@ export default class TutorContractForm extends Component {
             <br/>
             <h2>Add a meeting time</h2>
             {meetings}
-            <button onClick={this.addMeeting}>
-              Add a meeting time
-            </button>
-
+            <input type='submit' value = "Add a meeting time" onClick={this.addMeeting}/>
             <br/>
 
             <label>

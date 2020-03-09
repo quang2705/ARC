@@ -3,13 +3,14 @@ import { render } from 'react-dom';
 import { library } from '@fortawesome/fontawesome-svg-core';
 
 import Login from './Login/login';
-<<<<<<< HEAD
 import Modal from './DefaultUI/Modal/modal';
 import Collapsible from './DefaultUI/Collapsible/collapsible';
 import Main from './Main/main';
-=======
-//import TutorContracts from "./Main/TutorContracts/tutor-contracts";
+import MyAPI from './Api';
+import TutorContracts from './Main/TutorContracts/tutor-contracts';
 import TutorContractForm from './Main/TutorContracts/TutorContractForm/tutor-contract-form';
+import AdminSummary from './Main/AdminSummary/admin-summary';
+
 >>>>>>> contractform
 
 class App extends Component {
@@ -25,21 +26,12 @@ class App extends Component {
 
   toggleModal = () => {
     this.setState((prevState) => {
-      return {...prevState, showModal: !prevState.showModal };
+      return { ...prevState, showModal: !prevState.showModal };
     });
   }
 
   render() {
     return (
-      // <ul>
-      //   {this.state.data.map(contact => {
-      //     return (
-      //       <li key={contact.id}>
-      //         {contact.first_name} - {contact.last_name} - {contact.email}
-      //       </li>
-      //     );
-      //   })}
-      // </ul>
       <>
       <Modal isVisible={this.state.showModal} toggle={this.toggleModal}
              title={'Create new contract'}>
