@@ -32,7 +32,6 @@ export default class TutorContractForm extends Component {
     callback = (data)=>{console.log(data)}
     onSubmitHandler = (event) => {
       event.preventDefault();
-      console.log("Submit");
       MyAPI.create_contract(this.state, this.callback);
     }
 
@@ -44,7 +43,6 @@ export default class TutorContractForm extends Component {
     }
 
     addMeeting = () => {
-      console.log('add meeting');
       let newMeetings = this.state.meetings;
       let newMeeting = { location: '',
                          day: '',
@@ -57,7 +55,6 @@ export default class TutorContractForm extends Component {
     onMeetingChangeHandler=(data)=> {
       event.preventDefault();
       this.state.meetings[data.index][data.name] = data.value;
-      // this.forceUpdate();
     }
 
     render() {
