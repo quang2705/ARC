@@ -1,3 +1,5 @@
+import Cookies from 'js-cookie'
+
 const USERPROFILE_URL = '/api/userprofiles/';
 const USER_URL = '/api/users/';
 const CONTRACT_URL = '/api/contracts/';
@@ -39,11 +41,16 @@ export default class MyAPI{
 			fetch(this.get(CONTRACT_MEETING_URL, index));
 	}
 	static create_session(data){
-		fetch(SESSION_URL, {
-        method: 'POST',
-				headers: {
-            'Content-Type': 'application/json'
-        },
+		console.log("data ", data)
+		var csrftoken = Cookies.get('csrftoken');
+		var headers = new Headers();
+		headers.append('Accept', 'application/json')
+		headers.append('Content-Type', 'application/json')
+		headers.append('X-CSRFToken', csrftoken)
+		return fetch(SESSION_URL,
+			{
+        method: "post",
+				headers: headers,
         body: JSON.stringify({
 					'contract_id': data.contract_id,
 					'date': data.sessDate,
@@ -52,8 +59,6 @@ export default class MyAPI{
 					'summary': data.sessSummary
 				})
 
-    }).then(res => {
-        return res;
-    }).catch(err => err);
+    });
 	}
 }

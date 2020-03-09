@@ -29,16 +29,23 @@ export default class TutorSessionForm extends Component {
 		.then((data) => {
 			//set this.state.data
 			return this.setState(() => {
-				return ({contracts: data.results});
+        if (data.results.length > 0)
+          return ({contracts: data.results, contract_id: data.results[0].id});
+        else
+          return ({contracts: data.results});
 			});
 		});
   }
 
   onSubmitHandler = (event) => {
    event.preventDefault();
-   console.log("before submission")
    MyAPI.create_session(this.state)
-   console.log("submitted")
+   .then((response) => {
+     return response.json();
+   }).then((data) => {
+     console.log(data);
+   });
+   console.log("submitted");
   }
 
   onTextChangeHandler = (event) => {
@@ -47,15 +54,9 @@ export default class TutorSessionForm extends Component {
 
   render() {
     let options = this.state.contracts.map((item, index) => {
-			return <option key= {index} value={item.id}> {item.tutee.first_name+' - '+item.class_name} </option>
+			return <option key= {index} value={item.id}> {item.tutee.first_name+' - '+ item.class_name} </option>
 		});
-
-    console.log(this.state.contract_id)
-    console.log(this.state.sessDate)
-    console.log(this.state.sessStart)
-    console.log(this.state.sessEnd)
-    console.log(this.state.sessSummary)
-
+    console.log(this.state)
     return (
       <form onSubmit={this.onSubmitHandler}>
         <label>
