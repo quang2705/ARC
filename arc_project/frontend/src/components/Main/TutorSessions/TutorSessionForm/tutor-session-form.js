@@ -43,9 +43,7 @@ export default class TutorSessionForm extends Component {
    .then((response) => {
      return response.json();
    }).then((data) => {
-     console.log(data);
    });
-   console.log("submitted");
   }
 
   onTextChangeHandler = (event) => {
@@ -56,7 +54,6 @@ export default class TutorSessionForm extends Component {
     let options = this.state.contracts.map((item, index) => {
 			return <option key= {index} value={item.id}> {item.tutee.first_name+' - '+ item.class_name} </option>
 		});
-    console.log(this.state)
     return (
       <form onSubmit={this.onSubmitHandler}>
         <label>
