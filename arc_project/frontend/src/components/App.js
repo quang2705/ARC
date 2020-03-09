@@ -11,8 +11,6 @@ import TutorContracts from './Main/TutorContracts/tutor-contracts';
 import TutorContractForm from './Main/TutorContracts/TutorContractForm/tutor-contract-form';
 import AdminSummary from './Main/AdminSummary/admin-summary';
 
->>>>>>> contractform
-
 class App extends Component {
   constructor(props) {
     super(props);
