@@ -4,7 +4,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE','arc_project.settings')
 import django
 django.setup()
 
-from arc_app.models import UserProfile, Contract, Session, ContractMeeting
+from arc_app.models import UserProfile, Contract, Session, ContractMeeting, Subject
 from django.db import models
 from django.contrib.auth.models import User
 from datetime import datetime
@@ -65,7 +65,7 @@ def create_contract_db(tutor_fn, tutor_ln, tutee_fn, tutee_ln):
 	print("Create Contract... ")
 	size = len(tutor_fn)
 	class_name_prefix = "CS"
-	subject = "Computer Science"
+	subject_name = "Computer Science"
 	professor_prefix = "Dr. "
 	for i in range(size):
 		tutor_first_name = tutor_fn[i]
@@ -76,6 +76,7 @@ def create_contract_db(tutor_fn, tutor_ln, tutee_fn, tutee_ln):
 								last_name=tutor_last_name)
 		tutee = UserProfile.objects.get(first_name=tutee_first_name,
 								last_name=tutee_last_name)
+		subject = Subject.objects.get(subject_name=subject_name)
 		class_name = class_name_prefix + str(i)
 		professor_name = professor_prefix + chr(ord('A') + i)
 		contract = Contract(tutor=tutor, tutee=tutee,
@@ -106,10 +107,7 @@ def create_contract_meeting():
 												start=start,
 												end=end,
 												location=location)
-			print("Create a Contract Meeting at {0} on {1} from {2} to {3}".format(location,
-																			date,
-																			start,
-																			end))
+			print("Create a Contract Meeting at {0} on {1} from {2} to {3}".format(location, date, start, end))
 			contract_meeting.save()
 
 #Generate the Session for each Contract
@@ -130,13 +128,28 @@ def create_session():
 								start=start,
 								end=end,
 								summary=summary)
-			print("Create a Session on {0} from {1} to {2}".format(date,
-																	start,
-																	end))
+			print("Create a Session on {0} from {1} to {2}".format(date, start, end))
+
 			session.save()
+
+def create_subject():
+	print("Creating subject...")
+	subject_name_list = ['Astronomy', 'Biology', 'Chemistry', 'Communication',\
+						'Computer Science', 'Data Analytics', 'Economics', \
+						'French', 'German', 'Global Commerce', 'Health Education and Sport Studies', \
+						'Japanese', 'Music', 'Philosophy', 'Physics', 'Psychology', \
+						'Queer Studies', 'Spanish']
+
+	for subject_name in subject_name_list:
+		subject = Subject(subject_name=subject_name)
+		subject.save()
+		print("Create a Subject name : ", subject_name)
 
 #Populate the database with our 5 tutor and 5 tutee
 def populate():
+	create_subject();
+	print("already have these subjects")
+
 	tutor_first_name = ["Hiep", "Khanh", "Khue", "Meg", "Quang"]
 	tutor_last_name = ["Phan", "Tran", "Le", "Jaffy", "Nguyen"]
 	size = len(tutor_first_name)
@@ -156,12 +169,29 @@ def populate():
 		print("already have tutee with similar name")
 
 	print("================================================")
-	create_contract_db(tutor_first_name, tutor_last_name, \
-						tutee_first_name, tutee_last_name)
+	try:
+		create_contract_db(tutor_first_name, tutor_last_name, \
+							tutee_first_name, tutee_last_name)
+		tutee_first_name = ["Yuri", "Wang", "Sam", "Jake", "John"]
+		tutee_last_name = ["Kuro", "Shei", "Smith", "Perata", "Doe"]
+		create_contract_db(tutor_first_name, tutor_last_name, \
+							tutee_first_name, tutee_last_name)
+		tutee_first_name = ["Khanh", "Khue", "Meg", "Quang", "Hiep"]
+		tutee_last_name = ["Tran", "Le", "Jaffy", "Nguyen", "Phan"]
+		create_contract_db(tutor_first_name, tutor_last_name, \
+							tutee_first_name, tutee_last_name)
+	except:
+		print("already have contract with this tutor and tutee")
 	print("================================================")
-	create_contract_meeting()
+	try:
+		create_contract_meeting()
+	except:
+		print("already have the contract meeting ")
 	print("================================================")
-	create_session()
+	try:
+		create_session()
+	except:
+		print("already have the session")
 
 if __name__=='__main__':
 	print("Starting to populate")
