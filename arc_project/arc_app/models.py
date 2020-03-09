@@ -27,8 +27,8 @@ class UserProfile(models.Model):
 class Subject(models.Model):
 	subject_name = models.CharField(max_length=100)
 	def __str__(self):
-		return ("Subject " + subject_name)
-		
+		return ("Subject " + self.subject_name)
+
 class Contract(models.Model):
 	#Contract has a many to one relation with tutor
 	#Contract has a many to one relation with tutee
@@ -42,7 +42,7 @@ class Contract(models.Model):
 							related_name='tutee_contracts')
 	subject = models.ForeignKey(Subject,
 								on_delete=models.CASCADE,
-								related_name='subject')
+								related_name='contracts')
 	class_name = models.CharField(max_length=100)
 	professor_name = models.CharField(max_length=100)
 
