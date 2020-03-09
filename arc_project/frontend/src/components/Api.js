@@ -43,7 +43,7 @@ export default class MyAPI {
 		if (index === undefined)
 			return fetch(CONTRACT_MEETING_URL);
 		else
-			fetch(this.get(CONTRACT_MEETING_URL, index));
+			return fetch(this.get(CONTRACT_MEETING_URL, index));
 	}
 
 	static create_contract(data, callback) {

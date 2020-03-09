@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 class MiniContractSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Contract
-		fields = ('id', 'url')
+		fields = ('id', 'url', 'class_name')
 
 class MiniSessionSerializer(serializers.ModelSerializer):
 	class Meta:

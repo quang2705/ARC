@@ -31,8 +31,8 @@ export default class TutorContracts extends Component {
 		})
 		.then((data) => {
 			//set this.state.data
-			return this.setState(() => {
-				return ({data: data.results});
+			this.setState({
+				data: data.results,
 			});
 		});
   }
