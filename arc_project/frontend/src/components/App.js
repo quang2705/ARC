@@ -3,6 +3,7 @@ import { render } from 'react-dom';
 import { library } from '@fortawesome/fontawesome-svg-core';
 
 import Login from './Login/login';
+import TutorSessionForm from './Main/TutorSessions/TutorSessionForm/tutor-session-form.js'
 import Modal from './DefaultUI/Modal/modal';
 import Collapsible from './DefaultUI/Collapsible/collapsible';
 import Main from './Main/main';
@@ -30,6 +31,15 @@ class App extends Component {
 
   render() {
     return (
+      // <ul>
+      //   {this.state.data.map(contact => {
+      //     return (
+      //       <li key={contact.id}>
+      //         {contact.first_name} - {contact.last_name} - {contact.email}
+      //       </li>
+      //     );
+      //   })}
+      // </ul>
       <>
       <Modal isVisible={this.state.showModal} toggle={this.toggleModal}
              title={'Create new contract'}>

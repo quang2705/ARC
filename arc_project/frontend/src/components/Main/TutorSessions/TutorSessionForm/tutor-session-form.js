@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
-
 import css from './tutor-session-form.module.css';
+import MyAPI from '../../../Api'
 
 export default class TutorSessionForm extends Component {
   constructor(props) {
 		super(props);
     this.state = {
-      contract: '',
+      contracts: [],
+      contract_id:'',
       sessDate: '',
       sessStart: '',
       sessEnd: '',
@@ -15,8 +16,34 @@ export default class TutorSessionForm extends Component {
     };
 	}
 
+  componentDidMount(){
+		//get all the contract of this user, then put it
+		//into this.state.data. Check MyAPI class for more
+		//functionality
+		MyAPI.get_contract()
+    .then((response) => {
+			//TODO: check for error response here - checked below
+			return response.json();
+		})
+    .catch(err => err)
+		.then((data) => {
+			//set this.state.data
+			return this.setState(() => {
+        if (data.results.length > 0)
+          return ({contracts: data.results, contract_id: data.results[0].id});
+        else
+          return ({contracts: data.results});
+			});
+		});
+  }
+
   onSubmitHandler = (event) => {
    event.preventDefault();
+   MyAPI.create_session(this.state)
+   .then((response) => {
+     return response.json();
+   }).then((data) => {
+   });
   }
 
   onTextChangeHandler = (event) => {
@@ -24,21 +51,14 @@ export default class TutorSessionForm extends Component {
   }
 
   render() {
-    let data = {contracts: [{tutee: 'abc', class: 'cs', }, {tutee: 'ef', class: 'jap', }]};
-    let options = data.contracts.map((item, index) => {
-      return <option value={item.tutee+' - '+item.class} key={index}> {item.tutee+' - '+item.class} </option>
-    });
-    console.log(this.state.contract)
-    console.log(this.state.sessDate)
-    console.log(this.state.sessStart)
-    console.log(this.state.sessEnd)
-    console.log(this.state.sessSummary)
-
+    let options = this.state.contracts.map((item, index) => {
+			return <option key= {index} value={item.id}> {item.tutee.first_name+' - '+ item.class_name} </option>
+		});
     return (
-      <form>
+      <form onSubmit={this.onSubmitHandler}>
         <label>
           Tutee: <br/>
-          <select name='contract' value={this.state.contract} onChange={this.onTextChangeHandler}>
+          <select name='contract_id' onChange={this.onTextChangeHandler}>
             {options}
           </select>
         </label><br/>
