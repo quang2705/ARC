@@ -1,5 +1,7 @@
 from rest_framework import serializers
-from arc_app.models import UserProfile, Contract, Session, ContractMeeting
+from arc_app.models import UserProfile, Contract
+from arc_app.models import Session, ContractMeeting, Subject
+
 from django.contrib.auth.models import User
 
 #TODO: need testing
@@ -60,3 +62,8 @@ class ContractMeetingSerializer(serializers.HyperlinkedModelSerializer):
 	class Meta:
 		model = ContractMeeting
 		fields = ('url','id', 'contract', 'date', 'start', 'end', 'location')
+
+class SubjectSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Subject
+		fields = ('url', 'id', 'subject_name')
