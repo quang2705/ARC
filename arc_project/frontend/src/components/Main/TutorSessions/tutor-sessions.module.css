@@ -1,0 +1,19 @@
+.container {
+
+}
+
+.buttonWrapper {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.addButton {
+  display: inline-block;
+  cursor: pointer;
+  height: 25px;
+  font-size: 20px;
+}
+
+.list {
+  margin-top: 20px;
+}

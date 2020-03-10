@@ -1,25 +1,16 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
-import MyAPI from '../../../Api'
 
+import MyAPI from '../../../Api';
+import Collapsible from '../../../DefaultUI/Collapsible/collapsible';
 
 import css from './tutor-contract-item.module.css';
+import cssSession from '../../TutorSessions/TutorSessionItem/tutor-session-item.module.css';
 
 export default class TutorContractItem extends Component {
   constructor(props){
     super(props);
-    this.state = {
-      data: {
-        class: '',
-        tutee: '',
-        phone: '',
-        email: '',
-        heademail: '',
-        meetings:
-        []
-      },
-      meetings: [],
-    };
+    this.state = { meetings: [] };
   }
 
   componentDidMount(){
@@ -40,20 +31,17 @@ export default class TutorContractItem extends Component {
   }
 
   render() {
-    console.log('meetingss',this.meetingss)
-
-    let data = {class_name: this.props.contract.class_name,
-                tutee: this.props.contract.tutee.first_name + " " + this.props.contract.tutee.last_name,
-								tutor: this.props.contract.tutor.first_name + " " + this.props.contract.tutor.last_name,
-                tutor_phone: '740 281 9394',
-								tutee_phone: '740 123 1231',
-                tutee_email:this.props.contract.tutor.email,
-								tutor_email:this.props.contract.tutor.email,
-                heademail:' ',
-                meetings: this.state.meetings,
-								subject: this.props.contract.subject,
-								professor_name: this.props.contract.professor_name,
-                };
+    let data = { class_name: this.props.contract.class_name,
+                 tutee: this.props.contract.tutee.first_name + " " + this.props.contract.tutee.last_name,
+							 	 tutor: this.props.contract.tutor.first_name + " " + this.props.contract.tutor.last_name,
+                 tutor_phone: 'n/a',
+								 tutee_phone: 'n/a',
+                 tutee_email: this.props.contract.tutee.email,
+								 tutor_email: this.props.contract.tutor.email,
+                 heademail: ' ',
+                 meetings: this.state.meetings,
+								 subject: this.props.contract.subject,
+								 professor_name: this.props.contract.professor_name, };
 
     let meetings = data.meetings.map((meeting, index) => {
       return (
@@ -65,20 +53,29 @@ export default class TutorContractItem extends Component {
         </div>
       );
     });
- console.log(data.meetings.length)
+
+    let mainInfo = (
+      <>
+        <div>Class: {data.class_name}</div>
+        <div>Tutor: {data.tutor}</div>
+        <div>Tutee: {data.tutee}</div>
+        <div>Tutor Phone: {data.tutor_phone}</div>
+        <div>Tutee Phone: {data.tutee_phone}</div>
+        <div>Tutor Email: {data.tutor_email}</div>
+        <div>Tutee Email: {data.tutee_email}</div>
+      </>
+    );
+
+    let details = (
+      <>
+        <div>Head Tutor Email: {data.heademail}</div>
+        <div>Professor Name: {data.professor_name}</div>
+        {meetings}
+      </>
+    );
+
     return (
-    <div>
-      <div>Class: {data.class_name}</div>
-      <div>Tutor: {data.tutor}</div>
-			<div>Tutee: {data.tutee}</div>
-      <div>Tutor Phone: {data.tutor_phone}</div>
-			<div>Tutee Phone: {data.tutee_phone}</div>
-			<div>Tutor Email: {data.tutor_email}</div>
-      <div>Tutee Email: {data.tutee_email}</div>
-      <div>Head Tutor Email: {data.heademail}</div>
-      <div>Professor Name: {data.professor_name}</div>
-    	{meetings}
-    </div>
+      <Collapsible main={mainInfo} details={details} className={cssSession.container}/>
     );
   }
 }

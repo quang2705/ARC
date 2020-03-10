@@ -1,0 +1,14 @@
+.container {
+
+}
+
+.addContractButton {
+  display: inline-block;
+  cursor: pointer;
+  height: 25px;
+  font-size: 20px;
+}
+
+.contractsList {
+  margin-top: 20px;
+}

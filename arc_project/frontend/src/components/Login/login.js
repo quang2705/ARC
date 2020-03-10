@@ -13,20 +13,15 @@ export default class Login extends Component {
     setTimeout(() => {
       gapi.signin2.render('my-signin2', {
         scope: Auth.scope,
-        onsuccess: this.onLoginSuccess,
+        onsuccess: this.props.onLoginSuccess,
       });
     }, 1000);
-  }
-
-  onLoginSuccess = (res) => {
-    console.log('yay');
-    console.log(res);
   }
 
   render() {
     return (
       <div>
-      <div id='my-signin2'></div>
+        <div id='my-signin2'/>
 
       </div>
     );
