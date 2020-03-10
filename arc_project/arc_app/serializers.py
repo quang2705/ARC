@@ -1,5 +1,7 @@
 from rest_framework import serializers
-from arc_app.models import UserProfile, Contract, Session, ContractMeeting
+from arc_app.models import UserProfile, Contract
+from arc_app.models import Session, ContractMeeting, Subject
+
 from django.contrib.auth.models import User
 
 #TODO: need testing
@@ -23,6 +25,11 @@ class MiniUserProfileSerializer(serializers.ModelSerializer):
 		model = UserProfile
 		fields = ('id', 'url', 'email', 'first_name', 'last_name')
 
+class MiniSubjectSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Subject
+		fields = ('id', 'subject_name')
+
 class UserProfileSerializer(serializers.HyperlinkedModelSerializer):
 	tutor_contracts = MiniContractSerializer(many=True, read_only=True)
 	tutee_contracts = MiniContractSerializer(many=True, read_only=True)
@@ -38,6 +45,7 @@ class ContractSerializer(serializers.HyperlinkedModelSerializer):
 	contract_meetings = MiniContractMeetingSerializer(many=True, read_only=True)
 	tutor = MiniUserProfileSerializer(many=False, read_only=True)
 	tutee = MiniUserProfileSerializer(many=False, read_only=True)
+	subject = MiniSubjectSerializer(many=False, read_only=True)
 	class Meta:
 		model = Contract
 		fields = ('url', 'id', 'tutor', 'tutee','sessions',
@@ -60,3 +68,9 @@ class ContractMeetingSerializer(serializers.HyperlinkedModelSerializer):
 	class Meta:
 		model = ContractMeeting
 		fields = ('url','id', 'contract', 'date', 'start', 'end', 'location')
+
+class SubjectSerializer(serializers.ModelSerializer):
+	contracts = MiniContractSerializer(many=True, read_only=True)
+	class Meta:
+		model = Subject
+		fields = ('id', 'subject_name', 'contracts')

@@ -1,8 +1,8 @@
 from django.contrib.auth.models import User
 from arc_app.models import UserProfile, Contract
-from arc_app.models import Session, ContractMeeting
+from arc_app.models import Session, ContractMeeting, Subject
 from arc_app.serializers import UserSerializer, UserProfileSerializer, ContractSerializer
-from arc_app.serializers import SessionSerializer, ContractMeetingSerializer
+from arc_app.serializers import SessionSerializer, ContractMeetingSerializer, SubjectSerializer
 from rest_framework import permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -259,7 +259,7 @@ class ContractMeetingViewSet(viewsets.ModelViewSet):
 class SessionViewSet(viewsets.ModelViewSet):
 	queryset = Session.objects.all()
 	serializer_class = SessionSerializer
-	#permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+	permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 	#create our own action in handling post request
 	def create(self, request):
@@ -322,3 +322,8 @@ class SessionViewSet(viewsets.ModelViewSet):
 
 		sessions = self.queryset
 		return sessions.filter(query)
+
+class SubjectViewSet(viewsets.ReadOnlyModelViewSet):
+	queryset = Subject.objects.all()
+	serializer_class = SubjectSerializer
+	permission_classes = [permissions.IsAuthenticatedOrReadOnly]
