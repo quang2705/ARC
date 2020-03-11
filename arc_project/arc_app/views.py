@@ -234,7 +234,7 @@ class ContractMeetingViewSet(viewsets.ModelViewSet):
 		if not user.is_authenticated:
 			return []
 		elif user.is_staff:
-			return queryset
+			return self.queryset
 		#get all contracts that contract meetings is belong to
 		#based on user that is currently log in
 		userprofile = user.userprofiles
