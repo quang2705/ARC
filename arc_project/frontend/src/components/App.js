@@ -60,7 +60,11 @@ class App extends Component {
 
     return (
       <>
+<<<<<<< HEAD
         {true ?
+=======
+        {true?
+>>>>>>> calculate-verified-hour-quang
          mainComponent :
          <Login onLoginSuccess={this.onLoginSuccess} />}
       </>

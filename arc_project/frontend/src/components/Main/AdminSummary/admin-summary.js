@@ -14,7 +14,7 @@ export default class AdminSummary extends Component {
         }
     }
     componentDidMount(){
-        MyAPI.get_userprofile()
+        MyAPI.get_userprofile(undefined,{'is_tutor': true})
         .then((response) => {
             return response.json();
         }).then((data) => {
@@ -34,10 +34,13 @@ export default class AdminSummary extends Component {
         <table id ='admin_summary'>
             <tbody>
                 <tr>
-                    <th key={0}>{" Tutor First Name"}</th>
-                    <th key={1}>{" Tutor Last Name"}</th>
-                    <th key={2}>{" Tutor Email Name"}</th>
-                    <th key={3}>{" Tutor Phone Name"}</th>
+                    <th key={0}>{" Tutor First Name "}</th>
+                    <th key={1}>{" Tutor Last Name "}</th>
+                    <th key={2}>{" Tutor Email "}</th>
+                    <th key={3}>{" Tutor Phone "}</th>
+                    <th key={4}>{" Total Verified Hours "}</th>
+                    <th key={5}>{" Total Hours "}</th>
+
                 </tr>
                 {userprofiles}
             </tbody>
