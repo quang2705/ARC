@@ -1,32 +1,37 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
 
+import Collapsible from '../../../DefaultUI/Collapsible/collapsible';
+
 import css from './tutor-session-item.module.css';
 
 export default class TutorSessionItem extends Component {
 
   render() {
+    let data = { class_name: this.props.session.contract.class_name,
+                 //tutee: this.props.session.tutee.first_name + " " + this.props.session.tutee.last_name,
+                 date: this.props.session.date,
+                 start: this.props.session.start,
+                 end: this.props.session.end,
+                 summary: this.props.session.summary };
 
-    let session =
-      {
-        class: 'MATH 145',
-        tutee: 'Hiep Phan',
-        date: '10-22-2020',
-        starttime : '02:00 pm',
-        endtime: '03:00 pm',
-        status: 'verified'
-      }
+    let mainInfo = (
+      <>
+        <div>Class: {data.class_name}</div>
+        <div>Date: {data.date}</div>
+        <div>Start Time: {data.start}</div>
+        <div>End Time: {data.end}</div>
+      </>
+    );
+
+    let details = (
+      <>
+        <div>Summary: {data.summary}</div>
+      </>
+    )
 
     return (
-    <div>
-    <br/>
-     <div>Class: {session.class}</div>
-     <div>Tutee: {session.tutee}</div>
-     <div>Date: {session.date}</div>
-     <div>Start time: {session.starttime}</div>
-     <div>End time: {session.endtime}</div>
-    <br/>
-    </div>
+      <Collapsible main={mainInfo} details={details} className={css.container}/>
     );
   }
 }

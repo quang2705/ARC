@@ -19,7 +19,6 @@ export default class AdminSummary extends Component {
             return response.json();
         }).then((data) => {
             return this.setState(() => {
-                console.log("data.results", data.results);
                 return {data: data.results};
             });
         });

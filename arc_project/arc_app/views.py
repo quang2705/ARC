@@ -1,8 +1,8 @@
 from django.contrib.auth.models import User
 from arc_app.models import UserProfile, Contract
-from arc_app.models import Session, ContractMeeting
+from arc_app.models import Session, ContractMeeting, Subject
 from arc_app.serializers import UserSerializer, UserProfileSerializer, ContractSerializer
-from arc_app.serializers import SessionSerializer, ContractMeetingSerializer
+from arc_app.serializers import SessionSerializer, ContractMeetingSerializer, SubjectSerializer
 from rest_framework import permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -261,7 +261,7 @@ class ContractMeetingViewSet(viewsets.ModelViewSet):
 		if not user.is_authenticated:
 			return []
 		elif user.is_staff:
-			return queryset
+			return self.queryset
 		#get all contracts that contract meetings is belong to
 		#based on user that is currently log in
 		userprofile = user.userprofiles
@@ -334,3 +334,8 @@ class SessionViewSet(viewsets.ModelViewSet):
 		sessions = [session for contract in contracts for session in contract.sessions.all()]
 
 		return sessions
+
+class SubjectViewSet(viewsets.ReadOnlyModelViewSet):
+	queryset = Subject.objects.all()
+	serializer_class = SubjectSerializer
+	permission_classes = [permissions.IsAuthenticatedOrReadOnly]

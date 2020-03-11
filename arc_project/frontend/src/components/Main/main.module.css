@@ -1,0 +1,17 @@
+.container {
+
+}
+
+.contentWrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.contentContainer {
+  width: 80%;
+  max-width: 800px;
+}
+
+.content {
+  padding: 20px 0 10px 0;
+}

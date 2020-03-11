@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
-import MyAPI from '../../../Api'
+import MyAPI from '../../../Api';
 
-import ContractMeeting from './contract-meeting'
+import ContractMeeting from './contract-meeting';
 
 import css from './tutor-contract-form.module.css';
 
@@ -32,7 +32,6 @@ export default class TutorContractForm extends Component {
     callback = (data)=>{console.log(data)}
     onSubmitHandler = (event) => {
       event.preventDefault();
-      console.log("Submit");
       MyAPI.create_contract(this.state, this.callback);
     }
 
@@ -44,7 +43,6 @@ export default class TutorContractForm extends Component {
     }
 
     addMeeting = () => {
-      console.log('add meeting');
       let newMeetings = this.state.meetings;
       let newMeeting = { location: '',
                          day: '',
@@ -57,7 +55,6 @@ export default class TutorContractForm extends Component {
     onMeetingChangeHandler=(data)=> {
       event.preventDefault();
       this.state.meetings[data.index][data.name] = data.value;
-      // this.forceUpdate();
     }
 
     render() {
@@ -66,7 +63,6 @@ export default class TutorContractForm extends Component {
       });
   		return (
   			<div className={css.container}>
-  				<h1>Make a New Contract</h1>
           <form onSubmit={this.onSubmitHandler}>
 
             <label>
