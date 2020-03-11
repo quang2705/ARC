@@ -53,15 +53,11 @@ export default class MyAPI {
 		else
 			return fetch(this.get(SESSION_URL, index));
 	}
-<<<<<<< HEAD
 	static get_user_session(user_id){
 		return fetch(this.get(USER_URL, user_id)+'get_sessions/')
 	}
-	static get_contractmeeting(index){
-=======
 
 	static get_contractmeeting(index) {
->>>>>>> f76ec2b9184c22c4aca600edea65d62cc729693f
 		if (index === undefined)
 			return fetch(CONTRACT_MEETING_URL);
 		else
