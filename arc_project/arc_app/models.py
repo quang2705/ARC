@@ -45,6 +45,8 @@ class Contract(models.Model):
 								related_name='contracts')
 	class_name = models.CharField(max_length=100)
 	professor_name = models.CharField(max_length=100)
+	is_verified = models.BooleanField(default=False)
+	is_waiting = models.BooleanField(default=False)
 
 	def __str__(self):
 		return ("Contract "+ str(self.id))
@@ -60,6 +62,8 @@ class Session(models.Model):
 	start = models.TimeField()
 	end = models.TimeField()
 	summary = models.TextField()
+	is_verified = models.BooleanField(default=False)
+	is_waiting = models.BooleanField(default=False)
 
 	def __str__(self):
 		return ("Session "+ str(self.id))
