@@ -38,10 +38,12 @@ class App extends Component {
   }
 
   onLoginSuccess = (res) => {
+      console.log(res)
     gapi.load('auth2',() => {
       const auth2 = gapi.auth2.init();
       if (auth2.isSignedIn.get()) {
         const email = auth2.currentUser.get().getBasicProfile().getEmail();
+        console.log('id lol', auth2.currentUser.get().getAuthResponse().id_token);
         const auth = { access_token: res.uc.access_token,
                        email: email };
         this.setState({ auth: { ...auth,
@@ -49,6 +51,8 @@ class App extends Component {
         console.log('logged in');
       }
     });
+
+
   }
 
   render() {
