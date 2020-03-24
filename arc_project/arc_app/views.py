@@ -8,7 +8,15 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import viewsets
 from django.db.models import Q
+from rest_framework_social_oauth2.views import ConvertTokenView
+import time
 
+class MyConvertTokenView(ConvertTokenView):
+	def post(self, request, *args, **kwargs):
+		res = super().post(request, args, kwargs)
+		user = self.request.user
+		print(user)
+		return res
 
 class UserProfileViewSet(viewsets.ModelViewSet):
 	#This viewset automatically provides 'list', 'create', 'retrieve',
@@ -56,25 +64,28 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 	permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 	def get_queryset(self):
+		print("get_queryset")
 		user = self.request.user
+		print(user.is_staff)
 		if not user.is_authenticated:
 			return []
 		elif user.is_staff:
-			return self.queryset
-		#get the params from url and filter it with
-		#the users objects
-		first_name = self.request.query_params.get('first_name', None)
-		last_name = self.request.query_params.get('last_name', None)
-		email = self.request.query_params.get('email', None)
-		users = self.queryset
+			#get the params from url and filter it with
+			#the users objects
+			first_name = self.request.query_params.get('first_name', None)
+			last_name = self.request.query_params.get('last_name', None)
+			email = self.request.query_params.get('email', None)
+			users = self.queryset
 
-		if first_name is not None:
-			users = users.filter(first_name=first_name)
-		if last_name is not None:
-			users = users.filter(last_name=last_name)
-		if email is not None:
-			users = users.filter(email=email)
-		return users
+			if first_name is not None:
+				users = users.filter(first_name=first_name)
+			if last_name is not None:
+				users = users.filter(last_name=last_name)
+			if email is not None:
+				users = users.filter(email=email)
+			return users
+		else:
+			return User.objects.filter(username=user.username)
 
 	@action(methods=['get'], detail=True)
 	def get_sessions(self, request, pk=None):

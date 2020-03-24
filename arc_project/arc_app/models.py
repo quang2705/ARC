@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from  django.contrib.auth.models import BaseUserManager
 
 #TODO: Gives contrains for all the CharField and IntegerField
 #TODO: Write test for database on contrain and relationship
@@ -22,7 +23,7 @@ class UserProfile(models.Model):
 	created_at = models.DateTimeField(auto_now_add=True)
 
 	def __str__(self):
-		return (self.first_name + " " + self.last_name)
+		return (self.user.username)
 
 class Subject(models.Model):
 	subject_name = models.CharField(max_length=100)
