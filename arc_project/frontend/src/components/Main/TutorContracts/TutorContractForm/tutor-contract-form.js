@@ -21,7 +21,8 @@ export default class TutorContractForm extends Component {
       tuteeEmail: '',
       tuteePhone: '',
       tuteeDnumber: '',
-      subjects: '',
+      subjects: [],
+      subject: '',
       class: '',
       instructor: '',
       meetings: [],
@@ -33,16 +34,9 @@ export default class TutorContractForm extends Component {
     componentDidMount() {
         MyAPI.get_subjects(null, this.context.access_token)
         .then((subjects) => {
-            console.log(subjects)
+            console.log(subjects);
+            this.setState({subjects: subjects});
         });
-        console.log("alksdja;lskjdf");
-        console.log("asdkfja;slkdjf,mqwneroipu109384029");
-        console.log("asdkfja;slkdjf,mqwneroipu109384029");
-        console.log("asdkfja;slkdjf,mqwneroipu109384029");
-        console.log("asdkfja;slkdjf,mqwneroipu109384029");
-        console.log("asdkfja;slkdjf,mqwneroipu109384029");
-        console.log("asdkfja;slkdjf,mqwneroipu109384029");
-        
     }
     callback = (data)=>{console.log(data)}
     onSubmitHandler = (event) => {
@@ -74,6 +68,11 @@ export default class TutorContractForm extends Component {
     }
 
     render() {
+      let subjects_name = this.state.subjects.map((subject, index) => {
+          return (
+              <option key={index} value={subject.subject_name}>{subject.subject_name}</option>
+          )
+      });
       let meetings = this.state.meetings.map((meeting, index) => {
         return <ContractMeeting key={index} index={index} onChange={this.onMeetingChangeHandler}/>;
       });
@@ -123,11 +122,8 @@ export default class TutorContractForm extends Component {
             <br/>
             <label>
               Subject:<br/>
-              <select id = "subjects" name='subjects' onChange={this.onTextChangeHandler}>
-               <option value = "MATH">Math</option>
-               <option value = "CS">Computer Science</option>
-               <option value = "ENGL">English</option>
-               <option value = "PHIL">Philosophy</option>
+              <select id = "subject" name='subject' onChange={this.onTextChangeHandler}>
+                   {subjects_name}
              </select><br/>
             </label>
             <label>
