@@ -1,4 +1,6 @@
-import Cookies from 'js-cookie'
+import Cookies from 'js-cookie';
+
+const CONVERT_TOKEN_URL = '/auth/convert-token';
 const USERPROFILE_URL = '/api/userprofiles/';
 const USER_URL = '/api/users/';
 const CONTRACT_URL = '/api/contracts/';
@@ -6,9 +8,23 @@ const SESSION_URL = '/api/sessions/';
 const CONTRACT_MEETING_URL = '/api/contractmeetings/';
 
 export default class MyAPI {
+
 	static get(url, index) {
 		return url + index.toString()+"/";
 	}
+
+	static get_db_access_token(query_params) {
+		var csrftoken = Cookies.get('csrftoken');
+		let headers = new Headers();
+		headers.append('Accept', 'application/json');
+		headers.append('Content-Type', 'application/json');
+		headers.append('X-CSRFToken', csrftoken);
+		return fetch(CONVERT_TOKEN_URL, { method: "post",
+							 headers: headers,
+							 body: JSON.stringify(query_params)
+							});
+	}
+
 	static query(url, query_params) {
 		if (query_params === undefined)
 			return url;
@@ -25,52 +41,82 @@ export default class MyAPI {
 			return url + query_url;
 		}
 	}
-	static get_userprofile(index, query_params){
-		if (index === undefined)
-			return fetch(this.query(USERPROFILE_URL, query_params));
+
+	static get_userprofile(index, query_params, access_token){
+		let headers = new Headers();
+		headers.append('Authorization', 'bearer '+access_token);
+
+		if (!index)
+			return fetch(this.query(USERPROFILE_URL,
+									query_params),
+								{ headers: headers });
 		else
-			return fetch(this.get(USERPROFILE_URL, index));
+			return fetch(this.get(USERPROFILE_URL, index),
+								{headers: headers });
 
 	}
 
-	static get_user(index) {
-		if (index === undefined)
-			return fetch(USER_URL);
+	static get_user(index, access_token) {
+		let headers = new Headers();
+		headers.append('Authorization', 'bearer '+access_token);
+
+		if (!index)
+			return fetch(USER_URL, { headers: headers });
 		else
-			return fetch(this.get(USER_URL, index));
+			return fetch(this.get(USER_URL, index),
+							{ headers: headers });
 	}
 
-	static get_contract(index) {
-		if (index === undefined)
-			return fetch(CONTRACT_URL);
+	static get_contract(index, access_token) {
+		let headers = new Headers();
+		headers.append('Authorization', 'bearer '+access_token);
+		if (!index)
+			return fetch(CONTRACT_URL,
+						{ headers: headers });
 		else
-			return fetch(this.get(CONTRACT_URL, index));
+			return fetch(this.get(CONTRACT_URL, index),
+						{ headers: headers });
 	}
 
-	static get_session(index) {
-		if (index === undefined)
-			return fetch(SESSION_URL);
+	static get_session(index, access_token) {
+		let headers = new Headers();
+		headers.append('Authorization', 'bearer '+ access_token);
+		if (!index)
+			return fetch(SESSION_URL,
+						{ headers: headers });
 		else
-			return fetch(this.get(SESSION_URL, index));
-	}
-	static get_user_session(user_id){
-		return fetch(this.get(USER_URL, user_id)+'get_sessions/')
+			return fetch(this.get(SESSION_URL, index),
+						{ headers: headers });
 	}
 
-	static get_contractmeeting(index) {
+	static get_user_session(user_id, access_token){
+		let headers = new Headers();
+		headers.append('Authorization', 'bearer '+ access_token);
+		return fetch(this.get(USER_URL, user_id) +'get_sessions/',
+					{ headers: headers });
+	}
+
+	static get_contractmeeting(index, access_token) {
+		let headers = new Headers();
+		headers.append('Accept', 'application/json');
+		headers.append('Content-Type', 'application/json');
+		headers.append('Authorization', 'bearer '+ access_token);
 		if (index === undefined)
-			return fetch(CONTRACT_MEETING_URL);
+			return fetch(CONTRACT_MEETING_URL,
+						{ headers: headers });
 		else
-			return fetch(this.get(CONTRACT_MEETING_URL, index));
+			return fetch(this.get(CONTRACT_MEETING_URL, index),
+						{ headers: headers });
 	}
 
-	static create_contract(data, callback) {
+	static create_contract(data, callback, access_token) {
 		var csrftoken = Cookies.get('csrftoken');
 		var headers = new Headers();
 		// headers.append('Authorization', 'Basic '+ btoa('MegJaffy:Jaffy@123'));
-		headers.append('Accept', 'application/json')
-		headers.append('Content-Type', 'application/json')
-		headers.append('X-CSRFToken', csrftoken)
+		headers.append('Accept', 'application/json');
+		headers.append('Content-Type', 'application/json');
+		headers.append('X-CSRFToken', csrftoken);
+		headers.append('Authorization', 'bearer '+access_token);
 		var contract_id;
 		fetch(CONTRACT_URL,{
 			method: "post",
@@ -113,13 +159,15 @@ export default class MyAPI {
 		});
 	}
 
-	static create_session(data) {
+	static create_session(data, access_token) {
 		console.log("data ", data)
 		var csrftoken = Cookies.get('csrftoken');
 		var headers = new Headers();
 		headers.append('Accept', 'application/json')
 		headers.append('Content-Type', 'application/json')
 		headers.append('X-CSRFToken', csrftoken)
+		headers.append('Authorization', 'bearer '+access_token);
+
 		return fetch(SESSION_URL,
 			{
         method: "post",

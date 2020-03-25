@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
+import { AuthContext } from '../../../Auth/auth';
 
 import css from './admin-summary-item.module.css';
 
 import MyAPI from '../../../Api';
 
 export default class AdminSummaryItem extends Component {
+    static contextType = AuthContext;
     constructor(props){
         super(props);
         this.state = {
@@ -32,9 +34,9 @@ export default class AdminSummaryItem extends Component {
         minutes = minutes % 60;
         return [hours, minutes].join(':');
     }
-    
+
     componentDidMount(){
-        MyAPI.get_user_session(this.state.tutor_id)
+        MyAPI.get_user_session(this.state.tutor_id, this.context.access_token)
         .then((response) => {
             return response.json();
         }).then((data) => {

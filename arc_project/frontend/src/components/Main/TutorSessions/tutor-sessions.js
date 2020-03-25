@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { AuthContext } from '../../Auth/auth'
 
 import TutorSessionItem from './TutorSessionItem/tutor-session-item';
 import TutorSessionForm from './TutorSessionForm/tutor-session-form';
@@ -10,6 +11,7 @@ import Modal from '../../DefaultUI/Modal/modal';
 import css from './tutor-sessions.module.css';
 
 export default class TutorSessions extends Component {
+  static contextType = AuthContext;
   constructor(props){
     super(props);
     this.state = {
@@ -22,7 +24,7 @@ export default class TutorSessions extends Component {
 		// Get all the session of this user, then put it
 		// into this.state.data. Check MyAPI class for more
 		// functionality
-		MyAPI.get_session()
+		MyAPI.get_session(null, this.context.access_token)
 		.then((response) => {
 			//TODO: check for error response here
 			return response.json();

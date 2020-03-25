@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
+import { AuthContext } from '../../../Auth/auth'
 
 import MyAPI from '../../../Api';
 import Collapsible from '../../../DefaultUI/Collapsible/collapsible';
@@ -8,6 +9,7 @@ import css from './tutor-contract-item.module.css';
 import cssSession from '../../TutorSessions/TutorSessionItem/tutor-session-item.module.css';
 
 export default class TutorContractItem extends Component {
+  static contextType = AuthContext;
   constructor(props){
     super(props);
     this.state = { meetings: [] };
@@ -16,7 +18,7 @@ export default class TutorContractItem extends Component {
   componentDidMount(){
     for (var i = 0; i < this.props.contract.contract_meetings.length; i++) {
       var index = this.props.contract.contract_meetings[i].id;
-      MyAPI.get_contractmeeting(index)
+      MyAPI.get_contractmeeting(index, this.context.access_token)
       .then((response) => {
         //TODO: check for error response here
         return response.json();

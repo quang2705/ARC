@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { AuthContext } from '../../Auth/auth'
 
 import Modal from '../../DefaultUI/Modal/modal';
 import TutorContractForm from './TutorContractForm/tutor-contract-form';
@@ -11,6 +12,7 @@ import css from './tutor-contracts.module.css';
 import cssSession from '../TutorSessions/tutor-sessions.module.css';
 
 export default class TutorContracts extends Component {
+  static contextType = AuthContext;
   constructor(props) {
     super(props);
     this.state = { showModal: false,
@@ -21,7 +23,7 @@ export default class TutorContracts extends Component {
 		// Get all the contract of this user, then put it
 		// into this.state.data. Check MyAPI class for more
 		// functionality
-		MyAPI.get_contract()
+		MyAPI.get_contract(null, this.context.access_token)
 		.then((response) => {
 			//TODO: check for error response here
 			return response.json();

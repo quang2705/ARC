@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
+import { AuthContext } from '../../../Auth/auth';
+
 import css from './tutor-session-form.module.css';
 import MyAPI from '../../../Api'
 
 export default class TutorSessionForm extends Component {
+  static contextType = AuthContext;
   constructor(props) {
 		super(props);
     this.state = {
@@ -20,7 +23,7 @@ export default class TutorSessionForm extends Component {
 		//get all the contract of this user, then put it
 		//into this.state.data. Check MyAPI class for more
 		//functionality
-		MyAPI.get_contract()
+		MyAPI.get_contract(null, this.context.access_token)
     .then((response) => {
 			//TODO: check for error response here - checked below
 			return response.json();
@@ -39,7 +42,7 @@ export default class TutorSessionForm extends Component {
 
   onSubmitHandler = (event) => {
    event.preventDefault();
-   MyAPI.create_session(this.state)
+   MyAPI.create_session(this.state, this.context.access_token)
    .then((response) => {
      return response.json();
    }).then((data) => {

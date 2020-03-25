@@ -8,15 +8,19 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import viewsets
 from django.db.models import Q
-from rest_framework_social_oauth2.views import ConvertTokenView
-import time
 
-class MyConvertTokenView(ConvertTokenView):
-	def post(self, request, *args, **kwargs):
-		res = super().post(request, args, kwargs)
-		user = self.request.user
-		print(user)
-		return res
+def create_userprofile(user):
+	try:
+		userprofile = user.userprofiles
+	except:
+		userprofile = UserProfile(user=user,
+								first_name=user.first_name,
+								last_name=user.last_name,
+								email=user.email,
+								is_tutor=True,
+								is_tutee=False)
+		userprofile.save()
+		user.userprofiles = userprofile
 
 class UserProfileViewSet(viewsets.ModelViewSet):
 	#This viewset automatically provides 'list', 'create', 'retrieve',
@@ -64,12 +68,12 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 	permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 	def get_queryset(self):
-		print("get_queryset")
 		user = self.request.user
-		print(user.is_staff)
+		create_userprofile(user)
 		if not user.is_authenticated:
 			return []
 		elif user.is_staff:
+
 			#get the params from url and filter it with
 			#the users objects
 			first_name = self.request.query_params.get('first_name', None)

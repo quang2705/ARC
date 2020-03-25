@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
+import { AuthContext } from '../../Auth/auth';
 
 import css from './admin-summary.module.css';
 
@@ -7,6 +8,7 @@ import MyAPI from '../../Api';
 import AdminSummaryItem from './AdminSummaryItem/admin-summary-item';
 
 export default class AdminSummary extends Component {
+    static contextType = AuthContext;
     constructor(props){
         super(props);
         this.state = {
@@ -14,7 +16,7 @@ export default class AdminSummary extends Component {
         }
     }
     componentDidMount(){
-        MyAPI.get_userprofile(undefined,{'is_tutor': true})
+        MyAPI.get_userprofile(null, {'is_tutor': true}, this.context.access_token)
         .then((response) => {
             return response.json();
         }).then((data) => {

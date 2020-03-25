@@ -18,6 +18,7 @@ import Auth, { AuthContext } from './Auth/auth';
 import TutorContracts from './Main/TutorContracts/tutor-contracts';
 import TutorContractForm from './Main/TutorContracts/TutorContractForm/tutor-contract-form';
 import AdminSummary from './Main/AdminSummary/admin-summary';
+import MyAPI from './Api';
 
 class App extends Component {
   constructor(props) {
@@ -38,32 +39,51 @@ class App extends Component {
   }
 
   onLoginSuccess = (res) => {
-      console.log(res)
-      console.log("access_token "+ res.uc.access_token);
     gapi.load('auth2',() => {
       const auth2 = gapi.auth2.init();
       if (auth2.isSignedIn.get()) {
-        const email = auth2.currentUser.get().getBasicProfile().getEmail();
-        console.log("a;klsdjf;a")
-        const auth = { access_token: res.uc.access_token,
-                       email: email };
-        this.setState({ auth: { ...auth,
-                                isAuthenticated: true} });
+        let email = auth2.currentUser.get().getBasicProfile().getEmail();
+        let auth = { access_token: res.uc.access_token,
+                     email: email };
+        // this.setState({ auth: { ...auth,
+        //                         isAuthenticated: true} });
+        console.log("access_token ", res.uc.access_token)
+        MyAPI.get_db_access_token({ token: auth.access_token,
+                                    client_id: Auth.dbClientId,
+                                    grant_type: 'convert_token',
+                                    backend: 'google-oauth2' })
+             .then((res) => {
+                 return res.json();
+             })
+             .then((data) => {
+                 console.log("db data", data);
+                 auth = { ...auth, access_token: data.access_token };
+                 this.setState({  auth: { ...auth },
+                                  isAuthenticated: true });
+                MyAPI.get_user(null, auth.access_token)
+                .then((res) => {
+                    return res.json()
+                })
+                .then((data) => {
+                    console.log(data);
+                });
+             });
         console.log('logged in');
       }
     });
   }
 
   render() {
+      console.log("auth", this.state.auth)
     const mainComponent = (
-      <AuthContext.Provider auth={this.state.auth}>
+      <AuthContext.Provider value={this.state.auth}>
         <Main/>
       </AuthContext.Provider>
     );
 
     return (
       <>
-        {this.state.auth.isAuthenticated?
+        {this.state.isAuthenticated ?
          mainComponent :
          <Login onLoginSuccess={this.onLoginSuccess} />}
       </>

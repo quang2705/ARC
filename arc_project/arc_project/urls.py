@@ -16,14 +16,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls import include
-from arc_app.views import MyConvertTokenView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
     path('', include('arc_app.urls')),
     path('', include('frontend.urls')),
-    path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
-    path('auth/convert-token', MyConvertTokenView.as_view(), name="convert_token"),
+    # path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     path('auth/', include('rest_framework_social_oauth2.urls')),
 ]

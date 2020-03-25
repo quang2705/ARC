@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
 import MyAPI from '../../../Api';
+import { AuthContext } from '../../../Auth/auth';
 
 import ContractMeeting from './contract-meeting';
 
 import css from './tutor-contract-form.module.css';
 
 export default class TutorContractForm extends Component {
-
+  static contextType = AuthContext;
   constructor(props) {
 		super(props);
     this.state = {
@@ -32,7 +33,7 @@ export default class TutorContractForm extends Component {
     callback = (data)=>{console.log(data)}
     onSubmitHandler = (event) => {
       event.preventDefault();
-      MyAPI.create_contract(this.state, this.callback);
+      MyAPI.create_contract(this.state, this.callback, this.context.access_token);
     }
 
     onTextChangeHandler = (event) => {

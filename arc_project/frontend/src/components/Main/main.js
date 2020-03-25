@@ -6,16 +6,13 @@ import ContentContainer from '../DefaultUI/ContentContainer/content-container';
 import TutorContracts from './TutorContracts/tutor-contracts';
 import TutorSessions from './TutorSessions/tutor-sessions';
 import AdminSummary from './AdminSummary/admin-summary';
-
 import css from './main.module.css';
 
 export default class Main extends Component {
   constructor(props) {
     super(props);
     this.state = { currentTab: 0 };
-
     this.tabs = ['Session', 'Contracts', 'Summary'];
-
   }
 
   onTabChange = (index) => {
