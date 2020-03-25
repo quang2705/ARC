@@ -21,7 +21,7 @@ export default class TutorContractForm extends Component {
       tuteeEmail: '',
       tuteePhone: '',
       tuteeDnumber: '',
-      subject: '',
+      subjects: '',
       class: '',
       instructor: '',
       meetings: [],
@@ -30,9 +30,24 @@ export default class TutorContractForm extends Component {
     }
 
   }
+    componentDidMount() {
+        MyAPI.get_subjects(null, this.context.access_token)
+        .then((subjects) => {
+            console.log(subjects)
+        });
+        console.log("alksdja;lskjdf");
+        console.log("asdkfja;slkdjf,mqwneroipu109384029");
+        console.log("asdkfja;slkdjf,mqwneroipu109384029");
+        console.log("asdkfja;slkdjf,mqwneroipu109384029");
+        console.log("asdkfja;slkdjf,mqwneroipu109384029");
+        console.log("asdkfja;slkdjf,mqwneroipu109384029");
+        console.log("asdkfja;slkdjf,mqwneroipu109384029");
+        
+    }
     callback = (data)=>{console.log(data)}
     onSubmitHandler = (event) => {
       event.preventDefault();
+      console.log("contract form ", this.context.access_token)
       MyAPI.create_contract(this.state, this.callback, this.context.access_token);
     }
 
@@ -108,7 +123,7 @@ export default class TutorContractForm extends Component {
             <br/>
             <label>
               Subject:<br/>
-              <select id = "subjects" name='subject' onChange={this.onTextChangeHandler}>
+              <select id = "subjects" name='subjects' onChange={this.onTextChangeHandler}>
                <option value = "MATH">Math</option>
                <option value = "CS">Computer Science</option>
                <option value = "ENGL">English</option>

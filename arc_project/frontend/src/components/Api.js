@@ -6,7 +6,7 @@ const USER_URL = '/api/users/';
 const CONTRACT_URL = '/api/contracts/';
 const SESSION_URL = '/api/sessions/';
 const CONTRACT_MEETING_URL = '/api/contractmeetings/';
-
+const SUBJECT_URL = '/api/subjects/'
 export default class MyAPI {
 
 	static get(url, index) {
@@ -109,6 +109,42 @@ export default class MyAPI {
 						{ headers: headers });
 	}
 
+	static get_subjects(index, access_token){
+		let headers = new Headers();
+		headers.append('Authorization', 'bearer '+ access_token);
+		let subjects = [];
+		if (!index) {
+			return fetch(SUBJECT_URL, { headers:headers })
+			.then((res) => {
+				return res.json();
+			}).then((data) => {
+				subjects.push(...data.results);
+				let data_next = data.next;
+				if (data_next != null)
+				{
+					fetch(data_next, { headers: headers })
+					.then((res) => {
+						return res.json();
+					}).then((data) =>{
+						subjects.push(...data.results);
+						data_next = data.next;
+					});
+				}
+				return subjects;
+			});
+		}
+		else {
+			fetch(this.get(SUBJECT_URL, index),
+						{ headers: headers })
+					.then((res) => {
+						return res.json();
+					}).then((data) => {
+						subjects.push(...data.results);
+					});
+			return subjects;
+		}
+	}
+
 	static create_contract(data, callback, access_token) {
 		var csrftoken = Cookies.get('csrftoken');
 		var headers = new Headers();
@@ -116,7 +152,7 @@ export default class MyAPI {
 		headers.append('Accept', 'application/json');
 		headers.append('Content-Type', 'application/json');
 		headers.append('X-CSRFToken', csrftoken);
-		headers.append('Authorization', 'bearer '+access_token);
+		headers.append('Authorization', 'bearer '+ access_token);
 		var contract_id;
 		fetch(CONTRACT_URL,{
 			method: "post",

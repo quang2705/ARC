@@ -14,7 +14,7 @@ class UserProfile(models.Model):
 
 	first_name = models.CharField(max_length=100)
 	last_name = models.CharField(max_length=100)
-	email = models.EmailField()
+	email = models.EmailField(unique=True)
 	d_number = models.CharField(max_length=100)
 	phone = models.CharField(max_length=100)
 	is_tutor = models.BooleanField(default=False)

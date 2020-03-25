@@ -144,6 +144,8 @@ class ContractViewSet(viewsets.ModelViewSet):
 		except Exception as e:
 			print(e)
 			return Response("Your information about tutor or tutee is not correct, check the parameter again")
+		print(subject)
+		subject = Subject.objects.get(subject_name=subject)
 		contract = Contract(tutor=tutor, tutee=tutee,
 							class_name=class_name, subject=subject,
 							professor_name=professor_name)
