@@ -22,7 +22,7 @@ export default class TutorContractForm extends Component {
       tuteePhone: '',
       tuteeDnumber: '',
       subjects: [],
-      subject: '',
+      subject: 'Astronomy',
       class: '',
       instructor: '',
       meetings: [],
@@ -54,8 +54,8 @@ export default class TutorContractForm extends Component {
       let newMeetings = this.state.meetings;
       let newMeeting = { location: '',
                          day: '',
-                         start: Date(),
-                         end: Date(),};
+                         start: '',
+                         end: '',};
       newMeetings.push(newMeeting);
       this.setState({ meetings: newMeetings });
     }
@@ -76,7 +76,7 @@ export default class TutorContractForm extends Component {
       });
   		return (
   			<div className={css.container}>
-          <form onSubmit={this.onSubmitHandler}>
+          <form>
 
             <label>
               Tutor First Name:<br/>

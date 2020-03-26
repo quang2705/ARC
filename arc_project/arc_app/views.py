@@ -85,7 +85,6 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 		if not user.is_authenticated:
 			return []
 		elif user.is_staff:
-
 			#get the params from url and filter it with
 			#the users objects
 			first_name = self.request.query_params.get('first_name', None)
@@ -272,6 +271,7 @@ class ContractMeetingViewSet(viewsets.ModelViewSet):
 
 	#filter contract meeting based on the user
 	def get_queryset(self):
+		print("get_queryset contract_meeting")
 		user = self.request.user
 		if not user.is_authenticated:
 			return []
@@ -287,6 +287,9 @@ class ContractMeetingViewSet(viewsets.ModelViewSet):
 		if location is not None:
 			contract_meetings = [cmeeting for cmeeting in contract_meetings if cmeeting.location == location]
 		return contract_meetings
+
+	def retrieve(self, request, pk=None):
+		return Response(ContractMeetingSerializer(ContractMeeting.objects.get(pk=pk), context={'request':request}).data)
 
 
 class SessionViewSet(viewsets.ModelViewSet):
@@ -350,6 +353,9 @@ class SessionViewSet(viewsets.ModelViewSet):
 
 		return sessions
 
+	def retrieve(self, request, pk=None):
+		return Response(SessionSerializer(Session.objects.get(pk=pk), context={'request':request}).data)
+		
 class SubjectViewSet(viewsets.ReadOnlyModelViewSet):
 	queryset = Subject.objects.all()
 	serializer_class = SubjectSerializer

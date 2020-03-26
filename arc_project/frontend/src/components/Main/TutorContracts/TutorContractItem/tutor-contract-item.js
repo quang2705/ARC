@@ -42,9 +42,8 @@ export default class TutorContractItem extends Component {
 				 tutor_email: this.props.contract.tutor.email,
                  heademail: ' ',
                  meetings: this.state.meetings,
-								 subject: this.props.contract.subject,
-								 professor_name: this.props.contract.professor_name, };
-
+				 subject: this.props.contract.subject.subject_name,
+				 professor_name: this.props.contract.professor_name};
     let meetings = data.meetings.map((meeting, index) => {
       return (
         <div key={index}>
