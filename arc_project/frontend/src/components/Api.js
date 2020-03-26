@@ -92,7 +92,7 @@ export default class MyAPI {
 	static get_user_session(user_id, access_token){
 		let headers = new Headers();
 		headers.append('Authorization', 'bearer '+ access_token);
-		return fetch(this.get(USER_URL, user_id) +'get_sessions/',
+		return fetch(this.get(USERPROFILE_URL, user_id) +'get_sessions/',
 					{ headers: headers });
 	}
 

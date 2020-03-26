@@ -61,6 +61,18 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 		contract_id = self.request.query_params.get('contract_id', None)
 		return super().retrieve(request, pk)
 
+	@action(methods=['get'], detail=True)
+	def get_sessions(self, request, pk=None):
+		userprofile = UserProfile.objects.get(pk=pk)
+		#if the user is staff return nothing
+		if (userprofile.is_tutor == False and userprofile.is_tutee == False):
+			return Response({"Staff does not have sessions"})
+		else:
+			#get the contracts of this tuktor
+			contracts = userprofile.tutor_contracts.all()
+			sessions = [session for contract in contracts for session in contract.sessions.all()]
+		return Response(SessionSerializer(sessions, many=True, context={'request': request}).data)
+
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
 	#This viewset automatically provide 'list' and 'detail' action
 	queryset = User.objects.all()
@@ -90,20 +102,6 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 			return users
 		else:
 			return User.objects.filter(username=user.username)
-
-	@action(methods=['get'], detail=True)
-	def get_sessions(self, request, pk=None):
-		user = User.objects.get(pk=pk)
-		#if the user is staff return nothing
-		if (user.is_staff):
-			return Response({"Staff does not have sessions"})
-		else:
-			#get the userprofile of this users
-			userprofile = user.userprofiles
-			#get the contracts of this tutor
-			contracts = userprofile.tutor_contracts.all()
-			sessions = [session for contract in contracts for session in contract.sessions.all()]
-		return Response(SessionSerializer(sessions, many=True, context={'request': request}).data)
 
 class ContractViewSet(viewsets.ModelViewSet):
 	#This viewset automatically provides 'list', 'create', 'retrieve',

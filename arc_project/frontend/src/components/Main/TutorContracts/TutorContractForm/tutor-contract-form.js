@@ -34,14 +34,12 @@ export default class TutorContractForm extends Component {
     componentDidMount() {
         MyAPI.get_subjects(null, this.context.access_token)
         .then((subjects) => {
-            console.log(subjects);
             this.setState({subjects: subjects});
         });
     }
     callback = (data)=>{console.log(data)}
     onSubmitHandler = (event) => {
       event.preventDefault();
-      console.log("contract form ", this.context.access_token)
       MyAPI.create_contract(this.state, this.callback, this.context.access_token);
     }
 

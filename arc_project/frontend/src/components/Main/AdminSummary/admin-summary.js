@@ -42,7 +42,6 @@ export default class AdminSummary extends Component {
                     <th key={3}>{" Tutor Phone "}</th>
                     <th key={4}>{" Total Verified Hours "}</th>
                     <th key={5}>{" Total Hours "}</th>
-
                 </tr>
                 {userprofiles}
             </tbody>

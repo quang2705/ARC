@@ -74,7 +74,6 @@ class App extends Component {
   }
 
   render() {
-      console.log("auth", this.state.auth)
     const mainComponent = (
       <AuthContext.Provider value={this.state.auth}>
         <Main/>
