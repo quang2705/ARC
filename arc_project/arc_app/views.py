@@ -284,12 +284,12 @@ class ContractMeetingViewSet(viewsets.ModelViewSet):
 		contract_meetings = [cmeeting for contract in contracts for cmeeting in contract.contract_meetings.all()]
 
 		location = self.request.query_params.get('location', None)
+		query = Q(id = -1)
+		for cmeeting in contract_meetings:
+			query |= Q(id = cmeeting.id)
 		if location is not None:
-			contract_meetings = [cmeeting for cmeeting in contract_meetings if cmeeting.location == location]
-		return contract_meetings
-
-	def retrieve(self, request, pk=None):
-		return Response(ContractMeetingSerializer(ContractMeeting.objects.get(pk=pk), context={'request':request}).data)
+			query |= Q(location = location)
+		return ContractMeeting.objects.filter(query)
 
 
 class SessionViewSet(viewsets.ModelViewSet):
@@ -337,8 +337,8 @@ class SessionViewSet(viewsets.ModelViewSet):
 		session.save()
 		return Response(SessionSerializer(session, context={'request': request}).data)
 
-
 	#filter session based on users
+	#Note: get_queryset should return a queryset
 	def get_queryset(self):
 		user = self.request.user
 		if not user.is_authenticated:
@@ -349,13 +349,12 @@ class SessionViewSet(viewsets.ModelViewSet):
 		#based on user that is currently log in
 		userprofile = self.request.user.userprofiles
 		contracts = userprofile.tutor_contracts.all()
-		sessions = [session for contract in contracts for session in contract.sessions.all()]
+		query = Q(id = -1)
+		for contract in contracts:
+			for session in contract.sessions.all():
+				query |= Q(id= session.id)
+		return Session.objects.filter(query);
 
-		return sessions
-
-	def retrieve(self, request, pk=None):
-		return Response(SessionSerializer(Session.objects.get(pk=pk), context={'request':request}).data)
-		
 class SubjectViewSet(viewsets.ReadOnlyModelViewSet):
 	queryset = Subject.objects.all()
 	serializer_class = SubjectSerializer
