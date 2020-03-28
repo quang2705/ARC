@@ -349,7 +349,6 @@ class SessionViewSet(viewsets.ModelViewSet):
 		elif user.is_staff:
 			return self.queryset
 
-		print("hdaodh " + self.request.query_params.get('date'))
 		#get all contracts that sessions is belong to
 		#based on user that is currently log in
 		userprofile = self.request.user.userprofiles

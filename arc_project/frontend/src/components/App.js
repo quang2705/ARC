@@ -58,15 +58,16 @@ class App extends Component {
              .then((data) => {
                  console.log("db data", data);
                  auth = { ...auth, access_token: data.access_token };
-                 this.setState({  auth: { ...auth },
-                                  isAuthenticated: true });
-                MyAPI.get_user(null, auth.access_token)
-                .then((res) => {
+
+                 MyAPI.get_user(null, auth.access_token)
+                 .then((res) => {
                     return res.json()
-                })
-                .then((data) => {
+                 })
+                 .then((data) => {
                     console.log(data);
-                });
+                    this.setState({  auth: { ...auth },
+                                     isAuthenticated: true });
+                 });
              });
         console.log('logged in');
       }
