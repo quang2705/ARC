@@ -62,7 +62,10 @@ export default class TutorContracts extends Component {
         </div>
         <Modal isVisible={this.state.showModal} toggle={this.toggleModal}
                title={'Create new contract'}>
-          <TutorContractForm/>
+
+          <AuthContext.Consumer>
+              {value => <TutorContractForm auth={value}/>}
+          </AuthContext.Consumer>
         </Modal>
 
         <div className={cssSession.list}>

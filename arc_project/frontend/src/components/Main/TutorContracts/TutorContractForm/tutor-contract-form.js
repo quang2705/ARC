@@ -8,7 +8,6 @@ import ContractMeeting from './contract-meeting';
 import css from './tutor-contract-form.module.css';
 
 export default class TutorContractForm extends Component {
-  static contextType = AuthContext;
   constructor(props) {
 		super(props);
     this.state = {
@@ -32,7 +31,7 @@ export default class TutorContractForm extends Component {
 
   }
     componentDidMount() {
-        MyAPI.get_subjects(null, this.context.access_token)
+        MyAPI.get_subjects(null, this.props.auth.access_token)
         .then((subjects) => {
             this.setState({subjects: subjects});
         });
@@ -40,7 +39,7 @@ export default class TutorContractForm extends Component {
     callback = (data)=>{console.log(data)}
     onSubmitHandler = (event) => {
       event.preventDefault();
-      MyAPI.create_contract(this.state, this.callback, this.context.access_token);
+      MyAPI.create_contract(this.state, this.callback, this.props.auth.access_token);
     }
 
     onTextChangeHandler = (event) => {
@@ -76,7 +75,7 @@ export default class TutorContractForm extends Component {
       });
   		return (
   			<div className={css.container}>
-          <form>
+          <form >
 
             <label>
               Tutor First Name:<br/>

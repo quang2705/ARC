@@ -114,7 +114,7 @@ export default class MyAPI {
 		headers.append('Authorization', 'bearer '+ access_token);
 		let subjects = [];
 		if (!index) {
-			return fetch(SUBJECT_URL, { headers:headers })
+			return fetch(SUBJECT_URL, { headers: headers })
 			.then((res) => {
 				return res.json();
 			}).then((data) => {
@@ -125,7 +125,7 @@ export default class MyAPI {
 					fetch(data_next, { headers: headers })
 					.then((res) => {
 						return res.json();
-					}).then((data) =>{
+					}).then((data) => {
 						subjects.push(...data.results);
 						data_next = data.next;
 					});
@@ -134,14 +134,14 @@ export default class MyAPI {
 			});
 		}
 		else {
-			fetch(this.get(SUBJECT_URL, index),
+			 return fetch(this.get(SUBJECT_URL, index),
 						{ headers: headers })
 					.then((res) => {
 						return res.json();
 					}).then((data) => {
 						subjects.push(...data.results);
+						return subjects;
 					});
-			return subjects;
 		}
 	}
 

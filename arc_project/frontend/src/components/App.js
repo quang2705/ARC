@@ -34,7 +34,7 @@ class App extends Component {
     // Dynamically add meta with Google App's Client ID to HTML
     let meta = document.createElement('meta');
     meta.name = 'google-signin-client_id';
-    meta.content = Auth.clientId;
+    meta.content = Auth.googleClientId;
     document.body.appendChild(meta);
   }
 

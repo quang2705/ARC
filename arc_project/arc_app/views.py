@@ -102,6 +102,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 		else:
 			return User.objects.filter(username=user.username)
 
+#/contracts/
 class ContractViewSet(viewsets.ModelViewSet):
 	#This viewset automatically provides 'list', 'create', 'retrieve',
 	#'update', and 'destroy' actions
@@ -141,7 +142,6 @@ class ContractViewSet(viewsets.ModelViewSet):
 		except Exception as e:
 			print(e)
 			return Response("Your information about tutor or tutee is not correct, check the parameter again")
-		print(subject)
 		subject = Subject.objects.get(subject_name=subject)
 		contract = Contract(tutor=tutor, tutee=tutee,
 							class_name=class_name, subject=subject,
@@ -184,6 +184,7 @@ class ContractViewSet(viewsets.ModelViewSet):
 		return contracts
 
 	#Return all the sessions of the current contract
+	#/contracts/get_sesions/
 	@action(methods=['get'], detail=True)
 	def get_sessions(self, request, pk=None):
 		#get the contract and the sessions that belong to this contract
@@ -225,6 +226,7 @@ class ContractViewSet(viewsets.ModelViewSet):
 
 		return Response(contract_cmeetings_serializer.data)
 
+#/contractmeetings/
 class ContractMeetingViewSet(viewsets.ModelViewSet):
 	queryset = ContractMeeting.objects.all()
 	serializer_class = ContractMeetingSerializer
@@ -271,7 +273,6 @@ class ContractMeetingViewSet(viewsets.ModelViewSet):
 
 	#filter contract meeting based on the user
 	def get_queryset(self):
-		print("get_queryset contract_meeting")
 		user = self.request.user
 		if not user.is_authenticated:
 			return []
@@ -291,13 +292,14 @@ class ContractMeetingViewSet(viewsets.ModelViewSet):
 			query |= Q(location = location)
 		return ContractMeeting.objects.filter(query)
 
-
+#/sessions/
 class SessionViewSet(viewsets.ModelViewSet):
 	queryset = Session.objects.all()
 	serializer_class = SessionSerializer
 	permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 	#create our own action in handling post request
+	#handling GET request /sessions/
 	def create(self, request):
 		#Get all the required parameter for the POST request
 		#contract_id, date, start, end, summary
@@ -339,12 +341,15 @@ class SessionViewSet(viewsets.ModelViewSet):
 
 	#filter session based on users
 	#Note: get_queryset should return a queryset
+	#/sessions/
 	def get_queryset(self):
 		user = self.request.user
 		if not user.is_authenticated:
 			return []
 		elif user.is_staff:
 			return self.queryset
+
+		print("hdaodh " + self.request.query_params.get('date'))
 		#get all contracts that sessions is belong to
 		#based on user that is currently log in
 		userprofile = self.request.user.userprofiles
@@ -355,7 +360,15 @@ class SessionViewSet(viewsets.ModelViewSet):
 				query |= Q(id= session.id)
 		return Session.objects.filter(query);
 
+
 class SubjectViewSet(viewsets.ReadOnlyModelViewSet):
 	queryset = Subject.objects.all()
 	serializer_class = SubjectSerializer
 	permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+	def get_queryset(self):
+		user = self.request.user
+		if not user.is_authenticated:
+			return []
+		else:
+			return self.queryset
