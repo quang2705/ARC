@@ -134,7 +134,7 @@ export default class TutorContractForm extends Component {
             <br/>
             <h2>Add a meeting time</h2>
             {meetings}
-            <input type='submit' value = "Add a meeting time" onClick={this.addMeeting}/>
+            <div onClick={this.addMeeting}>Add new meeting</div>
             <br/>
 
             <label>
