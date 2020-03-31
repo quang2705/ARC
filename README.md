@@ -29,6 +29,10 @@ This is optional. If you skip this section, please use `pip install` to install 
 In the command-line, type `conda install --name ARC django`. Then `conda install --name ARC djangorestframework`. The commands will install those packages in the `ARC` environment and can only be used if the `ARC` environment is activated.
 
 <i>Note.</i> If the virtual environment does not work for some reason, use `pip install _package_name_` to install the package in the global environment. However, this may create conflicts with packages not used by this project.
+#### Installing Python packages
+Use the following command to install dependencies for our Django project:
+
+`pip install oauth2_provider python-social-oauth[django] django-rest-framework-social-oauth2`
 #### Installing npm packages and Reactjs
 `cd arc_projects/frontend` then `npm install`.
 #### Getting the database for development
