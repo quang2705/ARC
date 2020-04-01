@@ -35,6 +35,16 @@ export default class AdminSummaryItem extends Component {
         return [hours, minutes].join(':');
     }
 
+    get_verified_session = (sessions) => {
+        var tutor_verified_sessions = []
+        for (let i = 0; i < sessions.length; i++){
+            let session = sessions[i];
+            if (session.is_verified == true){
+                tutor_verified_sessions.push(session);
+            }
+        }
+        return tutor_verified_sessions;
+    }
     componentDidMount(){
         MyAPI.get_user_session(this.state.tutor_id, this.context.access_token)
         .then((response) => {
@@ -52,7 +62,8 @@ export default class AdminSummaryItem extends Component {
       var tutor_phone = this.state.tutor_phone;
       var tutor_sessions = this.state.tutor_sessions;
       var total_hours = this.total_hours(tutor_sessions);
-      var total_verified_hours = 0;
+      var tutor_verified_sessions = this.get_verified_session(tutor_sessions);
+      var total_verified_hours = this.total_hours(tutor_verified_sessions);
     return (
         <tr key={index}>
            <td>{tutor_first_name}</td>
