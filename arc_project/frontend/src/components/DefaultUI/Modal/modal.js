@@ -29,7 +29,6 @@ export default class Modal extends Component {
 
     // Set max-width for title text
     let headerWidth = document.getElementsByClassName(css.header)[0].offsetWidth;
-    console.log(headerWidth);
     this.setState({ titleWidth: headerWidth-10*2-20*2 });
   }
 
@@ -39,7 +38,7 @@ export default class Modal extends Component {
            onScroll={this.scrollHandler}>
         <div className={css.screen} onClick={this.props.toggle}/>
         <div className={css.container+' '+this.props.className} style={{ opacity: this.props.isVisible ? 1 : 0,
-                                                                         top: this.props.isVisible ? '0px' : '300px' }}>
+                                                                         top: this.props.isVisible ? '0px' : '-300px' }}>
 
           <div className={css.header+' '+this.props.classNameTitle}>
             <div className={css.title} title={this.props.title}>

@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
 import MyAPI from '../../../Api';
+import { AuthContext } from '../../../Auth/auth';
 
 import ContractMeeting from './contract-meeting';
 
 import css from './tutor-contract-form.module.css';
 
 export default class TutorContractForm extends Component {
-
   constructor(props) {
 		super(props);
     this.state = {
@@ -20,7 +20,8 @@ export default class TutorContractForm extends Component {
       tuteeEmail: '',
       tuteePhone: '',
       tuteeDnumber: '',
-      subject: '',
+      subjects: [],
+      subject: 'Astronomy',
       class: '',
       instructor: '',
       meetings: [],
@@ -29,10 +30,16 @@ export default class TutorContractForm extends Component {
     }
 
   }
+    componentDidMount() {
+        MyAPI.get_subjects(null, this.props.auth.access_token)
+        .then((subjects) => {
+            this.setState({subjects: subjects});
+        });
+    }
     callback = (data)=>{console.log(data)}
     onSubmitHandler = (event) => {
       event.preventDefault();
-      MyAPI.create_contract(this.state, this.callback);
+      MyAPI.create_contract(this.state, this.callback, this.props.auth.access_token);
     }
 
     onTextChangeHandler = (event) => {
@@ -46,8 +53,8 @@ export default class TutorContractForm extends Component {
       let newMeetings = this.state.meetings;
       let newMeeting = { location: '',
                          day: '',
-                         start: Date(),
-                         end: Date(),};
+                         start: '',
+                         end: '',};
       newMeetings.push(newMeeting);
       this.setState({ meetings: newMeetings });
     }
@@ -58,12 +65,17 @@ export default class TutorContractForm extends Component {
     }
 
     render() {
+      let subjects_name = this.state.subjects.map((subject, index) => {
+          return (
+              <option key={index} value={subject.subject_name}>{subject.subject_name}</option>
+          )
+      });
       let meetings = this.state.meetings.map((meeting, index) => {
         return <ContractMeeting key={index} index={index} onChange={this.onMeetingChangeHandler}/>;
       });
   		return (
   			<div className={css.container}>
-          <form onSubmit={this.onSubmitHandler}>
+          <form >
 
             <label>
               Tutor First Name:<br/>
@@ -107,11 +119,8 @@ export default class TutorContractForm extends Component {
             <br/>
             <label>
               Subject:<br/>
-              <select id = "subjects" name='subject' onChange={this.onTextChangeHandler}>
-               <option value = "MATH">Math</option>
-               <option value = "CS">Computer Science</option>
-               <option value = "ENGL">English</option>
-               <option value = "PHIL">Philosophy</option>
+              <select id = "subject" name='subject' onChange={this.onTextChangeHandler}>
+                   {subjects_name}
              </select><br/>
             </label>
             <label>
@@ -125,7 +134,7 @@ export default class TutorContractForm extends Component {
             <br/>
             <h2>Add a meeting time</h2>
             {meetings}
-            <input type='submit' value = "Add a meeting time" onClick={this.addMeeting}/>
+            <div onClick={this.addMeeting}>Add new meeting</div>
             <br/>
 
             <label>

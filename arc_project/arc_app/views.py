@@ -9,6 +9,18 @@ from rest_framework.response import Response
 from rest_framework import viewsets
 from django.db.models import Q
 
+def create_userprofile(user):
+	try:
+		userprofile = user.userprofiles
+	except:
+		userprofile = UserProfile(user=user,
+								first_name=user.first_name,
+								last_name=user.last_name,
+								email=user.email,
+								is_tutor=True,
+								is_tutee=False)
+		userprofile.save()
+		user.userprofiles = userprofile
 
 class UserProfileViewSet(viewsets.ModelViewSet):
 	#This viewset automatically provides 'list', 'create', 'retrieve',
@@ -24,13 +36,42 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 		if not user.is_authenticated:
 			return []
 		elif user.is_staff:
-			return self.queryset
+			is_tutor = self.request.query_params.get('is_tutor', None)
+			first_name = self.request.query_params.get('first_name', None)
+			last_name = self.request.query_params.get('last_name', None)
+			email = self.request.query_params.get('email', None)
+			userprofiles = UserProfile.objects.all()
+			if is_tutor is not None:
+				if is_tutor == 'true':
+					is_tutor = 'True'
+				elif is_tutor == 'false':
+					is_tutor = 'False'
+				userprofiles = userprofiles.filter(is_tutor=is_tutor)
+			if first_name is not None:
+				userprofiles = userprofiles.filter(first_name=first_name)
+			if last_name is not None:
+				userprofiles = userprofiles.filter(last_name=last_name)
+			if email is not None:
+				userprofiles = userprofiles.filter(email=email)
+			return userprofiles
 		else:
 			return UserProfile.objects.filter(user=user)
 
 	def retrieve(self, request, pk=None):
 		contract_id = self.request.query_params.get('contract_id', None)
 		return super().retrieve(request, pk)
+
+	@action(methods=['get'], detail=True)
+	def get_sessions(self, request, pk=None):
+		userprofile = UserProfile.objects.get(pk=pk)
+		#if the user is staff return nothing
+		if (userprofile.is_tutor == False and userprofile.is_tutee == False):
+			return Response({"Staff does not have sessions"})
+		else:
+			#get the contracts of this tuktor
+			contracts = userprofile.tutor_contracts.all()
+			sessions = [session for contract in contracts for session in contract.sessions.all()]
+		return Response(SessionSerializer(sessions, many=True, context={'request': request}).data)
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
 	#This viewset automatically provide 'list' and 'detail' action
@@ -39,28 +80,29 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 	permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 	def get_queryset(self):
-		user= self.request.user
+		user = self.request.user
+		create_userprofile(user)
 		if not user.is_authenticated:
 			return []
 		elif user.is_staff:
-			return self.queryset
-		#get the params from url and filter it with
-		#the users objects
-		first_name = self.request.query_params.get('first_name', None)
-		last_name = self.request.query_params.get('last_name', None)
-		email = self.request.query_params.get('email', None)
-		users = self.queryset
+			#get the params from url and filter it with
+			#the users objects
+			first_name = self.request.query_params.get('first_name', None)
+			last_name = self.request.query_params.get('last_name', None)
+			email = self.request.query_params.get('email', None)
+			users = self.queryset
 
-		if first_name is not None:
-			users = users.filter(first_name=first_name)
-		if last_name is not None:
-			users = users.filter(last_name=last_name)
-		if email is not None:
-			users = users.filter(email=email)
-		return users
+			if first_name is not None:
+				users = users.filter(first_name=first_name)
+			if last_name is not None:
+				users = users.filter(last_name=last_name)
+			if email is not None:
+				users = users.filter(email=email)
+			return users
+		else:
+			return User.objects.filter(username=user.username)
 
-
-
+#/contracts/
 class ContractViewSet(viewsets.ModelViewSet):
 	#This viewset automatically provides 'list', 'create', 'retrieve',
 	#'update', and 'destroy' actions
@@ -100,6 +142,7 @@ class ContractViewSet(viewsets.ModelViewSet):
 		except Exception as e:
 			print(e)
 			return Response("Your information about tutor or tutee is not correct, check the parameter again")
+		subject = Subject.objects.get(subject_name=subject)
 		contract = Contract(tutor=tutor, tutee=tutee,
 							class_name=class_name, subject=subject,
 							professor_name=professor_name)
@@ -110,7 +153,7 @@ class ContractViewSet(viewsets.ModelViewSet):
 	#query contract based on the tutor of the contract and
 	#any parameter that is added onto the url
 	def get_queryset(self):
-		user= self.request.user
+		user = self.request.user
 		if not user.is_authenticated:
 			return []
 		elif user.is_staff:
@@ -122,8 +165,7 @@ class ContractViewSet(viewsets.ModelViewSet):
 		tutee_email = self.request.query_params.get('tutee_email', None)
 
 		userprofile = user.userprofiles
-		contracts = self.queryset
-
+		contracts = userprofile.tutor_contracts.all()
 
 		#if the params is not Null, query it
 		if class_name is not None:
@@ -136,13 +178,13 @@ class ContractViewSet(viewsets.ModelViewSet):
 			tutee = UserProfile.objects.get(email=tutee_email)
 			contracts = contracts.filter(tutee = tutee)
 
-
 		#query the contracts based on the user loging in
 		#right now only show contract if user is a tutor, does not show
 		#contract when the user is a tutee
-		return contracts.filter(tutor = userprofile)
+		return contracts
 
 	#Return all the sessions of the current contract
+	#/contracts/get_sesions/
 	@action(methods=['get'], detail=True)
 	def get_sessions(self, request, pk=None):
 		#get the contract and the sessions that belong to this contract
@@ -184,6 +226,7 @@ class ContractViewSet(viewsets.ModelViewSet):
 
 		return Response(contract_cmeetings_serializer.data)
 
+#/contractmeetings/
 class ContractMeetingViewSet(viewsets.ModelViewSet):
 	queryset = ContractMeeting.objects.all()
 	serializer_class = ContractMeetingSerializer
@@ -238,30 +281,25 @@ class ContractMeetingViewSet(viewsets.ModelViewSet):
 		#get all contracts that contract meetings is belong to
 		#based on user that is currently log in
 		userprofile = user.userprofiles
-		contracts = Contract.objects.filter(tutor = userprofile)
-
-		#create a query variable that allow us to query all the
-		#contract meeting of that user
-		query = Q(contract= contracts[0])
-		for i in range(1,len(contracts)):
-			query.add(Q(contract = contracts[i]), Q.OR)
-
-		contract_meetings = self.queryset
-		#query by location if possible
+		contracts = userprofile.tutor_contracts.all()
+		contract_meetings = [cmeeting for contract in contracts for cmeeting in contract.contract_meetings.all()]
 
 		location = self.request.query_params.get('location', None)
+		query = Q(id = -1)
+		for cmeeting in contract_meetings:
+			query |= Q(id = cmeeting.id)
 		if location is not None:
-			contract_meetings = contract_meetings.filter(location=location)
+			query |= Q(location = location)
+		return ContractMeeting.objects.filter(query)
 
-		return contract_meetings.filter(query)
-
-
+#/sessions/
 class SessionViewSet(viewsets.ModelViewSet):
 	queryset = Session.objects.all()
 	serializer_class = SessionSerializer
 	permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 	#create our own action in handling post request
+	#handling GET request /sessions/
 	def create(self, request):
 		#Get all the required parameter for the POST request
 		#contract_id, date, start, end, summary
@@ -301,29 +339,35 @@ class SessionViewSet(viewsets.ModelViewSet):
 		session.save()
 		return Response(SessionSerializer(session, context={'request': request}).data)
 
-
 	#filter session based on users
+	#Note: get_queryset should return a queryset
+	#/sessions/
 	def get_queryset(self):
 		user = self.request.user
 		if not user.is_authenticated:
 			return []
 		elif user.is_staff:
 			return self.queryset
+
 		#get all contracts that sessions is belong to
 		#based on user that is currently log in
 		userprofile = self.request.user.userprofiles
-		contracts = Contract.objects.filter(tutor = userprofile)
+		contracts = userprofile.tutor_contracts.all()
+		query = Q(id = -1)
+		for contract in contracts:
+			for session in contract.sessions.all():
+				query |= Q(id= session.id)
+		return Session.objects.filter(query);
 
-		#create a query variable that allow us to query all the
-		#sessions of that user
-		query = Q(contract= contracts[0])
-		for i in range(1,len(contracts)):
-			query.add(Q(contract = contracts[i]), Q.OR)
-
-		sessions = self.queryset
-		return sessions.filter(query)
 
 class SubjectViewSet(viewsets.ReadOnlyModelViewSet):
 	queryset = Subject.objects.all()
 	serializer_class = SubjectSerializer
 	permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+	def get_queryset(self):
+		user = self.request.user
+		if not user.is_authenticated:
+			return []
+		else:
+			return self.queryset

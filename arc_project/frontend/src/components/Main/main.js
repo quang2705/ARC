@@ -5,16 +5,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import ContentContainer from '../DefaultUI/ContentContainer/content-container';
 import TutorContracts from './TutorContracts/tutor-contracts';
 import TutorSessions from './TutorSessions/tutor-sessions';
-
+import AdminSummary from './AdminSummary/admin-summary';
 import css from './main.module.css';
 
 export default class Main extends Component {
   constructor(props) {
     super(props);
     this.state = { currentTab: 0 };
-
-    this.tabs = ['Session', 'Contracts'];
-
+    this.tabs = ['Session', 'Contracts', 'Summary'];
   }
 
   onTabChange = (index) => {
@@ -30,6 +28,8 @@ export default class Main extends Component {
                             className={css.contentContainer} classNameContent={css.content}>
             {this.state.currentTab === 0 && <TutorSessions/>}
             {this.state.currentTab === 1 && <TutorContracts/>}
+            {this.state.currentTab === 2 && <AdminSummary/>}
+
           </ContentContainer>
         </div>
       </div>

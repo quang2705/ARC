@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from  django.contrib.auth.models import BaseUserManager
 
 #TODO: Gives contrains for all the CharField and IntegerField
 #TODO: Write test for database on contrain and relationship
@@ -13,7 +14,7 @@ class UserProfile(models.Model):
 
 	first_name = models.CharField(max_length=100)
 	last_name = models.CharField(max_length=100)
-	email = models.EmailField()
+	email = models.EmailField(unique=True)
 	d_number = models.CharField(max_length=100)
 	phone = models.CharField(max_length=100)
 	is_tutor = models.BooleanField(default=False)
@@ -22,7 +23,10 @@ class UserProfile(models.Model):
 	created_at = models.DateTimeField(auto_now_add=True)
 
 	def __str__(self):
-		return (self.first_name + " " + self.last_name)
+		try:
+			return (self.first_name + self.last_name)
+		except:
+			return "Anonymous"
 
 class Subject(models.Model):
 	subject_name = models.CharField(max_length=100)
@@ -45,6 +49,8 @@ class Contract(models.Model):
 								related_name='contracts')
 	class_name = models.CharField(max_length=100)
 	professor_name = models.CharField(max_length=100)
+	is_verified = models.BooleanField(default=False)
+	is_waiting = models.BooleanField(default=False)
 
 	def __str__(self):
 		return ("Contract "+ str(self.id))
@@ -60,6 +66,8 @@ class Session(models.Model):
 	start = models.TimeField()
 	end = models.TimeField()
 	summary = models.TextField()
+	is_verified = models.BooleanField(default=False)
+	is_waiting = models.BooleanField(default=False)
 
 	def __str__(self):
 		return ("Session "+ str(self.id))

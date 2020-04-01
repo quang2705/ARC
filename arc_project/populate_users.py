@@ -15,9 +15,9 @@ def generate_user_info(first_name, last_name, is_tutor=False, is_tutee=False):
 	password = []
 	email = []
 	for i in range(len(first_name)):
-		username.append(first_name[i] + last_name[i])
+		username.append(first_name[i] + last_name[i]+ "Clone")
 		password.append(last_name[i] +"@123")
-		email.append(last_name[i]+"_"+first_name[i][0] +"1" +"@denison.edu")
+		email.append(last_name[i]+"_"+first_name[i][0] +"1_clone" +"@denison.edu")
 
 	user_db = {"first_name": first_name,
 				"last_name": last_name,
@@ -25,7 +25,9 @@ def generate_user_info(first_name, last_name, is_tutor=False, is_tutee=False):
 				"password": password,
 				"email": email,
 				"is_tutor": is_tutor,
-				"is_tutee": is_tutee
+				"is_tutee": is_tutee,
+				"phone": ["7404019934"]*len(first_name),
+				"d_number": ["D19283013"]*len(first_name)
 				}
 	return user_db
 
@@ -39,6 +41,8 @@ def create_user_db(user_db, size):
 		last_name = user_db['last_name'][i]
 		password = user_db['password'][i]
 		email = user_db['email'][i].lower()
+		phone = user_db['phone'][i]
+		d_number = user_db['d_number'][i]
 		is_tutor = user_db['is_tutor']
 		is_tutee = user_db['is_tutee']
 
@@ -53,7 +57,9 @@ def create_user_db(user_db, size):
 									last_name=last_name,
 									email=email,
 									is_tutor=is_tutor,
-									is_tutee=is_tutee)
+									is_tutee=is_tutee,
+									phone=phone,
+									d_number=d_number)
 
 		print("Creating user {0} {1}".format(username, email))
 		user.save()

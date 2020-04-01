@@ -1,5 +1,5 @@
-rm db.sqlite3
-rm -r arc_app/migrations
+del db.sqlite3
+rmdir /S /Q "./arc_app/migrations"
 python manage.py makemigrations arc_app
 python manage.py migrate
 python populate_users.py
