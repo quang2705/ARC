@@ -1,0 +1,97 @@
+[33mf76ec2b[m[33m ([m[1;36mHEAD -> [m[1;32madmin-summary-quang[m[33m, [m[1;31morigin/develop[m[33m, [m[1;32mdevelop[m[33m)[m HEAD@{0}: checkout: moving from develop to admin-summary-quang
+[33mf76ec2b[m[33m ([m[1;36mHEAD -> [m[1;32madmin-summary-quang[m[33m, [m[1;31morigin/develop[m[33m, [m[1;32mdevelop[m[33m)[m HEAD@{1}: checkout: moving from test_api_call to develop
+[33m80d5d60[m[33m ([m[1;31morigin/test_api_call[m[33m)[m HEAD@{2}: reset: moving to HEAD
+[33m80d5d60[m[33m ([m[1;31morigin/test_api_call[m[33m)[m HEAD@{3}: reset: moving to HEAD
+[33m80d5d60[m[33m ([m[1;31morigin/test_api_call[m[33m)[m HEAD@{4}: reset: moving to HEAD
+[33m80d5d60[m[33m ([m[1;31morigin/test_api_call[m[33m)[m HEAD@{5}: checkout: moving from develop to test_api_call
+[33mf76ec2b[m[33m ([m[1;36mHEAD -> [m[1;32madmin-summary-quang[m[33m, [m[1;31morigin/develop[m[33m, [m[1;32mdevelop[m[33m)[m HEAD@{6}: commit: delete(delete_n_repopulate):delete repopulate.ps1 file
+[33m3faa55c[m HEAD@{7}: commit: add(batchfile):adding batch file to remove and repopulate database
+[33m1c6efd1[m HEAD@{8}: checkout: moving from DefaultUI to develop
+[33mc8ee58a[m HEAD@{9}: reset: moving to HEAD
+[33mc8ee58a[m HEAD@{10}: checkout: moving from develop to DefaultUI
+[33m1c6efd1[m HEAD@{11}: reset: moving to HEAD
+[33m1c6efd1[m HEAD@{12}: commit: fix(arc_app/views.py): quick fix bug in contractmeetingviewset
+[33md427dab[m HEAD@{13}: commit: add(ARC/arc_project): add script to execute deleting the sudo database, make migration and repopulating the users
+[33mf860881[m HEAD@{14}: pull origin develop: Fast-forward
+[33m3941fb0[m HEAD@{15}: reset: moving to HEAD
+[33m3941fb0[m HEAD@{16}: commit: implement minisubject
+[33mbfb9104[m HEAD@{17}: commit: update serializer class
+[33mbf45874[m HEAD@{18}: commit: adding subject table
+[33md8a6fba[m HEAD@{19}: pull origin develop: Fast-forward
+[33m9e40a34[m HEAD@{20}: reset: moving to HEAD
+[33m9e40a34[m HEAD@{21}: checkout: moving from test_api_call to develop
+[33m80d5d60[m[33m ([m[1;31morigin/test_api_call[m[33m)[m HEAD@{22}: commit: adding function to calculate total hours
+[33mc18ad1c[m HEAD@{23}: commit: refactor code
+[33m626bd29[m HEAD@{24}: commit: get sessions for user for admin usage
+[33mfdb62a6[m[33m ([m[1;31morigin/contractform[m[33m)[m HEAD@{25}: pull origin contractform: Fast-forward
+[33mf597342[m HEAD@{26}: checkout: moving from contractform to test_api_call
+[33mf43f1a1[m HEAD@{27}: commit: saving stuff
+[33mfdb62a6[m[33m ([m[1;31morigin/contractform[m[33m)[m HEAD@{28}: commit: change input button for adding meeting time
+[33m5ef1bb0[m HEAD@{29}: commit: adding contractmeeting post
+[33m2370db9[m HEAD@{30}: checkout: moving from posterr_sessform to contractform
+[33m7332730[m HEAD@{31}: reset: moving to HEAD
+[33m7332730[m HEAD@{32}: pull origin posterr_sessform: Merge made by the 'recursive' strategy.
+[33m9e40a34[m HEAD@{33}: reset: moving to HEAD
+[33m9e40a34[m HEAD@{34}: checkout: moving from develop to posterr_sessform
+[33m9e40a34[m HEAD@{35}: pull: Fast-forward
+[33m2169aec[m HEAD@{36}: checkout: moving from posserr_sessform to develop
+[33mad0fdac[m HEAD@{37}: checkout: moving from tutorsessionform to posserr_sessform
+[33mad0fdac[m HEAD@{38}: pull origin develop: Merge made by the 'recursive' strategy.
+[33m62958aa[m[33m ([m[1;31morigin/tutorsessionform[m[33m)[m HEAD@{39}: checkout: moving from contractform to tutorsessionform
+[33m2370db9[m HEAD@{40}: commit: remove unncessary comment
+[33mad4a125[m HEAD@{41}: commit: fixing POST issue in contract, need csrf
+[33m580a045[m HEAD@{42}: pull origin develop: Merge made by the 'recursive' strategy.
+[33m9f62a7b[m HEAD@{43}: pull origin contractform: Merge made by the 'recursive' strategy.
+[33mf597342[m HEAD@{44}: checkout: moving from contractform to contractform
+[33mf597342[m HEAD@{45}: checkout: moving from authenticationIssues to contractform
+[33mf597342[m HEAD@{46}: commit: merging
+[33m068bd10[m HEAD@{47}: reset: moving to HEAD
+[33m068bd10[m HEAD@{48}: pull origin authenticationIssues: Fast-forward
+[33mebabc8d[m HEAD@{49}: checkout: moving from test_api_call to authenticationIssues
+[33m068bd10[m HEAD@{50}: pull origin authenticationIssues: Fast-forward
+[33mebabc8d[m HEAD@{51}: commit: adding admin summary item and admin tutors item
+[33m7b240f7[m HEAD@{52}: pull origin test_api_call: Fast-forward
+[33m627392a[m HEAD@{53}: commit: adding post body for contract api
+[33mcb9eb72[m HEAD@{54}: pull origin tutorsessionform: Merge made by the 'recursive' strategy.
+[33m79dc09f[m HEAD@{55}: commit (merge): resolve conflict
+[33m41c689c[m HEAD@{56}: reset: moving to HEAD
+[33m41c689c[m HEAD@{57}: pull origin test_api_call: Fast-forward
+[33m7e991a8[m HEAD@{58}: commit: testing api class
+[33m64cb127[m HEAD@{59}: commit (merge): fixing conflict
+[33m10f2704[m HEAD@{60}: commit: adding api class
+[33mc8ee58a[m HEAD@{61}: checkout: moving from DefaultUI to test_api_call
+[33mc8ee58a[m HEAD@{62}: checkout: moving from tutorsessionform to DefaultUI
+[33m62958aa[m[33m ([m[1;31morigin/tutorsessionform[m[33m)[m HEAD@{63}: checkout: moving from contractAndSessionItem to tutorsessionform
+[33m1f830d2[m HEAD@{64}: pull: Fast-forward
+[33m2169aec[m HEAD@{65}: checkout: moving from query-api to contractAndSessionItem
+[33m4c590ed[m[33m ([m[1;31morigin/query-api[m[33m)[m HEAD@{66}: commit: redirect to api root after login
+[33mfecee83[m HEAD@{67}: pull origin develop: Merge made by the 'recursive' strategy.
+[33m53be93f[m HEAD@{68}: commit: fixing permission for contract meetings and sessions
+[33m37ebc4b[m HEAD@{69}: commit: fixing permission for contract meetings and sessions
+[33m6b0ad03[m HEAD@{70}: commit: search contract meeting and session through contract
+[33m596bcbc[m HEAD@{71}: commit: enable query by first_name last_name email for users
+[33md3f5357[m HEAD@{72}: commit: adding constrains to contracts, contract_meeting and sessions, now user can only query the information that they own
+[33mdbecf2f[m HEAD@{73}: pull origin develop: Fast-forward
+[33m2169aec[m HEAD@{74}: checkout: moving from develop to query-api
+[33m2169aec[m HEAD@{75}: pull: Fast-forward
+[33m5e0eebb[m HEAD@{76}: pull: Fast-forward
+[33m646caa4[m HEAD@{77}: checkout: moving from user-story-test-db to develop
+[33mdc44e9f[m HEAD@{78}: commit: writing serializer and basic permission for each of the model
+[33mcdabd90[m HEAD@{79}: commit: adding database with Contract ContractMeeting Session
+[33m4ba7b2a[m HEAD@{80}: checkout: moving from test-reactjs to user-story-test-db
+[33m4b0c2a4[m HEAD@{81}: commit: remove this.run()
+[33mfc18478[m[33m ([m[1;31morigin/test-reactjs[m[33m)[m HEAD@{82}: checkout: moving from develop to test-reactjs
+[33m646caa4[m HEAD@{83}: checkout: moving from test-reactjs to develop
+[33mfc18478[m[33m ([m[1;31morigin/test-reactjs[m[33m)[m HEAD@{84}: reset: moving to HEAD
+[33mfc18478[m[33m ([m[1;31morigin/test-reactjs[m[33m)[m HEAD@{85}: reset: moving to HEAD
+[33mfc18478[m[33m ([m[1;31morigin/test-reactjs[m[33m)[m HEAD@{86}: checkout: moving from user-story-test-db to test-reactjs
+[33m4ba7b2a[m HEAD@{87}: checkout: moving from test-reactjs to user-story-test-db
+[33mfc18478[m[33m ([m[1;31morigin/test-reactjs[m[33m)[m HEAD@{88}: checkout: moving from develop to test-reactjs
+[33m646caa4[m HEAD@{89}: checkout: moving from test-reactjs to develop
+[33m05c17aa[m HEAD@{90}: commit (merge): something is wrong
+[33m4ba7b2a[m HEAD@{91}: checkout: moving from user-story-test-db to test-reactjs
+[33m4ba7b2a[m HEAD@{92}: pull origin user-story-test-db: Fast-forward
+[33m646caa4[m HEAD@{93}: checkout: moving from develop to user-story-test-db
+[33m646caa4[m HEAD@{94}: commit: setting up the project
+[33m572d163[m[33m ([m[1;32mmaster[m[33m)[m HEAD@{95}: checkout: moving from master to develop
+[33m572d163[m[33m ([m[1;32mmaster[m[33m)[m HEAD@{96}: clone: from https://github.com/quang2705/arc_project.git
