@@ -37,7 +37,6 @@ export default class MyAPI {
 				query_url.push(key + "=" + query_params[key].toString());
 			});
 			query_url = query_url.join('&')
-			console.log(url+query_url);
 			return url + query_url;
 		}
 	}
@@ -188,7 +187,6 @@ export default class MyAPI {
 				}).then(response => {
 						return response.json();
 					}).then((data) => {
-						console.log("MEETING DATA ", data);
 						count +=1;
 						response_data.contract_meetings.push({
 							id: data.id,
@@ -201,7 +199,6 @@ export default class MyAPI {
 	}
 
 	static create_session(data, access_token) {
-		console.log("data ", data)
 		var csrftoken = Cookies.get('csrftoken');
 		var headers = new Headers();
 		headers.append('Accept', 'application/json')

@@ -29,7 +29,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 	serializer_class = UserProfileSerializer
 	#Basic permission, allows  all permission if authenticated otherwise
 	#user can only have 'read' operation
-	permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+	permission_classes = [permissions.IsAuthenticated]
 
 	def get_queryset(self):
 		user = self.request.user
@@ -77,7 +77,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 	#This viewset automatically provide 'list' and 'detail' action
 	queryset = User.objects.all()
 	serializer_class = UserSerializer
-	permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+	permission_classes = [permissions.IsAuthenticated]
 
 	def get_queryset(self):
 		user = self.request.user
@@ -108,7 +108,7 @@ class ContractViewSet(viewsets.ModelViewSet):
 	#'update', and 'destroy' actions
 	queryset = Contract.objects.all()
 	serializer_class = ContractSerializer
-	permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+	permission_classes = [permissions.IsAuthenticated]
 
 	def create(self, request):
 		try:
@@ -230,7 +230,7 @@ class ContractViewSet(viewsets.ModelViewSet):
 class ContractMeetingViewSet(viewsets.ModelViewSet):
 	queryset = ContractMeeting.objects.all()
 	serializer_class = ContractMeetingSerializer
-	permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+	permission_classes = [permissions.IsAuthenticated]
 
 	def create(self, request):
 		#Get all the required parameters for the POST request
@@ -296,7 +296,7 @@ class ContractMeetingViewSet(viewsets.ModelViewSet):
 class SessionViewSet(viewsets.ModelViewSet):
 	queryset = Session.objects.all()
 	serializer_class = SessionSerializer
-	permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+	permission_classes = [permissions.IsAuthenticated]
 
 	#create our own action in handling post request
 	#handling GET request /sessions/
@@ -363,7 +363,7 @@ class SessionViewSet(viewsets.ModelViewSet):
 class SubjectViewSet(viewsets.ReadOnlyModelViewSet):
 	queryset = Subject.objects.all()
 	serializer_class = SubjectSerializer
-	permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+	permission_classes = [permissions.IsAuthenticated]
 
 	def get_queryset(self):
 		user = self.request.user

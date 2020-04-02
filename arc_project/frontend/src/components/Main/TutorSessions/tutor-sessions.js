@@ -15,9 +15,9 @@ export default class TutorSessions extends Component {
   constructor(props){
     super(props);
     this.state = {
-			data: [],
-      showModal: false,
-		};
+        data: [],
+        showModal: false,
+       };
   }
 
   componentDidMount(){
@@ -44,7 +44,7 @@ export default class TutorSessions extends Component {
   }
 
   rerenderSession = (data) => {
-      this.setState(()=>{
+      this.setState(() => {
           var new_data = this.state.data.slice();
           new_data.push(data);
           return {data: new_data};

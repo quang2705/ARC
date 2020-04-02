@@ -5,11 +5,6 @@ from arc_app.models import Session, ContractMeeting, Subject
 from django.contrib.auth.models import User
 
 #TODO: need testing
-class MiniContractSerializer(serializers.ModelSerializer):
-	class Meta:
-		model = Contract
-		fields = ('id', 'url', 'class_name')
-
 class MiniSessionSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Session
@@ -24,6 +19,12 @@ class MiniUserProfileSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = UserProfile
 		fields = ('id', 'url', 'email', 'first_name', 'last_name', 'phone')
+
+class MiniContractSerializer(serializers.ModelSerializer):
+	tutee = MiniUserProfileSerializer(many=False, read_only=True)
+	class Meta:
+		model = Contract
+		fields = ('id', 'url', 'class_name', 'tutee')
 
 class MiniSubjectSerializer(serializers.ModelSerializer):
 	class Meta:

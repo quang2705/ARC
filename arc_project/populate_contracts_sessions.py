@@ -17,17 +17,16 @@ def create_contract(userprofile):
 
 	#create contract base on the number of contract
 	for i in range(num_contracts):
-		tutee = UserProfile.objects.get(pk=1)
 		class_name = class_name_prefix + str(i)
 		professor_name = professor_prefix + chr(ord('A') + i)
 		subject = Subject.objects.get(subject_name = subject_name)
-		contract = Contract(tutor=userprofile, tutee=tutee,
+		contract = Contract(tutor=userprofile, tutee=userprofile,
 							class_name=class_name,
 							subject=subject,
 							professor_name=professor_name)
 		contract.save()
 		print("Create a Contract between {0} {1} for class: {2} of prof {3}".format(userprofile.email,
-																		tutee.email,
+																		userprofile.email,
 																		class_name,
 																		professor_name))
 		for j in range (num_meetings_per_contract):
