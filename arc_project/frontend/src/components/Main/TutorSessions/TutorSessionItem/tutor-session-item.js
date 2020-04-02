@@ -29,7 +29,6 @@ export default class TutorSessionItem extends Component {
         <div>Summary: {data.summary}</div>
       </>
     )
-
     return (
       <Collapsible main={mainInfo} details={details} className={css.container}/>
     );

@@ -15,10 +15,10 @@ export default class TutorContracts extends Component {
   static contextType = AuthContext;
   constructor(props) {
     super(props);
-    this.state = { showModal: false,
-                   data: [], };
+    this.state = {
+        showModal: false,
+        data: [], };
   }
-
   componentDidMount() {
 		// Get all the contract of this user, then put it
 		// into this.state.data. Check MyAPI class for more
@@ -40,6 +40,14 @@ export default class TutorContracts extends Component {
     this.setState((prevState) => {
       return { ...prevState, showModal: !prevState.showModal };
     });
+  }
+
+  rerenderContract = (data) => {
+      this.setState (() => {
+          var new_data = this.state.data;
+          new_data.push(data);
+          return { data: new_data };
+      });
   }
 
   render() {
@@ -64,7 +72,7 @@ export default class TutorContracts extends Component {
                title={'Create new contract'}>
 
           <AuthContext.Consumer>
-              {value => <TutorContractForm auth={value}/>}
+              {value => <TutorContractForm auth={value} rerenderContract={this.rerenderContract}/>}
           </AuthContext.Consumer>
         </Modal>
 

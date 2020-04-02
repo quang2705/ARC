@@ -65,12 +65,10 @@ class App extends Component {
                     return res.json()
                  })
                  .then((data) => {
-                    console.log(data);
                     this.setState({  auth: { ...auth },
                                      isAuthenticated: true });
                  });
              });
-        console.log('logged in');
       }
     });
 

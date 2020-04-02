@@ -36,7 +36,9 @@ export default class TutorContractForm extends Component {
             this.setState({subjects: subjects});
         });
     }
-    callback = (data)=>{console.log(data)}
+    callback = (data) => {
+        this.props.rerenderContract(data);
+    }
     onSubmitHandler = (event) => {
       event.preventDefault();
       MyAPI.create_contract(this.state, this.callback, this.props.auth.access_token);
@@ -52,7 +54,7 @@ export default class TutorContractForm extends Component {
     addMeeting = () => {
       let newMeetings = this.state.meetings;
       let newMeeting = { location: '',
-                         day: '',
+                         day: 'Sunday',
                          start: '',
                          end: '',};
       newMeetings.push(newMeeting);

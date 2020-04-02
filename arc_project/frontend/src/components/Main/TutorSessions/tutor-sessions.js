@@ -43,6 +43,14 @@ export default class TutorSessions extends Component {
     });
   }
 
+  rerenderSession = (data) => {
+      this.setState(()=>{
+          var new_data = this.state.data.slice();
+          new_data.push(data);
+          return {data: new_data};
+      });
+  }
+
   render() {
 		// Pass the session data from this.state.data to the tutorSessionItem
 		// child, the data can be accessed through this.props.session in
@@ -63,7 +71,7 @@ export default class TutorSessions extends Component {
         <Modal isVisible={this.state.showModal} toggle={this.toggleModal}
                title={'Create a new session'}>
 
-          <TutorSessionForm/>
+          <TutorSessionForm rerenderSession = {this.rerenderSession}/>
         </Modal>
 
         <div className={css.list}>

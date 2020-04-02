@@ -145,7 +145,7 @@ export default class MyAPI {
 		}
 	}
 
-	static create_contract(data, callback, access_token) {
+	static create_contract(contract_data, callback, access_token) {
 		var csrftoken = Cookies.get('csrftoken');
 		var headers = new Headers();
 		// headers.append('Authorization', 'Basic '+ btoa('MegJaffy:Jaffy@123'));
@@ -158,23 +158,23 @@ export default class MyAPI {
 			method: "post",
 			headers: headers,
 			body: JSON.stringify({
-				"tutor_email": data.tutorEmail,
-				"tutee_email": data.tuteeEmail,
-				"tutee_first_name": data.tuteeFirstName,
-				"tutee_last_name": data.tuteeLastName,
-				"tutee_phone": data.tuteePhone,
-				"tutee_dnumber": data.tuteeDnumber,
-				"class_name": data.class,
-				"professor_name": data.instructor,
-				"subject": data.subject,
+				"tutor_email": contract_data.tutorEmail,
+				"tutee_email": contract_data.tuteeEmail,
+				"tutee_first_name": contract_data.tuteeFirstName,
+				"tutee_last_name": contract_data.tuteeLastName,
+				"tutee_phone": contract_data.tuteePhone,
+				"tutee_dnumber": contract_data.tuteeDnumber,
+				"class_name": contract_data.class,
+				"professor_name": contract_data.instructor,
+				"subject": contract_data.subject,
 				})
 		}).then((response) => {
-			console.log(response);
 			return response.json();
 		}).then((response_data) => {
+			let count = 0;
 			contract_id = response_data.id;
-			for (var i = 0; i < data.meetings.length; i++) {
-				let contractMeeting = data.meetings[i]
+			for (var i = 0; i < contract_data.meetings.length; i++) {
+				let contractMeeting = contract_data.meetings[i]
 				fetch(CONTRACT_MEETING_URL,{
 					method: "post",
 					headers: headers,
@@ -189,9 +189,14 @@ export default class MyAPI {
 						return response.json();
 					}).then((data) => {
 						console.log("MEETING DATA ", data);
+						count +=1;
+						response_data.contract_meetings.push({
+							id: data.id,
+							url: data.url});
+						if (count == contract_data.meetings.length)
+							callback(response_data);
 					});
 				}
-			callback(response_data);
 		});
 	}
 

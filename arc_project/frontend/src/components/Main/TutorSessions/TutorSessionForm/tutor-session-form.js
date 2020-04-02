@@ -46,6 +46,7 @@ export default class TutorSessionForm extends Component {
    .then((response) => {
      return response.json();
    }).then((data) => {
+       this.props.rerenderSession(data);
    });
   }
 
