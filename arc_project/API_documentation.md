@@ -21,6 +21,7 @@ Refer to the [README](https://github.com/quang2705/ARC/blob/develop/README.md) f
 - UserProfile can be access through `http://localhost:/api/userprofiles/`
 - `http://localhost:/api/usprofiles/`: will show the profile of a current user that log in
 - UserProfile contains details about the user with specific information that is only exist in our tutor verification system (eg:Dnumber, phone,...)
+- `http://localhost:/api/userprofiles/<pk>/get_sessions/`: query all the sessions of this userprofiles 
 ### User
 - User can be access through `http://localhost:/api/users/`
 - `http://localhost:/api/users/?param=<param>`: query the users based on the parameters that we provide:
