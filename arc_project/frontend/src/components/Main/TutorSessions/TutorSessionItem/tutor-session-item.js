@@ -14,6 +14,8 @@ export default class TutorSessionItem extends Component {
                  date: this.props.session.date,
                  start: this.props.session.start,
                  end: this.props.session.end,
+                 is_verified: this.props.session.is_verified.toString(),
+                 is_waiting: this.props.session.is_waiting.toString(),
                  summary: this.props.session.summary};
 
     let mainInfo = (
@@ -22,13 +24,15 @@ export default class TutorSessionItem extends Component {
         <div>Tutee Email: {data.tutee_email}</div>
         <div>Class: {data.class_name}</div>
         <div>Date: {data.date}</div>
-        <div>Start Time: {data.start}</div>
-        <div>End Time: {data.end}</div>
+        <div>Waiting for Tutee: {data.is_waiting}</div>
+        <div>Session Verified: {data.is_verified}</div>
       </>
     );
 
     let details = (
       <>
+        <div>Start Time: {data.start}</div>
+        <div>End Time: {data.end}</div>
         <div>Summary: {data.summary}</div>
       </>
     )
