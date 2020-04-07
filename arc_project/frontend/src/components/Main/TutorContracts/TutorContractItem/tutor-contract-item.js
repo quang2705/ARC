@@ -33,17 +33,18 @@ export default class TutorContractItem extends Component {
   }
 
   render() {
-    let data = { class_name: this.props.contract.class_name,
-                 tutee: this.props.contract.tutee.first_name + " " + this.props.contract.tutee.last_name,
-			 	 tutor: this.props.contract.tutor.first_name + " " + this.props.contract.tutor.last_name,
-                 tutor_phone: this.props.contract.tutor.phone,
-				 tutee_phone: this.props.contract.tutee.phone,
-                 tutee_email: this.props.contract.tutee.email,
-				 tutor_email: this.props.contract.tutor.email,
-                 heademail: ' ',
-                 meetings: this.state.meetings,
-				 subject: this.props.contract.subject.subject_name,
-				 professor_name: this.props.contract.professor_name};
+    let data = {contract_id: this.props.contract.id,
+                class_name: this.props.contract.class_name,
+                tutee: this.props.contract.tutee.first_name + " " + this.props.contract.tutee.last_name,
+                tutor: this.props.contract.tutor.first_name + " " + this.props.contract.tutor.last_name,
+                tutor_phone: this.props.contract.tutor.phone,
+                tutee_phone: this.props.contract.tutee.phone,
+                tutee_email: this.props.contract.tutee.email,
+                tutor_email: this.props.contract.tutor.email,
+                heademail: ' ',
+                meetings: this.state.meetings,
+                subject: this.props.contract.subject.subject_name,
+                professor_name: this.props.contract.professor_name};
     let meetings = data.meetings.map((meeting, index) => {
       return (
         <div key={index}>
@@ -64,6 +65,7 @@ export default class TutorContractItem extends Component {
         <div>Tutee Phone: {data.tutee_phone}</div>
         <div>Tutor Email: {data.tutor_email}</div>
         <div>Tutee Email: {data.tutee_email}</div>
+        <input type="submit" value="delete" onClick={() => this.props.onDeleteContract(data.contract_id)}/>
       </>
     );
 

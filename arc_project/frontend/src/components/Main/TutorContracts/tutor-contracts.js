@@ -50,13 +50,31 @@ export default class TutorContracts extends Component {
       });
   }
 
+  onDeleteContract = (contract_id) => {
+      MyAPI.delete_contract(contract_id, this.context.access_token)
+      .then((res) => {
+         return res.json();
+     }).then((data) => {
+         this.setState(() => {
+             var new_data  = this.state.data.slice();
+             for (let i = 0; i < new_data.length; i++){
+                 if (new_data[i].id === Number(data.id)){
+                     new_data.splice(i, 1);
+                     break;
+                 }
+             }
+             return {data:new_data};
+         })
+     });
+  }
+
   render() {
 		// Pass the contract data from this.state.data to the TutorContractItem
 		// child, the data can be accessed through this.props.contract in
 		// TutorContractItem
 		let contracts = this.state.data.map((contract, index) => {
 			return(
-				<TutorContractItem key={index} contract={contract}/>
+				<TutorContractItem key={index} contract={contract} onDeleteContract={this.onDeleteContract}/>
 			);
 		});
 

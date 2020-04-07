@@ -8,15 +8,18 @@ import css from './tutor-session-item.module.css';
 export default class TutorSessionItem extends Component {
 
   render() {
-    let data = { class_name: this.props.session.contract.class_name,
-                 tutee_name: this.props.session.contract.tutee.first_name + " " + this.props.session.contract.tutee.last_name,
-                 tutee_email: this.props.session.contract.tutee.email,
-                 date: this.props.session.date,
-                 start: this.props.session.start,
-                 end: this.props.session.end,
-                 is_verified: this.props.session.is_verified.toString(),
-                 is_waiting: this.props.session.is_waiting.toString(),
-                 summary: this.props.session.summary};
+    let data = {
+                session_id : this.props.session.id,
+                class_name: this.props.session.contract.class_name,
+                tutee_name: this.props.session.contract.tutee.first_name + " " + this.props.session.contract.tutee.last_name,
+                tutee_email: this.props.session.contract.tutee.email,
+                date: this.props.session.date,
+                start: this.props.session.start,
+                end: this.props.session.end,
+                is_verified: this.props.session.is_verified.toString(),
+                is_waiting: this.props.session.is_waiting.toString(),
+                summary: this.props.session.summary
+             };
 
     let mainInfo = (
       <>
@@ -26,6 +29,7 @@ export default class TutorSessionItem extends Component {
         <div>Date: {data.date}</div>
         <div>Waiting for Tutee: {data.is_waiting}</div>
         <div>Session Verified: {data.is_verified}</div>
+        <input type="submit" value="delete" onClick={() => this.props.onDeleteSession(data.session_id)}/>
       </>
     );
 

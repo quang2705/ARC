@@ -110,6 +110,10 @@ class ContractViewSet(viewsets.ModelViewSet):
 	serializer_class = ContractSerializer
 	permission_classes = [permissions.IsAuthenticated]
 
+	def destroy(self, request, pk=None):
+		super().destroy(request, pk)
+		return Response({'status': 200, 'id': pk})
+
 	def create(self, request):
 		try:
 			tutor_email = request.data['tutor_email']
@@ -298,6 +302,10 @@ class SessionViewSet(viewsets.ModelViewSet):
 	serializer_class = SessionSerializer
 	permission_classes = [permissions.IsAuthenticated]
 
+	def destroy(self, request, pk=None):
+		super().destroy(request, pk)
+		return Response({'status': 200, 'id': pk})
+
 	#create our own action in handling post request
 	#handling GET request /sessions/
 	def create(self, request):
@@ -358,6 +366,7 @@ class SessionViewSet(viewsets.ModelViewSet):
 			for session in contract.sessions.all():
 				query |= Q(id= session.id)
 		return Session.objects.filter(query);
+
 
 
 class SubjectViewSet(viewsets.ReadOnlyModelViewSet):

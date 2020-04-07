@@ -38,18 +38,16 @@ class App extends Component {
     document.body.appendChild(meta);
   }
 
-  onLoginSuccess = (res) => {
-      console.log(res)
+onLoginSuccess = (res) => {
+    console.log(res)
     gapi.load('auth2',() => {
-      const auth2 = gapi.auth2.init();
-      if (auth2.isSignedIn.get()) {
-        let email = auth2.currentUser.get().getBasicProfile().getEmail();
-        let auth = { access_token: res.uc.access_token,
+        const auth2 = gapi.auth2.init();
+        if (auth2.isSignedIn.get()) {
+            let email = auth2.currentUser.get().getBasicProfile().getEmail();
+            let auth = { access_token: res.uc.access_token,
                      email: email };
-        // this.setState({ auth: { ...auth,
-        //                         isAuthenticated: true} });
-        console.log("access_token ", res.uc.access_token)
-        MyAPI.get_db_access_token({ token: auth.access_token,
+            console.log("access_token ", res.uc.access_token)
+            MyAPI.get_db_access_token({ token: auth.access_token,
                                     client_id: Auth.dbClientId,
                                     grant_type: 'convert_token',
                                     backend: 'google-oauth2' })
@@ -59,7 +57,6 @@ class App extends Component {
              .then((data) => {
                  console.log("db data", data);
                  auth = { ...auth, access_token: data.access_token };
-
                  MyAPI.get_user(null, auth.access_token)
                  .then((res) => {
                     return res.json()
@@ -69,7 +66,7 @@ class App extends Component {
                                      isAuthenticated: true });
                  });
              });
-      }
+     }
     });
 
 

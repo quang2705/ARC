@@ -51,13 +51,31 @@ export default class TutorSessions extends Component {
       });
   }
 
+  onDeleteSession = (session_id) => {
+      MyAPI.delete_session(session_id, this.context.access_token)
+      .then((res) => {
+         return res.json();
+     }).then((data) => {
+         this.setState(() => {
+             var new_data  = this.state.data.slice();
+             for (let i = 0; i < new_data.length; i++){
+                 if (new_data[i].id === Number(data.id)){
+                     new_data.splice(i, 1);
+                     break;
+                 }
+             }
+             return {data:new_data};
+         })
+     });
+  }
+
   render() {
 		// Pass the session data from this.state.data to the tutorSessionItem
 		// child, the data can be accessed through this.props.session in
 		// tutorSessionItem
 		let sessions = this.state.data.map((session, index) => {
 			return(
-				<TutorSessionItem key={index} session={session}/>
+				<TutorSessionItem key={index} session={session} onDeleteSession={this.onDeleteSession}/>
 			);
 		});
     return (

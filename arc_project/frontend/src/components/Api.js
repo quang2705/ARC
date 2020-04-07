@@ -145,6 +145,9 @@ export default class MyAPI {
 	}
 
 	static create_contract(contract_data, callback, access_token) {
+		//TODO: create contrains for not adding contract meetings for contract
+		// need to call the callback function eventhough we dont have any
+		// contract meeting
 		var csrftoken = Cookies.get('csrftoken');
 		var headers = new Headers();
 		// headers.append('Authorization', 'Basic '+ btoa('MegJaffy:Jaffy@123'));
@@ -191,8 +194,9 @@ export default class MyAPI {
 						response_data.contract_meetings.push({
 							id: data.id,
 							url: data.url});
-						if (count == contract_data.meetings.length)
+						if (count == contract_data.meetings.length){
 							callback(response_data);
+						}
 					});
 				}
 		});
@@ -201,9 +205,9 @@ export default class MyAPI {
 	static create_session(data, access_token) {
 		var csrftoken = Cookies.get('csrftoken');
 		var headers = new Headers();
-		headers.append('Accept', 'application/json')
-		headers.append('Content-Type', 'application/json')
-		headers.append('X-CSRFToken', csrftoken)
+		headers.append('Accept', 'application/json');
+		headers.append('Content-Type', 'application/json');
+		headers.append('X-CSRFToken', csrftoken);
 		headers.append('Authorization', 'bearer '+access_token);
 
 		return fetch(SESSION_URL,
@@ -219,5 +223,35 @@ export default class MyAPI {
 				})
 
     });
+	}
+
+	static delete_session(index, access_token){
+		var csrftoken = Cookies.get('csrftoken');
+		var headers = new Headers();
+		headers.append('Accept', 'application/json');
+		headers.append('Content-Type', 'application/json');
+		headers.append('X-CSRFToken', csrftoken);
+		headers.append('Authorization', 'bearer '+access_token);
+
+		return fetch(this.get(SESSION_URL, index),
+					{
+						method: 'delete',
+						headers: headers,
+					});
+	}
+
+	static delete_contract(index, access_token){
+		var csrftoken = Cookies.get('csrftoken');
+		var headers = new Headers();
+		headers.append('Accept', 'application/json');
+		headers.append('Content-Type', 'application/json');
+		headers.append('X-CSRFToken', csrftoken);
+		headers.append('Authorization', 'bearer '+access_token);
+
+		return fetch(this.get(CONTRACT_URL, index),
+					{
+						method: 'delete',
+						headers: headers,
+					});
 	}
 }
