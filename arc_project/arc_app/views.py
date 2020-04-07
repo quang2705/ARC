@@ -33,9 +33,10 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 
 	def get_queryset(self):
 		user = self.request.user
+		create_userprofile(user)
 		if not user.is_authenticated:
 			return []
-		elif user.is_staff:
+		elif user.userprofiles.is_admin:
 			is_tutor = self.request.query_params.get('is_tutor', None)
 			first_name = self.request.query_params.get('first_name', None)
 			last_name = self.request.query_params.get('last_name', None)
@@ -84,7 +85,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 		create_userprofile(user)
 		if not user.is_authenticated:
 			return []
-		elif user.is_staff:
+		elif user.userprofiles.is_admin:
 			#get the params from url and filter it with
 			#the users objects
 			first_name = self.request.query_params.get('first_name', None)
@@ -158,9 +159,10 @@ class ContractViewSet(viewsets.ModelViewSet):
 	#any parameter that is added onto the url
 	def get_queryset(self):
 		user = self.request.user
+		create_userprofile(user)
 		if not user.is_authenticated:
 			return []
-		elif user.is_staff:
+		elif user.userprofiles.is_admin:
 			return self.queryset
 		#get all the params from the url
 		class_name = self.request.query_params.get('class_name', None)
@@ -278,9 +280,10 @@ class ContractMeetingViewSet(viewsets.ModelViewSet):
 	#filter contract meeting based on the user
 	def get_queryset(self):
 		user = self.request.user
+		create_userprofile(user)
 		if not user.is_authenticated:
 			return []
-		elif user.is_staff:
+		elif user.userprofiles.is_admin:
 			return self.queryset
 		#get all contracts that contract meetings is belong to
 		#based on user that is currently log in
@@ -352,9 +355,10 @@ class SessionViewSet(viewsets.ModelViewSet):
 	#/sessions/
 	def get_queryset(self):
 		user = self.request.user
+		create_userprofile(user)
 		if not user.is_authenticated:
 			return []
-		elif user.is_staff:
+		elif user.userprofiles.is_admin:
 			return self.queryset
 
 		#get all contracts that sessions is belong to
