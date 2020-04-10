@@ -8,6 +8,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import viewsets
 from django.db.models import Q
+import datetime
 
 def create_userprofile(user):
 	try:
@@ -69,9 +70,31 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 		if (userprofile.is_tutor == False and userprofile.is_tutee == False):
 			return Response({"Staff does not have sessions"})
 		else:
-			#get the contracts of this tuktor
+			#get the contracts of this tutor
 			contracts = userprofile.tutor_contracts.all()
-			sessions = [session for contract in contracts for session in contract.sessions.all()]
+
+			query = Q(id = -1)
+			for contract in contracts:
+				for session in contract.sessions.all():
+					query |= Q(id= session.id)
+
+			sessions = Session.objects.filter(query)
+
+			#filter date by lte: less than or equal, gte: greater than or equal
+			#lt: less than, gt: greater than
+			operators = ['lte', 'lt', 'gte', 'gt']
+			for operator in operators:
+				date = self.request.query_params.get('date[{}]'.format(operator), None)
+				if date is not None:
+					if operator == 'lte':
+						sessions = sessions.filter(date__lte=date)
+					elif operator == 'lt':
+						sessions = sessions.filter(date__lt=date)
+					elif operator == 'gte':
+						sessions = sessions.filter(date__gte=date)
+					elif operator == 'gt':
+						sessions = sessions.filter(date__gt=date)
+
 		return Response(SessionSerializer(sessions, many=True, context={'request': request}).data)
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
@@ -365,13 +388,29 @@ class SessionViewSet(viewsets.ModelViewSet):
 		#based on user that is currently log in
 		userprofile = self.request.user.userprofiles
 		contracts = userprofile.tutor_contracts.all()
+
 		query = Q(id = -1)
 		for contract in contracts:
 			for session in contract.sessions.all():
 				query |= Q(id= session.id)
-		return Session.objects.filter(query);
 
+		sessions = Session.objects.filter(query)
 
+		#filter date by lte: less than or equal, gte: greater than or equal
+		#lt: less than, gt: greater than
+		operators = ['lte', 'lt', 'gte', 'gt']
+		for operator in operators:
+			date = self.request.query_params.get('date[{}]'.format(operator), None)
+			if date is not None:
+				if operator == 'lte':
+					sessions = sessions.filter(date__lte=date)
+				elif operator == 'lt':
+					sessions = sessions.filter(date__lt=date)
+				elif operator == 'gte':
+					sessions = sessions.filter(date__gte=date)
+				elif operator == 'gt':
+					sessions = sessions.filter(date__gt=date)
+		return sessions;
 
 class SubjectViewSet(viewsets.ReadOnlyModelViewSet):
 	queryset = Subject.objects.all()

@@ -13,6 +13,10 @@ export default class AdminSummary extends Component {
         super(props);
         this.state = {
             data : [],
+            start_date:'',
+            end_date:'',
+            session_start_date:'',
+            session_end_date:'',
         }
     }
     componentDidMount(){
@@ -25,14 +29,52 @@ export default class AdminSummary extends Component {
             });
         });
     }
+    onTextChangeHandler = (event) => {
+        this.setState({[event.target.name]: event.target.value});
+    }
+
+    onDateFilter = () => {
+        console.log('oneDateFilter');
+        this.setState({
+            session_start_date: this.state.start_date,
+            session_end_date: this.state.end_date,
+        });
+    }
+
+    onCallBack = () => {
+
+    }
   render() {
       var userprofiles = this.state.data.map((userprofile, index) => {
           return (
-              <AdminSummaryItem key={index} tutor={userprofile}/>
+              <AdminSummaryItem key={index}
+                                tutor={userprofile}
+                                start_date={this.state.session_start_date}
+                                end_date={this.state.session_end_date}
+                                callback={this.onCallBack}/>
           )
       });
+
     return (
       <div>
+        <label> start date: <br/>
+            <input type='date' name='start_date' onChange={this.onTextChangeHandler}/>
+            <br/>
+        </label>
+
+        <br/>
+
+        <label> end date: <br/>
+            <input type='date' name='end_date' onChange={this.onTextChangeHandler}/>
+            <br/>
+        </label>
+
+        <br/>
+
+        <input type='submit' value='search' onClick={this.onDateFilter}/><br/>
+
+        <br/>
+
         <table id ='admin_summary'>
             <tbody>
                 <tr>

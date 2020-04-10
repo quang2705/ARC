@@ -34,7 +34,8 @@ export default class MyAPI {
 			url += "?";
 			var query_url = []
 			Object.keys(query_params).forEach((key, index) => {
-				query_url.push(key + "=" + query_params[key].toString());
+				if (query_params[key].toString() != '')
+					query_url.push(key + "=" + query_params[key].toString());
 			});
 			query_url = query_url.join('&')
 			return url + query_url;
@@ -88,11 +89,14 @@ export default class MyAPI {
 						{ headers: headers });
 	}
 
-	static get_user_session(user_id, access_token){
+	static get_user_session(user_id, access_token, query_params,){
 		let headers = new Headers();
 		headers.append('Authorization', 'bearer '+ access_token);
-		return fetch(this.get(USERPROFILE_URL, user_id) +'get_sessions/',
-					{ headers: headers });
+		let url = this.get(USERPROFILE_URL, user_id) +'get_sessions/';
+		url = this.query(url, query_params);
+		console.log('url', url);
+		console.log('query_params', query_params);
+		return fetch(url, { headers: headers });
 	}
 
 	static get_contractmeeting(index, access_token) {

@@ -16,7 +16,7 @@ export default class AdminSummaryItem extends Component {
             tutor_last_name: this.props.tutor.last_name,
             tutor_phone: this.props.tutor.phone,
             tutor_email: this.props.tutor.email,
-            tutor_sessions: []
+            tutor_sessions: [],
         };
     }
 
@@ -45,8 +45,11 @@ export default class AdminSummaryItem extends Component {
         }
         return tutor_verified_sessions;
     }
+
     componentDidMount(){
-        MyAPI.get_user_session(this.state.tutor_id, this.context.access_token)
+        MyAPI.get_user_session(this.state.tutor_id, this.context.access_token,
+                                {'date[gte]':this.props.start_date,
+                                'date[lte]':this.props.end_date,})
         .then((response) => {
             return response.json();
         }).then((data) => {
@@ -64,6 +67,9 @@ export default class AdminSummaryItem extends Component {
       var total_hours = this.total_hours(tutor_sessions);
       var tutor_verified_sessions = this.get_verified_session(tutor_sessions);
       var total_verified_hours = this.total_hours(tutor_verified_sessions);
+      console.log(this.props.start_date);
+     console.log(this.props.end_date);
+
     return (
         <tr key={index}>
            <td>{tutor_first_name}</td>
