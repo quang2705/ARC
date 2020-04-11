@@ -49,10 +49,20 @@ export default class MyAPI {
 		if (!index)
 			return fetch(this.query(USERPROFILE_URL,
 									query_params),
-								{ headers: headers });
+								{ headers: headers })
+					.then((response) => {
+						return response.json();
+					}).then((data) => {
+						return data.results;
+					});
 		else
 			return fetch(this.get(USERPROFILE_URL, index),
-								{headers: headers });
+								{headers: headers })
+					.then((response) => {
+						return response.json();
+					}).then((data) => {
+						return data.results;
+					});
 
 	}
 
@@ -61,10 +71,20 @@ export default class MyAPI {
 		headers.append('Authorization', 'bearer '+access_token);
 
 		if (!index)
-			return fetch(USER_URL, { headers: headers });
+			return fetch(USER_URL, { headers: headers })
+					.then((response) => {
+						return response.json();
+					}).then((data) => {
+						return data.results;
+					});
 		else
 			return fetch(this.get(USER_URL, index),
-							{ headers: headers });
+							{ headers: headers })
+					.then((response) => {
+						return response.json();
+					}).then((data) => {
+						return data.results;
+					});;
 	}
 
 	static get_contract(index, access_token) {
@@ -83,10 +103,20 @@ export default class MyAPI {
 		headers.append('Authorization', 'bearer '+ access_token);
 		if (!index)
 			return fetch(SESSION_URL,
-						{ headers: headers });
+						{ headers: headers })
+					.then((response) => {
+						return response.json();
+					}).then((data) => {
+						return data.results;
+					});
 		else
 			return fetch(this.get(SESSION_URL, index),
-						{ headers: headers });
+						{ headers: headers })
+					.then((response) => {
+						return response.json();
+					}).then((data) => {
+						return data.results;
+					});
 	}
 
 	static get_user_session(user_id, access_token, query_params,){
@@ -94,7 +124,12 @@ export default class MyAPI {
 		headers.append('Authorization', 'bearer '+ access_token);
 		let url = this.get(USERPROFILE_URL, user_id) +'get_sessions/';
 		url = this.query(url, query_params);
-		return fetch(url, { headers: headers });
+		return fetch(url, { headers: headers })
+				.then((response) => {
+					return response.json();
+				}).then((data) => {
+					return data;
+				});
 	}
 
 	static get_contractmeeting(index, access_token) {
@@ -223,7 +258,6 @@ export default class MyAPI {
 					'end': data.sessEnd,
 					'summary': data.sessSummary
 				})
-
     });
 	}
 

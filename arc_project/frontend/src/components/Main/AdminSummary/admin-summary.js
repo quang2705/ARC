@@ -23,12 +23,10 @@ export default class AdminSummary extends Component {
     //update the date state and the sessions state
     componentDidMount(){
         MyAPI.get_userprofile(null, {'is_tutor': true}, this.context.access_token)
-        .then((response) => {
-            return response.json();
-        }).then((data) => {
+        .then((data) => {
             this.setState(
-                {data: data.results,
-                sessions: Array(data.results.length).fill([])},
+                {data: data,
+                sessions: Array(data.length).fill([])},
                 () => {this.createSessions();}
             );
         });
@@ -42,12 +40,10 @@ export default class AdminSummary extends Component {
         MyAPI.get_user_session(tutor_id, this.context.access_token,
                                 {'date[gte]':this.state.start_date,
                                 'date[lte]':this.state.end_date,})
-        .then((response) => {
-            return response.json();
-        }).then((user_sessions) => {
+        .then((data) => {
             this.setState(() => {
                 let new_sessions = this.state.sessions.slice();
-                new_sessions[index] = user_sessions;
+                new_sessions[index] = data;
                 return {sessions: new_sessions};
             });
         });

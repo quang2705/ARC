@@ -38,7 +38,7 @@ class App extends Component {
     document.body.appendChild(meta);
   }
 
-  
+
 onLoginSuccess = (res) => {
     console.log(res);
     gapi.load('auth2',() => {
@@ -59,9 +59,6 @@ onLoginSuccess = (res) => {
                  console.log("db data", data);
                  auth = { ...auth, access_token: data.access_token };
                  MyAPI.get_user(null, auth.access_token)
-                 .then((res) => {
-                    return res.json()
-                 })
                  .then((data) => {
                     this.setState({  auth: { ...auth },
                                      isAuthenticated: true });

@@ -25,14 +25,10 @@ export default class TutorSessions extends Component {
 		// into this.state.data. Check MyAPI class for more
 		// functionality
 		MyAPI.get_session(null, this.context.access_token)
-		.then((response) => {
-			//TODO: check for error response here
-			return response.json();
-		})
 		.then((data) => {
 			//set this.state.data
 			this.setState({
-				data: data.results,
+				data: data,
 			});
 		});
   }
