@@ -15,43 +15,56 @@ export default class AdminSummary extends Component {
             data : [],
             start_date:'',
             end_date:'',
-            session_start_date:'',
-            session_end_date:'',
+            sessions: [],
         }
     }
+
+    //getting the list of all the tutor and their sessions
+    //update the date state and the sessions state
     componentDidMount(){
         MyAPI.get_userprofile(null, {'is_tutor': true}, this.context.access_token)
         .then((response) => {
             return response.json();
         }).then((data) => {
-            return this.setState(() => {
-                return {data: data.results};
-            });
+            this.setState(
+                {data: data.results,
+                sessions: Array(data.results.length).fill([])},
+                () => {this.createSessions();}
+            );
         });
     }
+
+    //update the sessions state so that it can filter based on
+    //the start date and the end date
+    createSessions = () => {
+        this.state.data.map((userprofile, index) => {
+        let tutor_id = userprofile.id;
+        MyAPI.get_user_session(tutor_id, this.context.access_token,
+                                {'date[gte]':this.state.start_date,
+                                'date[lte]':this.state.end_date,})
+        .then((response) => {
+            return response.json();
+        }).then((user_sessions) => {
+            this.setState(() => {
+                let new_sessions = this.state.sessions.slice();
+                new_sessions[index] = user_sessions;
+                return {sessions: new_sessions};
+            });
+        });
+    });
+    }
+
+    //updating the start and end date
     onTextChangeHandler = (event) => {
         this.setState({[event.target.name]: event.target.value});
     }
 
-    onDateFilter = () => {
-        console.log('oneDateFilter');
-        this.setState({
-            session_start_date: this.state.start_date,
-            session_end_date: this.state.end_date,
-        });
-    }
-
-    onCallBack = () => {
-
-    }
   render() {
       var userprofiles = this.state.data.map((userprofile, index) => {
           return (
               <AdminSummaryItem key={index}
                                 tutor={userprofile}
-                                start_date={this.state.session_start_date}
-                                end_date={this.state.session_end_date}
-                                callback={this.onCallBack}/>
+                                sessions={this.state.sessions[index]}/>
           )
       });
 
@@ -71,7 +84,7 @@ export default class AdminSummary extends Component {
 
         <br/>
 
-        <input type='submit' value='search' onClick={this.onDateFilter}/><br/>
+        <input type='submit' value='search' onClick={() => {this.createSessions();}}/><br/>
 
         <br/>
 

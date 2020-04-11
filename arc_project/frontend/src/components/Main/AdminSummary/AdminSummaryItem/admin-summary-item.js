@@ -10,19 +10,14 @@ export default class AdminSummaryItem extends Component {
     static contextType = AuthContext;
     constructor(props){
         super(props);
-        this.state = {
-            tutor_id : this.props.tutor.id,
-            tutor_first_name: this.props.tutor.first_name,
-            tutor_last_name: this.props.tutor.last_name,
-            tutor_phone: this.props.tutor.phone,
-            tutor_email: this.props.tutor.email,
-            tutor_sessions: [],
-        };
     }
 
     total_hours = (sessions) => {
         var hours = 0;
         var minutes = 0;
+        if (sessions == undefined) {
+            return [0,0].join(':');
+        }
         sessions.map((session, index) => {
             var start = new Date(session.date + " " + session.start);
             var end = new Date(session.date + " " + session.end);
@@ -36,6 +31,9 @@ export default class AdminSummaryItem extends Component {
     }
 
     get_verified_session = (sessions) => {
+        if (sessions == undefined){
+            return []
+        }
         var tutor_verified_sessions = []
         for (let i = 0; i < sessions.length; i++){
             let session = sessions[i];
@@ -46,30 +44,16 @@ export default class AdminSummaryItem extends Component {
         return tutor_verified_sessions;
     }
 
-    componentDidMount(){
-        MyAPI.get_user_session(this.state.tutor_id, this.context.access_token,
-                                {'date[gte]':this.props.start_date,
-                                'date[lte]':this.props.end_date,})
-        .then((response) => {
-            return response.json();
-        }).then((data) => {
-            this.setState({tutor_sessions: data});
-        });
-    }
-
   render() {
       var index = this.props.index;
-      var tutor_first_name = this.state.tutor_first_name;
-      var tutor_last_name = this.state.tutor_last_name;
-      var tutor_email = this.state.tutor_email;
-      var tutor_phone = this.state.tutor_phone;
-      var tutor_sessions = this.state.tutor_sessions;
+      var tutor_first_name = this.props.tutor.first_name;
+      var tutor_last_name = this.props.tutor.last_name;
+      var tutor_email = this.props.tutor.email;
+      var tutor_phone = this.props.tutor.phone;
+      var tutor_sessions = this.props.sessions;
       var total_hours = this.total_hours(tutor_sessions);
       var tutor_verified_sessions = this.get_verified_session(tutor_sessions);
       var total_verified_hours = this.total_hours(tutor_verified_sessions);
-      console.log(this.props.start_date);
-     console.log(this.props.end_date);
-
     return (
         <tr key={index}>
            <td>{tutor_first_name}</td>

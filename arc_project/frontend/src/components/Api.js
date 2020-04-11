@@ -94,8 +94,6 @@ export default class MyAPI {
 		headers.append('Authorization', 'bearer '+ access_token);
 		let url = this.get(USERPROFILE_URL, user_id) +'get_sessions/';
 		url = this.query(url, query_params);
-		console.log('url', url);
-		console.log('query_params', query_params);
 		return fetch(url, { headers: headers });
 	}
 
