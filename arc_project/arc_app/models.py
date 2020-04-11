@@ -22,6 +22,9 @@ class UserProfile(models.Model):
 	is_admin = models.BooleanField(default=False)
 	created_at = models.DateTimeField(auto_now_add=True)
 
+	class Meta:
+		ordering = ['-id']
+		
 	def __str__(self):
 		try:
 			return (self.first_name + self.last_name)
