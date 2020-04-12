@@ -2,12 +2,6 @@ import React, { Component } from 'react';
 import { render } from 'react-dom';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import Cookies from 'js-cookie';
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Redirect
-} from "react-router-dom";
 
 import Login from './Login/login';
 import TutorSessionForm from './Main/TutorSessions/TutorSessionForm/tutor-session-form.js'
@@ -30,41 +24,60 @@ class App extends Component {
   componentDidMount() {
     // Override the default margin of 8px
     document.body.style.margin = '0';
+    document.body.style.fontFamily = '\'Arial\', sans-serif';
+    document.body.style.fontSize = '15px';
 
     // Dynamically add meta with Google App's Client ID to HTML
-    let meta = document.createElement('meta');
-    meta.name = 'google-signin-client_id';
-    meta.content = Auth.googleClientId;
-    document.body.appendChild(meta);
+    this.addTag('meta', { name: 'google-signin-client_id',
+                          content: Auth.googleClientId });
+
+    // this.addTag('script', { src: 'https://apis.google.com/js/platform.js' });
+    //
+    // this.addTag('script', { src: 'https://apis.google.com/js/api.js' });
+
+    this.setState({ loaded: true });
   }
 
+  addTag = (tag, meta) => {
+    let e = document.createElement(tag);
+    for (let [key, value] of Object.entries(meta)) {
+      e[key] = value;
+    };
 
-onLoginSuccess = (res) => {
-    console.log(res);
-    gapi.load('auth2',() => {
-        const auth2 = gapi.auth2.init();
-        if (auth2.isSignedIn.get()) {
-            let email = auth2.currentUser.get().getBasicProfile().getEmail();
-            let auth = { access_token: res.tc.access_token,
+    document.body.appendChild(e);
+  }
+
+  onLoginSuccess = (res) => {
+    gapi.load('client:auth2', () => {
+      const auth2 = gapi.auth2.init();
+      if (auth2.isSignedIn.get()) {
+        let email = auth2.currentUser.get().getBasicProfile().getEmail();
+        let auth = { access_token: gapi.client.getToken().access_token,
                      email: email };
-            console.log("access_token ", res.tc.access_token);
-            MyAPI.get_db_access_token({ token: auth.access_token,
+
+        // Get access token for Django backend server
+        MyAPI.get_db_access_token({ token: auth.access_token,
                                     client_id: Auth.dbClientId,
                                     grant_type: 'convert_token',
                                     backend: 'google-oauth2' })
-             .then((res) => {
-                 return res.json();
-             })
-             .then((data) => {
-                 console.log("db data", data);
-                 auth = { ...auth, access_token: data.access_token };
-                 MyAPI.get_user(null, auth.access_token)
-                 .then((data) => {
-                    this.setState({  auth: { ...auth },
-                                     isAuthenticated: true });
-                 });
-             });
-     }
+        .then((res) => {
+           return res.json();
+        })
+        .then((data) => {
+          // Successfully retrieved access token for Django server
+          auth = { ...auth, access_token: data.access_token };
+          MyAPI.get_user(null, auth.access_token)
+          .then((data) => {
+            this.setState({ auth: { ...auth },
+                            isAuthenticated: true });
+          });
+        });
+
+        // Load Gmail API
+        gapi.client.load('gmail', 'v1', () => {
+          this.setState({ emailApiLoaded: true });
+        });
+      }
     });
 
 
@@ -77,13 +90,16 @@ onLoginSuccess = (res) => {
       </AuthContext.Provider>
     );
 
-    return (
-      <>
-        {this.state.isAuthenticated ?
-         mainComponent :
-         <Login onLoginSuccess={this.onLoginSuccess} />}
-      </>
-    );
+    if (this.state.loaded)
+      return (
+        <>
+          {this.state.isAuthenticated && this.state.emailApiLoaded?
+           mainComponent :
+           <Login onLoginSuccess={this.onLoginSuccess} />}
+        </>
+      );
+    else
+      return <></>;
   }
 }
 
