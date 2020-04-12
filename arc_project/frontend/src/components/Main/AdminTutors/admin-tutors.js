@@ -1,4 +1,4 @@
-//This is just a placeholder to show that admin-tutors-item works on one user 
+//This is just a placeholder to show that admin-tutors-item works on one user
 import React, { Component } from 'react';
 import { render } from 'react-dom';
 import { AuthContext } from '../../Auth/auth';
@@ -34,7 +34,18 @@ export default class AdminTutors extends Component {
       });
     return (
       <div>
-            {userprofiles}
+        <table id ='admin_tutors'>
+            <tbody>
+                <tr>
+                    <th key={0}>{" Tutor First Name "}</th>
+                    <th key={1}>{" Tutor Last Name "}</th>
+                    <th key={2}>{" Tutor Email "}</th>
+                    <th key={3}>{" Tutor Phone "}</th>
+                    <th key={4}>{""}</th>
+                </tr>
+                {userprofiles}
+            </tbody>
+        </table>
       </div>
     );
   }

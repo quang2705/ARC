@@ -6,6 +6,7 @@ import { AuthContext } from '../../../Auth/auth'
 import Modal from '../../../DefaultUI/Modal/modal';
 import AdminTutorContractItem from './AdminTutorContractItem/admin-tutor-contract-item';
 import MyAPI from '../../../Api';
+import Collapsible from '../../../DefaultUI/Collapsible/collapsible';
 
 import css from './admin-tutors-item.module.css';
 import cssSession from '../../TutorSessions/TutorSessionItem/tutor-session-item.module.css';
@@ -48,6 +49,7 @@ export default class AdminTutorsItem extends Component {
   }
 
   render() {
+    var tutor_id = this.state.tutor_id;
     var tutor_first_name = this.state.tutor_first_name;
     var tutor_last_name = this.state.tutor_last_name;
     var tutor_email = this.state.tutor_email;
@@ -60,16 +62,26 @@ export default class AdminTutorsItem extends Component {
 				<AdminTutorContractItem key={index} contract={contract}/>
 			);
 		});
+    let mainInfo = (
+      <>
+      <tr key={tutor_id}>
+         <td>{tutor_first_name}</td>
+         <td>{tutor_last_name}</td>
+         <td>{tutor_email}</td>
+         <td>{tutor_phone}</td>
+     </tr>
+      </>
+    );
+    let details = (
+      <>
+      <div className={cssSession.list}>
+        {contracts}
+      </div>
+      </>
+    );
 
     return (
-      <div className={css.container}>
-      Name: {tutor_first_name} {tutor_last_name}<br/>
-      Email: {tutor_email}<br/>
-      Phone: {tutor_phone}<br/>
-        <div className={cssSession.list}>
-  			  {contracts}
-        </div>
-      </div>
+      <Collapsible main={mainInfo} details={details} className={cssSession.container}/>
     );
   }
 }
