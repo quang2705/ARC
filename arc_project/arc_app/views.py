@@ -31,6 +31,24 @@ def check_for_key(request_data, key_list):
 		except KeyError:
 			return Response('You dont have the params `{0}`'.format(key))
 
+#This function return a Q objects that represents the exact filtering query
+#of the query parameters
+def setup_query(request_params, key_list):
+	query = None
+	for key in key_list:
+		val = request_params.get(key, None)
+		if (val != None):
+			if val == 'true':
+				val = 'True'
+			if val == 'false':
+				val = 'False'
+			q_object = Q(**{"%s__exact" % key : val})
+			if (query):
+				query = query & q_object
+			else:
+				query = q_object
+	return query
+
 class UserProfileViewSet(viewsets.ModelViewSet):
 	#This viewset automatically provides 'list', 'create', 'retrieve',
 	#'update', and 'destroy' actions
@@ -46,22 +64,10 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 			return []
 		elif user.is_staff:
 			is_tutor = self.request.query_params.get('is_tutor', None)
-			first_name = self.request.query_params.get('first_name', None)
-			last_name = self.request.query_params.get('last_name', None)
-			email = self.request.query_params.get('email', None)
 			userprofiles = UserProfile.objects.all()
-			if is_tutor is not None:
-				if is_tutor == 'true':
-					is_tutor = 'True'
-				elif is_tutor == 'false':
-					is_tutor = 'False'
-				userprofiles = userprofiles.filter(is_tutor=is_tutor)
-			if first_name is not None:
-				userprofiles = userprofiles.filter(first_name=first_name)
-			if last_name is not None:
-				userprofiles = userprofiles.filter(last_name=last_name)
-			if email is not None:
-				userprofiles = userprofiles.filter(email=email)
+			query = setup_query(self.request.query_params, ['first_name', 'last_name', 'email', 'is_tutor'])
+			if query is not None:
+				userprofiles = userprofiles.filter(query)
 			return userprofiles
 		else:
 			return UserProfile.objects.filter(user=user)
@@ -96,17 +102,10 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 		elif user.is_staff:
 			#get the params from url and filter it with
 			#the users objects
-			first_name = self.request.query_params.get('first_name', None)
-			last_name = self.request.query_params.get('last_name', None)
-			email = self.request.query_params.get('email', None)
 			users = self.queryset
-
-			if first_name is not None:
-				users = users.filter(first_name=first_name)
-			if last_name is not None:
-				users = users.filter(last_name=last_name)
-			if email is not None:
-				users = users.filter(email=email)
+			query = setup_query(self.request.query_params, ['first_name', 'last_name', 'email'])
+			if query is not None:
+				users = users.filter(query)
 			return users
 		else:
 			return User.objects.filter(username=user.username)
@@ -160,28 +159,25 @@ class ContractViewSet(viewsets.ModelViewSet):
 		elif user.is_staff:
 			return self.queryset
 		#get all the params from the url
-		class_name = self.request.query_params.get('class_name', None)
 		subject = self.request.query_params.get('subject', None)
-		professor_name = self.request.query_params.get('professor_name', None)
 		tutee_email = self.request.query_params.get('tutee_email', None)
 
 		userprofile = user.userprofiles
+		#query the contracts based on the user loging in
+		#right now only show contract if user is a tutor, does not show
+		#contract when the user is a tutee
 		contracts = userprofile.tutor_contracts.all()
-
 		#if the params is not Null, query it
-		if class_name is not None:
-			contracts = contracts.filter(class_name = class_name)
 		if subject is not None:
+			subject = Subject.objects.get(subject_name=subject)
 			contracts = contracts.filter(subject = subject)
-		if professor_name is not None:
-			contracts = contracts.filter(professor_name = professor_name)
 		if tutee_email is not None:
 			tutee = UserProfile.objects.get(email=tutee_email)
 			contracts = contracts.filter(tutee = tutee)
 
-		#query the contracts based on the user loging in
-		#right now only show contract if user is a tutor, does not show
-		#contract when the user is a tutee
+		query = setup_query(self.request.query_params, ['class_name', 'professor_name'])
+		if query is not None :
+			contracts = contracts.filter(query)
 		return contracts
 
 	#Return all the sessions of the current contract
