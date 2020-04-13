@@ -115,7 +115,7 @@ export default class MyAPI {
 					.then((response) => {
 						return response.json();
 					}).then((data) => {
-						return data.results;
+						return data;
 					});
 	}
 
@@ -256,7 +256,7 @@ export default class MyAPI {
 					'date': data.sessDate,
 					'start': data.sessStart,
 					'end': data.sessEnd,
-					'summary': data.sessSummary
+					'summary': data.sessSummary,
 				})
     });
 	}

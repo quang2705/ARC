@@ -4,11 +4,14 @@ from arc_app.models import Session, ContractMeeting, Subject
 from arc_app.serializers import UserSerializer, UserProfileSerializer, ContractSerializer
 from arc_app.serializers import SessionSerializer, ContractMeetingSerializer, SubjectSerializer
 from rest_framework import permissions
-from rest_framework.decorators import action
+from rest_framework.permissions import AllowAny
+from rest_framework.decorators import action, authentication_classes, permission_classes
 from rest_framework.response import Response
 from rest_framework import viewsets
 from django.db.models import Q
 import datetime
+from rest_framework.test import force_authenticate
+
 
 def create_userprofile(user):
 	try:
@@ -333,7 +336,7 @@ class SessionViewSet(viewsets.ModelViewSet):
 		return Response({'status': 200, 'id': pk})
 
 	#create our own action in handling post request
-	#handling GET request /sessions/
+	#handling POST request /sessions/
 	def create(self, request):
 		#Get all the required parameter for the POST request
 		#contract_id, date, start, end, summary
@@ -411,6 +414,14 @@ class SessionViewSet(viewsets.ModelViewSet):
 				elif operator == 'gt':
 					sessions = sessions.filter(date__gt=date)
 		return sessions;
+
+	@action(methods=['get', 'post'], detail=True)
+	def verify(self, request, pk=None):
+		print("verify session", pk)
+		force_authenticate(request, user=self.user)
+		session = Session.objects.get(pk=pk)
+		session.is_verified = True
+		session.save()
 
 class SubjectViewSet(viewsets.ReadOnlyModelViewSet):
 	queryset = Subject.objects.all()

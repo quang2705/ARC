@@ -30,6 +30,8 @@ export default class TutorSessionItem extends Component {
         <div>Waiting for Tutee: {data.is_waiting}</div>
         <div>Session Verified: {data.is_verified}</div>
         <input type="submit" value="delete" onClick={() => this.props.onDeleteSession(data.session_id)}/>
+        <br/>
+        <input type="submit" value="verify" onClick={() => this.props.onSendVerification(data.session_id)}/>
       </>
     );
 

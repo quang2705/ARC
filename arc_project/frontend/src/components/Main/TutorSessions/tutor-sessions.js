@@ -65,13 +65,48 @@ export default class TutorSessions extends Component {
      });
   }
 
+  onSendVerification = (session_id) => {
+    MyAPI.get_session(session_id, this.context.access_token)
+    .then((data) => {
+        let tutee_email = data.contract.tutee.email;
+        let tutee_firstname = data.contract.tutee.first_name;
+        let date = data.date;
+        let start = data.start;
+        let end = data.end;
+        let link = `http://localhost:8000/api/sessions/${session_id}/verify/`;
+
+        const message =
+            "From: me \r\n" +
+            `To: ${tutee_email} \r\n` +
+            "Subject: Tutoring Session Verification \r\n\r\n" +
+            `Hi ${tutee_firstname} \n
+            Please verify this session on ${date} from ${start} to ${end} with this link\n
+            ${link}`;
+
+        const encodedMessage = btoa(message).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+
+        gapi.client.gmail.users.messages.send({
+            userId: 'me',
+            resource: {
+                // same response with any of these
+                raw: encodedMessage
+            }
+        }).then(function () { console.log("done!")});
+    });
+
+
+
+
+  }
   render() {
 		// Pass the session data from this.state.data to the tutorSessionItem
 		// child, the data can be accessed through this.props.session in
 		// tutorSessionItem
 		let sessions = this.state.data.map((session, index) => {
 			return(
-				<TutorSessionItem key={index} session={session} onDeleteSession={this.onDeleteSession}/>
+				<TutorSessionItem key={index} session={session}
+                onDeleteSession={this.onDeleteSession}
+                onSendVerification={this.onSendVerification}/>
 			);
 		});
     return (

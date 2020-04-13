@@ -31,10 +31,6 @@ class App extends Component {
     this.addTag('meta', { name: 'google-signin-client_id',
                           content: Auth.googleClientId });
 
-    // this.addTag('script', { src: 'https://apis.google.com/js/platform.js' });
-    //
-    // this.addTag('script', { src: 'https://apis.google.com/js/api.js' });
-
     this.setState({ loaded: true });
   }
 
@@ -54,7 +50,6 @@ class App extends Component {
         let email = auth2.currentUser.get().getBasicProfile().getEmail();
         let auth = { access_token: gapi.client.getToken().access_token,
                      email: email };
-
         // Get access token for Django backend server
         MyAPI.get_db_access_token({ token: auth.access_token,
                                     client_id: Auth.dbClientId,
@@ -66,21 +61,19 @@ class App extends Component {
         .then((data) => {
           // Successfully retrieved access token for Django server
           auth = { ...auth, access_token: data.access_token };
+          console.log("db data ", data);
           MyAPI.get_user(null, auth.access_token)
           .then((data) => {
             this.setState({ auth: { ...auth },
                             isAuthenticated: true });
           });
         });
-
         // Load Gmail API
         gapi.client.load('gmail', 'v1', () => {
           this.setState({ emailApiLoaded: true });
         });
       }
     });
-
-
   }
 
   render() {
