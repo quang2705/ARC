@@ -1,0 +1,68 @@
+.container > span {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.filterContainer {
+  display: flex;
+  align-items: center;
+  padding-bottom: 20px;
+  border-bottom: solid 1px #ccc;
+  margin-top: 20px;
+}
+
+.filterContainer > * {
+  margin-left: 10px;
+}
+
+.filterButton {
+
+}
+
+.dateFilter {
+  display: flex;
+}
+
+.dateFilter > div {
+  margin-left: 10px;
+}
+
+.filterContainer > *:first-child, .dateFilter > div:first-child {
+  margin-left: 0;
+}
+
+.table {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.row {
+  /* display: flex;
+  flex-wrap: nowrap; */
+  align-items: center;
+  width: 100%;
+  height: 50px;
+}
+
+.table > tbody > .row:nth-child(2n) {
+  background-color: rgba(200, 3, 43, 0.1);
+}
+
+.table > thead > .row:first-child {
+  background-color: rgba(200, 3, 43, 0.5);
+}
+
+.row td {
+  padding: 0 10px;
+  border: none !important;
+}
+
+.headerItem {
+  font-weight: 700;
+}
+
+.dataCell {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

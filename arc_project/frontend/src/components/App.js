@@ -31,10 +31,6 @@ class App extends Component {
     this.addTag('meta', { name: 'google-signin-client_id',
                           content: Auth.googleClientId });
 
-    // this.addTag('script', { src: 'https://apis.google.com/js/platform.js' });
-    //
-    // this.addTag('script', { src: 'https://apis.google.com/js/api.js' });
-
     this.setState({ loaded: true });
   }
 
@@ -107,12 +103,15 @@ export default App;
 
 // Add FontAwesome icons into FontAwesome's library for ease of use
 import { faTimes, faSortDown, faChevronDown,
-         faPlus } from '@fortawesome/free-solid-svg-icons'
+         faPlus, faUser, faEnvelope, faPhone } from '@fortawesome/free-solid-svg-icons'
 library.add(
   faTimes,
   faSortDown,
   faChevronDown,
-  faPlus
+  faPlus,
+  faUser,
+  faEnvelope,
+  faPhone
 );
 
 const container = document.getElementById("app");

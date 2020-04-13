@@ -1,0 +1,24 @@
+.container {
+  cursor: pointer;
+  position: relative;
+  font-size: 15px;
+  padding: 5px;
+  border-radius: 5px;
+  border: solid 3px #eaeaea;
+  transition: all 0.3s ease-out;
+}
+
+.title {
+  position: absolute;
+  top: -12px;
+  left: 7px;
+  padding: 0 4px;
+}
+
+.input {
+  cursor: pointer;
+  width: 100%;
+  font-family: inherit;
+  font-size: 15px;
+  border: none;
+}

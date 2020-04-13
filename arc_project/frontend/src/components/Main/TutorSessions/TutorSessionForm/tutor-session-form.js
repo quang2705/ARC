@@ -1,9 +1,14 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
+
 import { AuthContext } from '../../../Auth/auth';
+import MyAPI from '../../../Api';
+import MultiSelectInput from '../../../DefaultUI/MultiSelectInput/multi-select-input';
+import DateInput from '../../../DefaultUI/DateInput/date-input';
+import Textarea from '../../../DefaultUI/Textarea/textarea';
+import Button from '../../../DefaultUI/Button/button';
 
 import css from './tutor-session-form.module.css';
-import MyAPI from '../../../Api'
 
 export default class TutorSessionForm extends Component {
   static contextType = AuthContext;
@@ -41,13 +46,13 @@ export default class TutorSessionForm extends Component {
   }
 
   onSubmitHandler = (event) => {
-   event.preventDefault();
-   MyAPI.create_session(this.state, this.context.access_token)
-   .then((response) => {
+    event.preventDefault();
+    MyAPI.create_session(this.state, this.context.access_token)
+    .then((response) => {
      return response.json();
-   }).then((data) => {
+    }).then((data) => {
        this.props.rerenderSession(data);
-   });
+    });
   }
 
   onTextChangeHandler = (event) => {
@@ -58,31 +63,22 @@ export default class TutorSessionForm extends Component {
     let options = this.state.contracts.map((item, index) => {
 			return <option key= {index} value={item.id}> {item.tutee.first_name+' - '+ item.class_name} </option>
 		});
+
     return (
-      <form onSubmit={this.onSubmitHandler}>
-        <label>
-          Tutee: <br/>
-          <select name='contract_id' onChange={this.onTextChangeHandler}>
-            {options}
-          </select>
-        </label><br/>
-        <label>
-          Date: <br/>
-          <input type='date' name='sessDate' value={this.state.sessDate} onChange={this.onTextChangeHandler}/><br/>
-        </label>
-        <label>
-          Start time: <br/>
-          <input type='time' name='sessStart' value={this.state.sessStart} onChange={this.onTextChangeHandler}/><br/>
-        </label>
-        <label>
-          End time: <br/>
-          <input type='time' name='sessEnd' value={this.state.sessEnd} onChange={this.onTextChangeHandler}/><br/>
-        </label>
-        <label>
-          Summary: <br/>
-          <input type='textarea' name='sessSummary' value={this.state.sessSummary} onChange={this.onTextChangeHandler}/><br/>
-        </label>
-        <input type='submit' value='Submit'/>
+      <form className={css.form}>
+        <MultiSelectInput name='contract_id' onChange={this.onTextChangeHandler}
+                          options={options} title='Tutee' classNameContainer={css.tuteeSelect}/>
+        <br/>
+        <DateInput title='Date' name='sessDate' value={this.state.sessDate} onChange={this.onTextChangeHandler}/><br/>
+        <div className={css.timeSelect}>
+          <DateInput type='time' title='Start time' name='sessStart' value={this.state.sessStart} onChange={this.onTextChangeHandler}/>
+          <DateInput type='time' title='End time' name='sessEnd' value={this.state.sessEnd} onChange={this.onTextChangeHandler}/>
+        </div>
+        <br/>
+        <Textarea name='sessSummary' className={css.summaryInput} title='Summary' value={this.state.sessSummary} onChange={this.onTextChangeHandler}/><br/>
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <Button type='submit' text='Add' color='red' value='Submit' onClick={this.onSubmitHandler}/>
+        </div>
       </form>
     );
   }

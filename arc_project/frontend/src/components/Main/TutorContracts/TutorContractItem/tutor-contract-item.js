@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
-import { AuthContext } from '../../../Auth/auth'
+import { AuthContext } from '../../../Auth/auth';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import MyAPI from '../../../Api';
 import Collapsible from '../../../DefaultUI/Collapsible/collapsible';
+import Button from '../../../DefaultUI/Button/button';
 
 import css from './tutor-contract-item.module.css';
 import cssSession from '../../TutorSessions/TutorSessionItem/tutor-session-item.module.css';
@@ -32,6 +34,17 @@ export default class TutorContractItem extends Component {
     }
   }
 
+  getTime = (time) => {
+    let timeRegex = /^\d\d\:\d\d/;
+    time = timeRegex.exec(time)[0];
+    let hour = parseInt(time[0]+time[1]);
+    let min = parseInt(time[3]+time[4]);
+    let period = hour >= 12 ? "pm" : "am";
+    if (hour > 12)
+      hour = hour % 12;
+    return hour+':'+min+' '+period;
+  }
+
   render() {
     let data = {contract_id: this.props.contract.id,
                 class_name: this.props.contract.class_name,
@@ -47,33 +60,51 @@ export default class TutorContractItem extends Component {
                 professor_name: this.props.contract.professor_name};
     let meetings = data.meetings.map((meeting, index) => {
       return (
-        <div key={index}>
-          <div>Location: {meeting.location}</div>
-          <div>Day: {meeting.date}</div>
-          <div>Start time: {meeting.start}</div>
-          <div>End time: {meeting.end}</div>
+        <div key={index} className={css.meeting}>
+          {meeting.location} - {meeting.date} - {this.getTime(meeting.start)} - {this.getTime(meeting.end)}
         </div>
       );
     });
 
     let mainInfo = (
-      <>
-        <div>Class: {data.class_name}</div>
-        <div>Tutor: {data.tutor}</div>
-        <div>Tutee: {data.tutee}</div>
-        <div>Tutor Phone: {data.tutor_phone}</div>
-        <div>Tutee Phone: {data.tutee_phone}</div>
-        <div>Tutor Email: {data.tutor_email}</div>
-        <div>Tutee Email: {data.tutee_email}</div>
-        <input type="submit" value="delete" onClick={() => this.props.onDeleteContract(data.contract_id)}/>
-      </>
+      <div className={css.main}>
+        <div className={css.left}>
+          <div>Tutor</div>
+          <div><span><FontAwesomeIcon icon='user'/></span> {data.tutor}</div>
+          <div style={{ fontStyle: 'italic' }}><span><FontAwesomeIcon icon='envelope'/></span> {data.tutor_email}</div>
+          <div><span><FontAwesomeIcon icon='phone'/></span> {data.tutor_phone}</div>
+        </div>
+
+        <div className={css.right}>
+          <div>Tutee</div>
+          <div>
+            <span><FontAwesomeIcon icon='user'/> </span>
+            {data.tutee}
+            <div style={{ display: 'inline' }}> - Class: {data.class_name}</div>
+          </div>
+          <div style={{ fontStyle: 'italic' }}><span><FontAwesomeIcon icon='envelope'/></span> {data.tutee_email}</div>
+          <div><span><FontAwesomeIcon icon='phone'/></span> {data.tutee_phone}</div>
+        </div>
+      </div>
     );
 
     let details = (
       <>
-        <div>Head Tutor Email: {data.heademail}</div>
-        <div>Professor Name: {data.professor_name}</div>
-        {meetings}
+        <div style={{ fontWeight: 700 }}>Additional info</div>
+        <div style={{ display: 'flex' }}>
+          <div style={{ flex: 1 }}>Head tutor email: {data.heademail !== '' ? data.heademail : 'N/A'}</div>
+          <div style={{ flex: 1 }}>Instructor: {data.professor_name}</div>
+        </div>
+        <div style={{ fontWeight: 700, marginTop: 5 }}>Meeting time</div>
+
+        <div className={css.meetingsContainer}>
+          {meetings}
+        </div>
+
+        <div className={css.deleteWrapper}>
+          <Button  text="Delete contract" reverse={true} color='red' className={css.deleteWrapper}
+                   onClick={() => this.props.onDeleteContract(data.contract_id)}/>
+        </div>
       </>
     );
 

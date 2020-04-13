@@ -66,11 +66,11 @@
   padding: 10px 10px 0 10px;
 }
 
-/* For padding on bottom. Regular way does work with overflow. */
+/* For padding on bottom. Regular way does work not with overflow. */
 .content:after {
   content: "";
   display: block;
-  height: 10px;
+  height: 20px;
   width: 100%;
 }
 

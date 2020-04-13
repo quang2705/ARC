@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import AnimateHeight from 'react-animate-height';
 
 import css from './collapsible.module.css';
 
@@ -30,7 +31,8 @@ export default class Collapsible extends Component {
   render() {
     return (
       <div className={css.container+' '+this.props.className} style={{ ...this.props.style }}>
-        <div className={css.mainContentWrapper} onClick={this.toggleDetails}>
+        <div className={css.mainContentWrapper}>
+          <div className={css.togglerDiv} onClick={this.toggleDetails}/>
           <div className={css.mainContent}>
             {this.props.main}
           </div>
@@ -41,12 +43,11 @@ export default class Collapsible extends Component {
           </div>
         </div>
 
-        <div className={css.detailsWrapper} style={{ maxHeight: this.state.show ? '600px' : '0px',
-                                                     transition: this.state.show ? 'max-height 0.5s ease-in' : 'max-height 0.3s ease-out' }}>
+        <AnimateHeight duration={300} height={this.state.show ? 'auto' : 0} className={css.detailsWrapper}>
           <div className={css.details}>
             {this.props.details}
           </div>
-        </div>
+        </AnimateHeight>
       </div>
     );
   }

@@ -1,0 +1,47 @@
+.main {
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.main > div > div:first-child {
+  font-weight: 700;
+  text-align: center;
+}
+
+.main span {
+  font-size: 12px;
+}
+
+.left, .right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.meetingsContainer {
+  display: flex;
+  border: solid 1px #b8b8b8;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+.meeting {
+  width: 50%;
+  text-align: center;
+  padding: 5px 0;
+  border-bottom: solid 1px #b8b8b8;
+}
+
+.meeting:nth-child(2n) {
+  border-left: solid 1px #b8b8b8;
+}
+
+.meeting:last-child, .meeting:nth-last-child(2) {
+  border-bottom: none;
+}
+
+.deleteWrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}

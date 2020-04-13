@@ -7,6 +7,7 @@ import TutorSessionItem from './TutorSessionItem/tutor-session-item';
 import TutorSessionForm from './TutorSessionForm/tutor-session-form';
 import MyAPI from '../../Api';
 import Modal from '../../DefaultUI/Modal/modal';
+import Button from '../../DefaultUI/Button/button';
 
 import css from './tutor-sessions.module.css';
 
@@ -43,7 +44,7 @@ export default class TutorSessions extends Component {
       this.setState(() => {
           var new_data = this.state.data.slice();
           new_data.push(data);
-          return {data: new_data};
+          return { data: new_data, showModal: false };
       });
   }
 
@@ -77,15 +78,13 @@ export default class TutorSessions extends Component {
     return (
       <div className={css.container}>
         <div className={css.buttonWrapper}>
-          <span className={css.addButton} onClick={this.toggleModal}>
-            <FontAwesomeIcon icon='plus'/>
-            &nbsp; new session
-          </span>
+          <Button onClick={this.toggleModal} color='red'
+                  text={<><FontAwesomeIcon icon='plus'/>&nbsp; new session</>}/>
         </div>
         <Modal isVisible={this.state.showModal} toggle={this.toggleModal}
-               title={'Create a new session'}>
+               title={'Add a new session'}>
 
-          <TutorSessionForm rerenderSession = {this.rerenderSession}/>
+          <TutorSessionForm rerenderSession={this.rerenderSession}/>
         </Modal>
 
         <div className={css.list}>

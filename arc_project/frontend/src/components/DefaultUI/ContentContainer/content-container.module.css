@@ -18,10 +18,15 @@
   padding: 0 20px;
   line-height: 50px;
   font-size: 20px;
+
+  -webkit-box-shadow: inset 10px 0px 10px 0px #ccc;
+  -moz-box-shadow: inset 10px 0px 10px 0px #ccc;
+  box-shadow: inset 10px 0px 10px 0px #ccc;
 }
 
 .selectedTab {
   background-color: white;
+  box-shadow: none;
 }
 
 .content {
