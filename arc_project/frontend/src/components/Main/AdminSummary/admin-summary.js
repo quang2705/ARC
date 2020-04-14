@@ -79,19 +79,22 @@ export default class AdminSummary extends Component {
 
     return (
       <div className={css.container}>
-        <span>Summary filter</span>
-        <form className={css.filterContainer}>
-          <div className={css.dateFilter}>
-            <div>
-              <DateInput title="Start date" name='start_date' onChange={this.onTextChangeHandler}/>
+        <form className={css.filterForm}>
+          <div className={css.filterContainer}>
+            <div className={css.dateFilter}>
+              <div>
+                <DateInput title="Start date" name='start_date' onChange={this.onTextChangeHandler}/>
+              </div>
+
+              <div>
+                <DateInput title="End date" name='end_date' onChange={this.onTextChangeHandler} />
+              </div>
             </div>
 
-            <div>
-              <DateInput title="End date" name='end_date' onChange={this.onTextChangeHandler} />
+            <div className={css.filterButtonWrapper}>
+              <Button className={css.filterButton} color='red' text='Apply filter' type='submit' onClick={this.createSessions}/>
             </div>
           </div>
-
-          <Button className={css.filterButton} color='red' text='Apply' type='submit' onClick={this.createSessions}/>
         </form>
 
         <table className={css.table}>

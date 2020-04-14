@@ -36,18 +36,22 @@ export default class Collapsible extends Component {
           <div className={css.mainContent}>
             {this.props.main}
           </div>
+          {this.props.details && !this.props.hideIcon &&
           <div className={css.expandIcon}>
             <div style={{ transform: this.state.show ? 'rotate(-180deg)' : 'rotate(0deg)' }}>
               <FontAwesomeIcon icon='chevron-down'/>
             </div>
           </div>
+          }
         </div>
 
+        {this.props.details &&
         <AnimateHeight duration={300} height={this.state.show ? 'auto' : 0} className={css.detailsWrapper}>
           <div className={css.details}>
             {this.props.details}
           </div>
         </AnimateHeight>
+        }
       </div>
     );
   }

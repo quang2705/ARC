@@ -3,20 +3,22 @@
   font-size: 15px;
 }
 
-.filterContainer {
+.filterForm {
   display: flex;
-  align-items: center;
-  padding-bottom: 20px;
+  justify-content: flex-end;
+  padding-bottom: 10px;
   border-bottom: solid 1px #ccc;
-  margin-top: 20px;
+  margin-top: 10px;
 }
 
 .filterContainer > * {
-  margin-left: 10px;
+  /* margin-left: 10px; */
 }
 
-.filterButton {
-
+.filterButtonWrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
 }
 
 .dateFilter {
@@ -33,7 +35,7 @@
 
 .table {
   width: 100%;
-  margin-top: 20px;
+  margin-top: 10px;
 }
 
 .row {

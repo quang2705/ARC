@@ -4,8 +4,8 @@
 }
 
 .main > div > div:first-child {
-  font-weight: 700;
-  text-align: center;
+  /* font-weight: 700;
+  text-align: center; */
 }
 
 .main span {

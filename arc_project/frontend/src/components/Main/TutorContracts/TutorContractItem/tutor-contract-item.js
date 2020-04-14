@@ -45,6 +45,10 @@ export default class TutorContractItem extends Component {
     return hour+':'+min+' '+period;
   }
 
+  formatString = (s) => {
+   return typeof(s) === typeof('') && s.trim() ? s : 'N/A';
+  }
+
   render() {
     let data = {contract_id: this.props.contract.id,
                 class_name: this.props.contract.class_name,
@@ -69,21 +73,19 @@ export default class TutorContractItem extends Component {
     let mainInfo = (
       <div className={css.main}>
         <div className={css.left}>
-          <div>Tutor</div>
           <div><span><FontAwesomeIcon icon='user'/></span> {data.tutor}</div>
           <div style={{ fontStyle: 'italic' }}><span><FontAwesomeIcon icon='envelope'/></span> {data.tutor_email}</div>
-          <div><span><FontAwesomeIcon icon='phone'/></span> {data.tutor_phone}</div>
+          <div><span><FontAwesomeIcon icon='phone'/></span> {this.formatString(data.tutor_phone)}</div>
         </div>
 
         <div className={css.right}>
-          <div>Tutee</div>
           <div>
             <span><FontAwesomeIcon icon='user'/> </span>
             {data.tutee}
             <div style={{ display: 'inline' }}> - Class: {data.class_name}</div>
           </div>
           <div style={{ fontStyle: 'italic' }}><span><FontAwesomeIcon icon='envelope'/></span> {data.tutee_email}</div>
-          <div><span><FontAwesomeIcon icon='phone'/></span> {data.tutee_phone}</div>
+          <div><span><FontAwesomeIcon icon='phone'/></span> {this.formatString(data.tutee_phone)}</div>
         </div>
       </div>
     );
@@ -92,7 +94,7 @@ export default class TutorContractItem extends Component {
       <>
         <div style={{ fontWeight: 700 }}>Additional info</div>
         <div style={{ display: 'flex' }}>
-          <div style={{ flex: 1 }}>Head tutor email: {data.heademail !== '' ? data.heademail : 'N/A'}</div>
+          <div style={{ flex: 1 }}>Head tutor email: {this.formatString(data.heademail)}</div>
           <div style={{ flex: 1 }}>Instructor: {data.professor_name}</div>
         </div>
         <div style={{ fontWeight: 700, marginTop: 5 }}>Meeting time</div>
