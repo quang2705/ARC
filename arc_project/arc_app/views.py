@@ -26,7 +26,6 @@ def create_userprofile(user):
 		userprofile.save()
 		user.userprofiles = userprofile
 
-#/userprofiles/
 class UserProfileViewSet(viewsets.ModelViewSet):
 	#This viewset automatically provides 'list', 'create', 'retrieve',
 	#'update', and 'destroy' actions
@@ -101,7 +100,6 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 
 		return Response(SessionSerializer(sessions, many=True, context={'request': request}).data)
 
-#/users/
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
 	#This viewset automatically provide 'list' and 'detail' action
 	queryset = User.objects.all()
@@ -139,12 +137,10 @@ class ContractViewSet(viewsets.ModelViewSet):
 	serializer_class = ContractSerializer
 	permission_classes = [permissions.IsAuthenticated]
 
-	#Return the id of the destroyed contract
 	def destroy(self, request, pk=None):
 		super().destroy(request, pk)
 		return Response({'status': 200, 'id': pk})
 
-	#Handling POST request for contract
 	def create(self, request):
 		try:
 			tutor_email = request.data['tutor_email']
@@ -220,7 +216,7 @@ class ContractViewSet(viewsets.ModelViewSet):
 		return contracts
 
 	#Return all the sessions of the current contract
-	#/contracts/get_sessions/
+	#/contracts/get_sesions/
 	@action(methods=['get'], detail=True)
 	def get_sessions(self, request, pk=None):
 		#get the contract and the sessions that belong to this contract
@@ -242,7 +238,6 @@ class ContractViewSet(viewsets.ModelViewSet):
 		return Response(contract_sessions_serializer.data)
 
 	#Return all the contracts meeting of the current contract
-	#/contracts/get_contractmeetings/
 	@action(methods=['get'], detail=True)
 	def get_contractmeetings(self, request, pk=None):
 		#get the contract and the contract meetings belong to this contract
@@ -420,8 +415,6 @@ class SessionViewSet(viewsets.ModelViewSet):
 					sessions = sessions.filter(date__gt=date)
 		return sessions;
 
-	#triggered when tutee click on the link that verify the session.
-	#TODO: need to by pass access_token of the database
 	@action(methods=['get', 'post'], detail=True)
 	def verify(self, request, pk=None):
 		print("verify session", pk)
@@ -430,7 +423,6 @@ class SessionViewSet(viewsets.ModelViewSet):
 		session.is_verified = True
 		session.save()
 
-#/subjects/
 class SubjectViewSet(viewsets.ReadOnlyModelViewSet):
 	queryset = Subject.objects.all()
 	serializer_class = SubjectSerializer
