@@ -104,12 +104,15 @@ export default App;
 
 // Add FontAwesome icons into FontAwesome's library for ease of use
 import { faTimes, faSortDown, faChevronDown,
-         faPlus } from '@fortawesome/free-solid-svg-icons'
+         faPlus, faUser, faEnvelope, faPhone } from '@fortawesome/free-solid-svg-icons'
 library.add(
   faTimes,
   faSortDown,
   faChevronDown,
-  faPlus
+  faPlus,
+  faUser,
+  faEnvelope,
+  faPhone
 );
 
 const container = document.getElementById("app");

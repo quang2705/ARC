@@ -6,3 +6,60 @@
 .container:first-child {
   margin-top: 0;
 }
+
+.main {
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.main > div {
+  flex: 1;
+}
+
+.left {
+  display: flex;
+  flex-direction: column;
+}
+
+.right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.verified {
+  background-color: #93db3b;
+}
+
+.unverified {
+  background-color: #ccc;
+}
+
+.statusBar {
+  display: flex;
+  margin-top: 10px;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  padding: 3px 10px !important;
+  border-radius: 5px;
+  margin-left: 5px;
+}
+
+.status:first-child {
+  margin-left: 0;
+}
+
+.deleteWrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.deleteButton {
+  padding: 5px 10px !important;
+}

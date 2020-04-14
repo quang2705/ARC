@@ -1,0 +1,16 @@
+.form {
+  margin-top: 10px;
+}
+
+.summaryInput {
+  resize: vertical;
+}
+
+.timeSelect {
+  display: flex;
+  justify-content: space-between;
+}
+
+.timeSelect > * {
+  width: 45%;
+}

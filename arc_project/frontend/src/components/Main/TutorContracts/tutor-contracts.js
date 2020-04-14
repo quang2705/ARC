@@ -7,6 +7,8 @@ import Modal from '../../DefaultUI/Modal/modal';
 import TutorContractForm from './TutorContractForm/tutor-contract-form';
 import TutorContractItem from './TutorContractItem/tutor-contract-item';
 import MyAPI from '../../Api';
+import Button from '../../DefaultUI/Button/button';
+import Collapsible from '../../DefaultUI/Collapsible/collapsible';
 
 import css from './tutor-contracts.module.css';
 import cssSession from '../TutorSessions/tutor-sessions.module.css';
@@ -78,13 +80,19 @@ export default class TutorContracts extends Component {
 			);
 		});
 
+    let header = (
+      <div className={css.header}>
+        <div>Tutor</div>
+        <div>Tutee</div>
+      </div>
+    );
+
     return (
       <div className={css.container}>
         <div className={cssSession.buttonWrapper}>
-          <span className={cssSession.addButton} onClick={this.toggleModal}>
-            <FontAwesomeIcon icon='plus'/>
-            &nbsp; new contract
-          </span>
+          <Button onClick={this.toggleModal} color='red'
+                  text={<><FontAwesomeIcon icon='plus'/>&nbsp; new contract</>}/>
+
         </div>
         <Modal isVisible={this.state.showModal} toggle={this.toggleModal}
                title={'Create new contract'}>
@@ -95,6 +103,7 @@ export default class TutorContracts extends Component {
         </Modal>
 
         <div className={cssSession.list}>
+          <Collapsible main={header} hideIcon={true}/>
   			  {contracts}
         </div>
       </div>

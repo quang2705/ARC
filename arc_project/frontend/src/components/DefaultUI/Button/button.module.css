@@ -1,0 +1,16 @@
+.button {
+  cursor: pointer;
+  font-weight: 500;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 3px 3px 10px 0px rgba(237,234,237,1);
+}
+
+.button:active {
+  filter: brightness(60%) !important;
+}
+
+.button:hover {
+  filter: brightness(80%);
+}
