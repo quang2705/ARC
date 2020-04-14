@@ -4,6 +4,7 @@ from arc_app.models import Session, ContractMeeting, Subject
 from arc_app.serializers import UserSerializer, UserProfileSerializer, ContractSerializer
 from arc_app.serializers import SessionSerializer, ContractMeetingSerializer, SubjectSerializer
 from rest_framework import permissions
+from arc_app.permissions import IsTutorOrIsAdminReadOnly
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import action, authentication_classes, permission_classes
 from rest_framework.response import Response
@@ -68,7 +69,6 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 		if not user.is_authenticated:
 			return []
 		elif user.userprofiles.is_admin:
-			is_tutor = self.request.query_params.get('is_tutor', None)
 			userprofiles = UserProfile.objects.all()
 			query = setup_query(self.request.query_params, ['first_name', 'last_name', 'email', 'is_tutor'])
 			if query is not None:
@@ -143,7 +143,7 @@ class ContractViewSet(viewsets.ModelViewSet):
 	#'update', and 'destroy' actions
 	queryset = Contract.objects.all()
 	serializer_class = ContractSerializer
-	permission_classes = [permissions.IsAuthenticated]
+	permission_classes = [permissions.IsAuthenticated, IsTutorOrIsAdminReadOnly]
 
 	def destroy(self, request, pk=None):
 		super().destroy(request, pk)
@@ -259,7 +259,7 @@ class ContractViewSet(viewsets.ModelViewSet):
 class ContractMeetingViewSet(viewsets.ModelViewSet):
 	queryset = ContractMeeting.objects.all()
 	serializer_class = ContractMeetingSerializer
-	permission_classes = [permissions.IsAuthenticated]
+	permission_classes = [permissions.IsAuthenticated, IsTutorOrIsAdminReadOnly]
 
 	def create(self, request):
 		#Get all the required parameters for the POST request
@@ -307,7 +307,7 @@ class ContractMeetingViewSet(viewsets.ModelViewSet):
 class SessionViewSet(viewsets.ModelViewSet):
 	queryset = Session.objects.all()
 	serializer_class = SessionSerializer
-	permission_classes = [permissions.IsAuthenticated]
+	permission_classes = [permissions.IsAuthenticated, IsTutorOrIsAdminReadOnly]
 
 	def destroy(self, request, pk=None):
 		super().destroy(request, pk)

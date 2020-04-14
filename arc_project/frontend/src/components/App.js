@@ -44,15 +44,6 @@ class App extends Component {
   }
 
   onLoginSuccess = (res) => {
-<<<<<<< HEAD
-    gapi.load('client:auth2', () => {
-      const auth2 = gapi.auth2.init();
-      if (auth2.isSignedIn.get()) {
-        let email = auth2.currentUser.get().getBasicProfile().getEmail();
-        let auth = { access_token: gapi.client.getToken().access_token,
-                     email: email };
-        // Get access token for Django backend server
-=======
       console.log(res)
     gapi.load('client:auth2',() => {
       const auth2 = gapi.auth2.init();
@@ -64,7 +55,6 @@ class App extends Component {
         // this.setState({ auth: { ...auth,
         //                         isAuthenticated: true} });
         console.log("access_token ", access_token)
->>>>>>> 87fa832c0f1f55d9effc556e3bd047e613949d89
         MyAPI.get_db_access_token({ token: auth.access_token,
                                     client_id: Auth.dbClientId,
                                     grant_type: 'convert_token',
