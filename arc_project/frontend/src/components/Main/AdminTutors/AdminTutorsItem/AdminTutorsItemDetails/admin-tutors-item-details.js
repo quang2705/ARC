@@ -1,20 +1,19 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { AuthContext } from '../../../Auth/auth'
+import { AuthContext } from '../../../../Auth/auth'
 
-import Modal from '../../../DefaultUI/Modal/modal';
-import MyAPI from '../../../Api';
-import Collapsible from '../../../DefaultUI/Collapsible/collapsible';
-import AdminTutorsItemDetails from './AdminTutorsItemDetails/admin-tutors-item-details';
+import Modal from '../../../../DefaultUI/Modal/modal';
+import AdminTutorContractItem from './AdminTutorContractItem/admin-tutor-contract-item';
+import MyAPI from '../../../../Api';
+import Collapsible from '../../../../DefaultUI/Collapsible/collapsible';
 
-
-import css from './admin-tutors-item.module.css';
-import cssSession from '../../TutorSessions/TutorSessionItem/tutor-session-item.module.css';
+import css from './admin-tutors-item-details.module.css';
+import cssSession from '../../../TutorSessions/TutorSessionItem/tutor-session-item.module.css';
 
 //Component should be passed key, which is index of this user,
 //and the tutor profile from the API
-export default class AdminTutorsItem extends Component {
+export default class AdminTutorsItemDetails extends Component {
   static contextType = AuthContext;
   constructor(props) {
     super(props);
@@ -50,40 +49,36 @@ export default class AdminTutorsItem extends Component {
     });
   }
 
+  toggleModal = () => {
+    this.setState((prevState) => {
+      return { ...prevState, showModal: !prevState.showModal };
+    });
+  }
+
   render() {
     var tutor_id = this.state.tutor_id;
     var tutor_first_name = this.state.tutor_first_name;
     var tutor_last_name = this.state.tutor_last_name;
     var tutor_email = this.state.tutor_email;
     var tutor_phone = this.state.tutor_phone;
-    var tutor = {}
-    let mainInfo = (
-      <>
-      <tr key={tutor_id}>
-         <td>{tutor_first_name}</td>
-         <td>{tutor_last_name}</td>
-         <td>{tutor_email}</td>
-         <td>{tutor_phone}</td>
-         <td>
-         <div className={cssSession.buttonWrapper}>
-           <span className={cssSession.addButton} onClick={this.toggleModal}>
-              View Details
-           </span>
-         </div>
-         <Modal isVisible={this.state.showModal} toggle={this.toggleModal} title={'View Details'}>
-           <AuthContext.Consumer>
-               {value => <AdminTutorsItemDetails auth={value} key={this.index} tutor={this.state}/>}
-
-           </AuthContext.Consumer>
-         </Modal>
-         </td>
-      </tr>
-      </>
-    );
-
+		// Pass the contract data from this.state.data to the AdminTutorContractItem
+		// child, the data can be accessed through this.props.contract in
+		// AdminTutorContractItem
+    let contracts = this.state.data.map((contract, index) => {
+			return(
+				<AdminTutorContractItem key={index} contract={contract}/>
+			);
+		});
 
     return (
-      mainInfo
+      <div>
+      Name: {tutor_first_name}
+      Email: {tutor_last_name}
+      Phone: {tutor_phone}
+        <div className={cssSession.list}>
+          {contracts}
+        </div>
+      </div>
     );
   }
 }

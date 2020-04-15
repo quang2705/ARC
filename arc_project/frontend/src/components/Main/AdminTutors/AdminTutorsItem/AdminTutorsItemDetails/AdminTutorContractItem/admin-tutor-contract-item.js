@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
-import { AuthContext } from '../../../../Auth/auth'
+import { AuthContext } from '../../../../../Auth/auth'
 
-import MyAPI from '../../../../Api';
-import Collapsible from '../../../../DefaultUI/Collapsible/collapsible';
+import MyAPI from '../../../../../Api';
+import Collapsible from '../../../../../DefaultUI/Collapsible/collapsible';
 
 import css from './admin-tutor-contract-item.module.css';
-import cssSession from '../../../TutorSessions/TutorSessionItem/tutor-session-item.module.css';
+import cssSession from '../../../../TutorSessions/TutorSessionItem/tutor-session-item.module.css';
 
 export default class AdminTutorContractItem extends Component {
   static contextType = AuthContext;
