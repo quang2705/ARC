@@ -15,6 +15,6 @@ router.register(r'subjects', views.SubjectViewSet)
 
 urlpatterns = [
     path(r'api/', include(router.urls)),
-    path(r'sessions/verify/', views.verify, name='verify'),
+    path(r'verify/sessions/', views.verify, name='verify'),
     path(r'encode/', views.encode, name='encode')
 ]

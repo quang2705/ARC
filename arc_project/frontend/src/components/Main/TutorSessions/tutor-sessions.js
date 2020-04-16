@@ -69,18 +69,16 @@ export default class TutorSessions extends Component {
   onSendVerification = (session_id) => {
     MyAPI.get_session(session_id, this.context.access_token)
     .then((data) => {
-        console.log(data);
         let tutee_email = data.contract.tutee.email;
         let tutee_firstname = data.contract.tutee.first_name;
         let date = data.date;
         let start = data.start;
         let end = data.end;
 
-        MyAPI.get_encrypted_string({'encode_string': session_id})
+        MyAPI.get_encrypted_string({'encode_string': session_id}, this.context.access_token)
         .then((data) =>{
-            console.log(data);
             let encrypted_string = data.encrypted_string;
-            let link = `${window.location.href}sessions/verify/?secret=${encrypted_string}`;
+            let link = `${window.location.href}verify/sessions/?secret=${encrypted_string}`;
             const message =
                 "From: me \r\n" +
                 `To: ${tutee_email} \r\n` +

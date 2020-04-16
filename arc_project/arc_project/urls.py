@@ -22,6 +22,5 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),
     path('', include('arc_app.urls')),
     path('', include('frontend.urls')),
-    # path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     path('auth/', include('rest_framework_social_oauth2.urls')),
 ]

@@ -1,70 +1,20 @@
+#Django class
 from django.contrib.auth.models import User
-from arc_app.models import UserProfile, Contract
-from arc_app.models import Session, ContractMeeting, Subject
+from django.db.models import Q
+from django.http import JsonResponse
+
+#custom Database, Serializer Permission and Utilities class
+from arc_app.models import UserProfile, Contract, Session, ContractMeeting, Subject
 from arc_app.serializers import UserSerializer, UserProfileSerializer, ContractSerializer
 from arc_app.serializers import SessionSerializer, ContractMeetingSerializer, SubjectSerializer
-from rest_framework import permissions
 from arc_app.permissions import IsTutorOrIsAdminReadOnly
-from rest_framework.permissions import AllowAny
-from rest_framework.decorators import action, authentication_classes, permission_classes
+from arc_app.utils import create_userprofile, check_for_key, setup_query, encode_val, decode_val
+#Rest framework class
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.decorators import action, authentication_classes, permission_classes, api_view
 from rest_framework.response import Response
 from rest_framework import viewsets
-from django.db.models import Q
-import datetime
-from django.http import JsonResponse
-import requests
-from django.core.signing import TimestampSigner
-from Crypto.Cipher import AES
-import base64
 
-
-def encrypt_val(clear_text):
-    enc_secret = AES.new(MASTER_KEY[:32])
-    tag_string = (str(clear_text) +
-                  (AES.block_size -
-                   len(str(clear_text)) % AES.block_size) * "\0")
-    cipher_text = base64.b64encode(enc_secret.encrypt(tag_string))
-
-    return cipher_text
-def create_userprofile(user):
-	try:
-		userprofile = user.userprofiles
-	except:
-		userprofile = UserProfile(user=user,
-								first_name=user.first_name,
-								last_name=user.last_name,
-								email=user.email,
-								is_tutor=True,
-								is_tutee=False)
-		userprofile.save()
-		user.userprofiles = userprofile
-
-#check to see if there is a required parameters for creating
-#a database object
-def check_for_key(request_data, key_list):
-	for key in key_list:
-		try:
-			val = request_data[key]
-		except KeyError:
-			return Response('You dont have the params `{0}`'.format(key))
-
-#This function return a Q objects that represents the exact filtering query
-#of the query parameters
-def setup_query(request_params, key_list):
-	query = None
-	for key in key_list:
-		val = request_params.get(key, None)
-		if (val != None):
-			if val == 'true':
-				val = 'True'
-			if val == 'false':
-				val = 'False'
-			q_object = Q(**{"%s__exact" % key : val})
-			if (query):
-				query = query & q_object
-			else:
-				query = q_object
-	return query
 
 class UserProfileViewSet(viewsets.ModelViewSet):
 	#This viewset automatically provides 'list', 'create', 'retrieve',
@@ -73,7 +23,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 	serializer_class = UserProfileSerializer
 	#Basic permission, allows  all permission if authenticated otherwise
 	#user can only have 'read' operation
-	permission_classes = [permissions.IsAuthenticated]
+	permission_classes = [IsAuthenticated]
 
 	def get_queryset(self):
 		user = self.request.user
@@ -131,7 +81,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 	#This viewset automatically provide 'list' and 'detail' action
 	queryset = User.objects.all()
 	serializer_class = UserSerializer
-	permission_classes = [permissions.IsAuthenticated]
+	permission_classes = [IsAuthenticated]
 
 	def get_queryset(self):
 		user = self.request.user
@@ -155,7 +105,7 @@ class ContractViewSet(viewsets.ModelViewSet):
 	#'update', and 'destroy' actions
 	queryset = Contract.objects.all()
 	serializer_class = ContractSerializer
-	permission_classes = [permissions.IsAuthenticated, IsTutorOrIsAdminReadOnly]
+	permission_classes = [IsAuthenticated, IsTutorOrIsAdminReadOnly]
 
 	def destroy(self, request, pk=None):
 		super().destroy(request, pk)
@@ -271,7 +221,7 @@ class ContractViewSet(viewsets.ModelViewSet):
 class ContractMeetingViewSet(viewsets.ModelViewSet):
 	queryset = ContractMeeting.objects.all()
 	serializer_class = ContractMeetingSerializer
-	permission_classes = [permissions.IsAuthenticated, IsTutorOrIsAdminReadOnly]
+	permission_classes = [IsAuthenticated, IsTutorOrIsAdminReadOnly]
 
 	def create(self, request):
 		#Get all the required parameters for the POST request
@@ -319,7 +269,7 @@ class ContractMeetingViewSet(viewsets.ModelViewSet):
 class SessionViewSet(viewsets.ModelViewSet):
 	queryset = Session.objects.all()
 	serializer_class = SessionSerializer
-	permission_classes = [permissions.IsAuthenticated, IsTutorOrIsAdminReadOnly]
+	permission_classes = [IsAuthenticated, IsTutorOrIsAdminReadOnly]
 
 	def destroy(self, request, pk=None):
 		super().destroy(request, pk)
@@ -399,7 +349,7 @@ class SessionViewSet(viewsets.ModelViewSet):
 class SubjectViewSet(viewsets.ReadOnlyModelViewSet):
 	queryset = Subject.objects.all()
 	serializer_class = SubjectSerializer
-	permission_classes = [permissions.IsAuthenticated]
+	permission_classes = [IsAuthenticated]
 
 	def get_queryset(self):
 		user = self.request.user
@@ -408,7 +358,8 @@ class SubjectViewSet(viewsets.ReadOnlyModelViewSet):
 		else:
 			return self.queryset
 
-@permission_classes([permissions.IsAuthenticated])
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def encode (request):
 	MASTER_KEY="Th1s-1is-@-R3lly-L0ng-M@ster_key-used-to-de%code$ stu##"
 	try:
@@ -416,23 +367,17 @@ def encode (request):
 	except:
 		return JsonResponse({"status": 400})
 
-	enc_secret = AES.new(MASTER_KEY[:32])
-	tag_string = (str(my_string) + (AES.block_size - len(str(my_string)) % AES.block_size) * "\0")
-	cipher_text = base64.b64encode(enc_secret.encrypt(tag_string))
+	cipher_text = encode_val(my_string, MASTER_KEY)
 	return JsonResponse({"encrypted_string": cipher_text.decode('utf-8')})
 
 
 def verify(request):
 	try:
 		value = request.GET['secret'].encode('utf-8')
-		print(value)
 	except:
 		return JsonResponse({"status":400})
 	MASTER_KEY="Th1s-1is-@-R3lly-L0ng-M@ster_key-used-to-de%code$ stu##"
-	dec_secret = AES.new(MASTER_KEY[:32])
-	raw_decrypted = dec_secret.decrypt(base64.b64decode(value))
-	pk = int(raw_decrypted.decode().rstrip("\0"))
-	print(pk)
+	pk = int(decode_val(value, MASTER_KEY))
 	session = Session.objects.get(pk=pk)
 	session.is_verified = True
 	session.save()

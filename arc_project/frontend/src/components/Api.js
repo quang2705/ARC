@@ -291,10 +291,12 @@ export default class MyAPI {
 						headers: headers,
 					});
 	}
-	static get_encrypted_string(query_params) {
+	static get_encrypted_string(query_params, access_token) {
 		let headers = new Headers();
 		headers.append('Accept', 'application/json');
 		headers.append('Content-Type', 'application/json');
+		headers.append('Authorization', 'bearer '+access_token);
+		
 		return fetch(this.query(ENCODE_URL, query_params),
 					{headers: headers})
 				.then((response) => {
