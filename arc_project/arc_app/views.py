@@ -11,9 +11,21 @@ from rest_framework.response import Response
 from rest_framework import viewsets
 from django.db.models import Q
 import datetime
-from rest_framework.test import force_authenticate
+from django.http import JsonResponse
+import requests
+from django.core.signing import TimestampSigner
+from Crypto.Cipher import AES
+import base64
 
 
+def encrypt_val(clear_text):
+    enc_secret = AES.new(MASTER_KEY[:32])
+    tag_string = (str(clear_text) +
+                  (AES.block_size -
+                   len(str(clear_text)) % AES.block_size) * "\0")
+    cipher_text = base64.b64encode(enc_secret.encrypt(tag_string))
+
+    return cipher_text
 def create_userprofile(user):
 	try:
 		userprofile = user.userprofiles
@@ -374,13 +386,15 @@ class SessionViewSet(viewsets.ModelViewSet):
 					sessions = sessions.filter(date__gt=date)
 		return sessions;
 
-	@action(methods=['get', 'post'], detail=True)
+	@action(methods=['put'], detail=True)
 	def verify(self, request, pk=None):
-		print("verify session", pk)
-		force_authenticate(request, user=self.user)
-		session = Session.objects.get(pk=pk)
-		session.is_verified = True
-		session.save()
+		try:
+			session = Session.objects.get(pk=pk)
+			session.is_verified = True
+			session.save()
+			return Response({"status": 200})
+		except:
+			return Response({"status": 400})
 
 class SubjectViewSet(viewsets.ReadOnlyModelViewSet):
 	queryset = Subject.objects.all()
@@ -393,3 +407,33 @@ class SubjectViewSet(viewsets.ReadOnlyModelViewSet):
 			return []
 		else:
 			return self.queryset
+
+@permission_classes([permissions.IsAuthenticated])
+def encode (request):
+	MASTER_KEY="Th1s-1is-@-R3lly-L0ng-M@ster_key-used-to-de%code$ stu##"
+	try:
+		my_string = request.GET['encode_string']
+	except:
+		return JsonResponse({"status": 400})
+
+	enc_secret = AES.new(MASTER_KEY[:32])
+	tag_string = (str(my_string) + (AES.block_size - len(str(my_string)) % AES.block_size) * "\0")
+	cipher_text = base64.b64encode(enc_secret.encrypt(tag_string))
+	return JsonResponse({"encrypted_string": cipher_text.decode('utf-8')})
+
+
+def verify(request):
+	try:
+		value = request.GET['secret'].encode('utf-8')
+		print(value)
+	except:
+		return JsonResponse({"status":400})
+	MASTER_KEY="Th1s-1is-@-R3lly-L0ng-M@ster_key-used-to-de%code$ stu##"
+	dec_secret = AES.new(MASTER_KEY[:32])
+	raw_decrypted = dec_secret.decrypt(base64.b64decode(value))
+	pk = int(raw_decrypted.decode().rstrip("\0"))
+	print(pk)
+	session = Session.objects.get(pk=pk)
+	session.is_verified = True
+	session.save()
+	return JsonResponse({"status":200})

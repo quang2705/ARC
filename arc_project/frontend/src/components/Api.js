@@ -7,6 +7,7 @@ const CONTRACT_URL = '/api/contracts/';
 const SESSION_URL = '/api/sessions/';
 const CONTRACT_MEETING_URL = '/api/contractmeetings/';
 const SUBJECT_URL = '/api/subjects/'
+const ENCODE_URL = '/encode/'
 export default class MyAPI {
 
 	static get(url, index) {
@@ -267,7 +268,7 @@ export default class MyAPI {
 		headers.append('Accept', 'application/json');
 		headers.append('Content-Type', 'application/json');
 		headers.append('X-CSRFToken', csrftoken);
-		headers.append('Authorization', 'bearer '+access_token);
+		headers.append('Authorization', 'bearer '+ access_token);
 
 		return fetch(this.get(SESSION_URL, index),
 					{
@@ -289,5 +290,17 @@ export default class MyAPI {
 						method: 'delete',
 						headers: headers,
 					});
+	}
+	static get_encrypted_string(query_params) {
+		let headers = new Headers();
+		headers.append('Accept', 'application/json');
+		headers.append('Content-Type', 'application/json');
+		return fetch(this.query(ENCODE_URL, query_params),
+					{headers: headers})
+				.then((response) => {
+					return response.json();
+				}).then((data) => {
+					return data;
+				})
 	}
 }

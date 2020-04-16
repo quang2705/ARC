@@ -34,19 +34,6 @@ export default class TutorSessionItem extends Component {
              };
 
     let mainInfo = (
-<<<<<<< HEAD
-      <>
-        <div>Tutte Name: {data.tutee_name}</div>
-        <div>Tutee Email: {data.tutee_email}</div>
-        <div>Class: {data.class_name}</div>
-        <div>Date: {data.date}</div>
-        <div>Waiting for Tutee: {data.is_waiting}</div>
-        <div>Session Verified: {data.is_verified}</div>
-        <input type="submit" value="delete" onClick={() => this.props.onDeleteSession(data.session_id)}/>
-        <br/>
-        <input type="submit" value="verify" onClick={() => this.props.onSendVerification(data.session_id)}/>
-      </>
-=======
       <div className={css.main}>
         <div className={css.left}>
           <div style={{ fontWeight: 600 }}>{data.tutee_name}</div>
@@ -57,7 +44,7 @@ export default class TutorSessionItem extends Component {
             <div className={css.verified+' '+css.status}>Verified</div> :
             <div className={css.unverified+' '+css.status}>Unverified</div>
             }
-            {!data.is_verified && <Button text='Send reminder' color='green' className={css.status}/>}
+            {!data.is_verified && <Button text='Send reminder' color='green' className={css.status} onClick={() => this.props.onSendVerification(data.session_id)}/>}
           </div>
         </div>
         <div className={css.right}>
@@ -67,7 +54,6 @@ export default class TutorSessionItem extends Component {
           </span>
         </div>
       </div>
->>>>>>> 1a04221083c1b7a6d78f2a1f200c164dc68c6d78
     );
 
     let details = (

@@ -44,7 +44,6 @@ class App extends Component {
   }
 
   onLoginSuccess = (res) => {
-      console.log(res)
     gapi.load('client:auth2',() => {
       const auth2 = gapi.auth2.init();
       if (auth2.isSignedIn.get()) {
@@ -54,7 +53,6 @@ class App extends Component {
                      email: email };
         // this.setState({ auth: { ...auth,
         //                         isAuthenticated: true} });
-        console.log("access_token ", access_token)
         MyAPI.get_db_access_token({ token: auth.access_token,
                                     client_id: Auth.dbClientId,
                                     grant_type: 'convert_token',

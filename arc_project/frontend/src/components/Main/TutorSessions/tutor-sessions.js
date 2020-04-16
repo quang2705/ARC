@@ -69,30 +69,36 @@ export default class TutorSessions extends Component {
   onSendVerification = (session_id) => {
     MyAPI.get_session(session_id, this.context.access_token)
     .then((data) => {
+        console.log(data);
         let tutee_email = data.contract.tutee.email;
         let tutee_firstname = data.contract.tutee.first_name;
         let date = data.date;
         let start = data.start;
         let end = data.end;
-        let link = `http://localhost:8000/api/sessions/${session_id}/verify/`;
 
-        const message =
-            "From: me \r\n" +
-            `To: ${tutee_email} \r\n` +
-            "Subject: Tutoring Session Verification \r\n\r\n" +
-            `Hi ${tutee_firstname} \n
-            Please verify this session on ${date} from ${start} to ${end} with this link\n
-            ${link}`;
+        MyAPI.get_encrypted_string({'encode_string': session_id})
+        .then((data) =>{
+            console.log(data);
+            let encrypted_string = data.encrypted_string;
+            let link = `${window.location.href}sessions/verify/?secret=${encrypted_string}`;
+            const message =
+                "From: me \r\n" +
+                `To: ${tutee_email} \r\n` +
+                "Subject: Tutoring Session Verification \r\n\r\n" +
+                `Hi ${tutee_firstname} \n
+                Please verify this session on ${date} from ${start} to ${end} with this link\n
+                ${link}`;
 
-        const encodedMessage = btoa(message).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+            const encodedMessage = btoa(message).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 
-        gapi.client.gmail.users.messages.send({
-            userId: 'me',
-            resource: {
-                // same response with any of these
-                raw: encodedMessage
-            }
-        }).then(function () { console.log("done!")});
+            gapi.client.gmail.users.messages.send({
+                userId: 'me',
+                resource: {
+                    // same response with any of these
+                    raw: encodedMessage
+                }
+            }).then(function () { console.log("done!")});
+        });
     });
 
 
