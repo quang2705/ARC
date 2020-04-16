@@ -19,26 +19,30 @@
 }
 
 .meetingsContainer {
+  overflow: hidden;
   display: flex;
+  flex-wrap: wrap;
   border: solid 1px #b8b8b8;
   border-radius: 5px;
   margin-top: 10px;
 }
 
 .meeting {
-  width: 50%;
+  flex: 0 1 50%;
+  /* width: 49%; */
   text-align: center;
   padding: 5px 0;
   border-bottom: solid 1px #b8b8b8;
 }
 
-.meeting:nth-child(2n) {
-  border-left: solid 1px #b8b8b8;
+.meeting:nth-child(2n){
+  background-color: #e0e0e0;
 }
 
 .meeting:last-child, .meeting:nth-last-child(2) {
   border-bottom: none;
 }
+
 
 .deleteWrapper {
   display: flex;

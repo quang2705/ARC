@@ -62,6 +62,7 @@ export default class TutorContractItem extends Component {
                 meetings: this.state.meetings,
                 subject: this.props.contract.subject.subject_name,
                 professor_name: this.props.contract.professor_name};
+
     let meetings = data.meetings.map((meeting, index) => {
       return (
         <div key={index} className={css.meeting}>
@@ -101,6 +102,7 @@ export default class TutorContractItem extends Component {
 
         <div className={css.meetingsContainer}>
           {meetings}
+          {meetings.length % 2 === 1 && <div className={css.meeting}/>}
         </div>
 
         <div className={css.deleteWrapper}>
