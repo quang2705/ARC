@@ -16,6 +16,8 @@ export default class TutorSessionItem extends Component {
     let period = hour >= 12 ? "pm" : "am";
     if (hour > 12)
       hour = hour % 12;
+    if (min < 10)
+        min = time[3]+time[4];
     return hour+':'+min+' '+period;
   }
 
@@ -44,7 +46,7 @@ export default class TutorSessionItem extends Component {
             <div className={css.verified+' '+css.status}>Verified</div> :
             <div className={css.unverified+' '+css.status}>Unverified</div>
             }
-            {!data.is_verified && <Button text='Send reminder' color='green' className={css.status} onClick={() => this.props.onSendVerification(data.session_id)}/>}
+            {!data.is_verified && !this.props.isAdmin && <Button text='Send reminder' color='green' className={css.status} onClick={() => this.props.onSendVerification(data.session_id)}/>}
           </div>
         </div>
         <div className={css.right}>

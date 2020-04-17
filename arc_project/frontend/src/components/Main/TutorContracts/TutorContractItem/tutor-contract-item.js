@@ -62,6 +62,7 @@ export default class TutorContractItem extends Component {
                 meetings: this.state.meetings,
                 subject: this.props.contract.subject.subject_name,
                 professor_name: this.props.contract.professor_name};
+
     let meetings = data.meetings.map((meeting, index) => {
       return (
         <div key={index} className={css.meeting}>
@@ -72,11 +73,13 @@ export default class TutorContractItem extends Component {
 
     let mainInfo = (
       <div className={css.main}>
+        {!this.props.isAdmin &&
         <div className={css.left}>
           <div><span><FontAwesomeIcon icon='user'/></span> {data.tutor}</div>
           <div style={{ fontStyle: 'italic' }}><span><FontAwesomeIcon icon='envelope'/></span> {data.tutor_email}</div>
           <div><span><FontAwesomeIcon icon='phone'/></span> {this.formatString(data.tutor_phone)}</div>
         </div>
+        }
 
         <div className={css.right}>
           <div>
@@ -101,6 +104,7 @@ export default class TutorContractItem extends Component {
 
         <div className={css.meetingsContainer}>
           {meetings}
+          {meetings.length % 2 === 1 && <div className={css.meeting}/>}
         </div>
 
         <div className={css.deleteWrapper}>

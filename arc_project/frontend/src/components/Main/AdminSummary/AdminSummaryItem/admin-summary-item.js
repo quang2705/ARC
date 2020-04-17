@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
+
 import { AuthContext } from '../../../Auth/auth';
+import MyAPI from '../../../Api';
 
 import css from '../admin-summary.module.css';
 
-import MyAPI from '../../../Api';
 
 export default class AdminSummaryItem extends Component {
   static contextType = AuthContext;
@@ -27,7 +28,8 @@ export default class AdminSummaryItem extends Component {
       });
       hours = hours % 24;
       minutes = minutes % 60;
-      return [hours, minutes].join(':');
+      minutes = minutes / 60;
+      return [hours, minutes.toFixed(2).substr(2)].join('.');
   }
 
   get_verified_session = (sessions) => {
@@ -57,8 +59,7 @@ export default class AdminSummaryItem extends Component {
       let data = [tutor_first_name, tutor_last_name, tutor_email, total_verified_hours, total_hours];
       let row = data.map((item, index) => {
         return (
-          <td key={index} title={item}
-               style={{ flex: this.props.flex[index] }} className={css.dataCell}>
+          <td key={index} title={item} className={css.dataCell}>
             {item}
           </td>
         );
