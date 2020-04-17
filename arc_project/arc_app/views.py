@@ -23,6 +23,15 @@ def create_userprofile(user):
 		userprofile.save()
 		user.userprofiles = userprofile
 
+#check to see if there is a required parameters for creating
+#a database object
+def check_for_key(request_data, key_list):
+	for key in key_list:
+		try:
+			val = request_data[key]
+		except KeyError:
+			return Response('You dont have the params `{0}`'.format(key))
+
 class UserProfileViewSet(viewsets.ModelViewSet):
 	#This viewset automatically provides 'list', 'create', 'retrieve',
 	#'update', and 'destroy' actions
@@ -97,6 +106,17 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 
 		return Response(SessionSerializer(sessions, many=True, context={'request': request}).data)
 
+	@action(methods=['get'], detail=True)
+	def get_contracts(self, request, pk=None):
+		userprofile = UserProfile.objects.get(pk=pk)
+		#if the user is staff return nothing
+		if (userprofile.is_tutor == False and userprofile.is_tutee == False):
+			return Response({"Staff does not have contracts"})
+		else:
+			#get the contracts of this tuktor
+			contracts = userprofile.tutor_contracts.all()
+		return Response(ContractSerializer(contracts, many=True, context={'request': request}).data)
+
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
 	#This viewset automatically provide 'list' and 'detail' action
 	queryset = User.objects.all()
@@ -139,41 +159,33 @@ class ContractViewSet(viewsets.ModelViewSet):
 		return Response({'status': 200, 'id': pk})
 
 	def create(self, request):
-		try:
-			tutor_email = request.data['tutor_email']
-			tutee_first_name = request.data['tutee_first_name']
-			tutee_last_name = request.data['tutee_last_name']
-			tutee_email = request.data['tutee_email']
-			tutee_phone = request.data['tutee_phone']
-			tutee_dnumber = request.data['tutee_dnumber']
-			class_name = request.data['class_name']
-			professor_name = request.data['professor_name']
-			subject = request.data['subject']
-		except:
-			return Response("missing parameter")
+		key_list = ['tutor_email', 'tutee_first_name', 'tutee_last_name', 'tutee_email', \
+					'tutee_phone', 'tutee_dnumber', 'class_name', 'professor_name', 'subject']
+		check_for_key(request.data, key_list)
 
 		try:
-			tutor = UserProfile.objects.get(email=tutor_email)
+			tutor = UserProfile.objects.get(email=request.data['tutor_email'])
 			#TODO: check to see if the tutor is the user sending
 			#the request and if he is a tutor
 			try:
-				tutee = UserProfile.objects.get(email=tutee_email)
+				tutee = UserProfile.objects.get(email=request.data['tutee_email'])
 			except:
 				#incase there is not tutee with this name in the database
-				tutee = UserProfile(first_name=tutee_first_name,
-									last_name=tutee_last_name,
-									email=tutee_email,
-									phone=tutee_phone,
-									d_number=tutee_dnumber,
+				tutee = UserProfile(first_name=request.data['tutee_first_name'],
+									last_name=request.data['tutee_last_name'],
+									email=request.data['tutee_email'],
+									phone=request.data['tutee_phone'],
+									d_number=request.data['tutee_dnumber'],
 									is_tutee=True)
 				tutee.save()
 		except Exception as e:
 			print(e)
 			return Response("Your information about tutor or tutee is not correct, check the parameter again")
-		subject = Subject.objects.get(subject_name=subject)
+		subject = Subject.objects.get(subject_name=request.data['subject'])
 		contract = Contract(tutor=tutor, tutee=tutee,
-							class_name=class_name, subject=subject,
-							professor_name=professor_name)
+							class_name=request.data['class_name'],
+							subject=subject,
+							professor_name=request.data['professor_name'])
 		contract.save()
 		contract_serializer = ContractSerializer(contract, many=False, context={'request':request})
 		return Response(contract_serializer.data)
@@ -234,7 +246,7 @@ class ContractViewSet(viewsets.ModelViewSet):
 
 		return Response(contract_sessions_serializer.data)
 
-	#Return all the contracts meeting of the current contract
+	#Return all the contracts meetings of the current contract
 	@action(methods=['get'], detail=True)
 	def get_contractmeetings(self, request, pk=None):
 		#get the contract and the contract meetings belong to this contract
@@ -264,39 +276,20 @@ class ContractMeetingViewSet(viewsets.ModelViewSet):
 	def create(self, request):
 		#Get all the required parameters for the POST request
 		#contract_id, date, start, end, location
-		try:
-			contract_id = request.data['contract_id']
-		except:
-			return Response('You dont have the params `contract_id`')
-		try:
-			week_day = request.data['week_day']
-		except:
-			return Response('You dont have the params `date`')
-		try:
-			start = request.data['start']
-		except:
-			return Response('You dont have the params `start`')
-		try:
-			end = request.data['end']
-		except:
-			return Response('You dont have the params `end`')
-		try:
-			location = request.data['location']
-		except:
-			return Response('You dont have the params `location`')
-
+		key_list = ['contract_id', 'week_day', 'start', 'end', 'location']
+		check_for_key(request.data, key_list)
 		#get the contract that this meeting is associated to
 		try:
-			contract = Contract.objects.get(pk=contract_id)
+			contract = Contract.objects.get(pk=request.data['contract_id'])
 		except:
-			return Reponse('You dont have contract with this id')
+			return Response('You dont have contract with this id')
 
 		#create a new contract and save to the database
 		contract_meeting = ContractMeeting(contract=contract,
-											date=week_day,
-											start=start,
-											end=end,
-											location=location)
+											date=request.data['week_day'],
+											start=request.data['start'],
+											end=request.data['end'],
+											location=request.data['location'])
 		contract_meeting.save()
 		return Response(ContractMeetingSerializer(contract_meeting, context={'request': request}).data)
 
@@ -337,39 +330,20 @@ class SessionViewSet(viewsets.ModelViewSet):
 	def create(self, request):
 		#Get all the required parameter for the POST request
 		#contract_id, date, start, end, summary
-		try:
-			contract_id = request.data['contract_id']
-		except KeyError:
-			return Response('You dont have the params `contract_id`')
-		try:
-			date = request.data['date']
-		except KeyError:
-			return Response('You dont have the params `date`')
-		try:
-			start = request.data['start']
-		except KeyError:
-			return Response('You dont have the params `start`')
-		try:
-			end = request.data['end']
-		except KeyError:
-			return Response('You dont have the params `end`')
-		try:
-			summary = request.data['summary']
-		except KeyError:
-			return Response('You dont have the params `summary`')
-
+		key_list = ['contract_id', 'date', 'start', 'end', 'summary']
+		check_for_key(request.data, key_list)
 		#get the contract that this session is associated to
 		try:
-			contract = Contract.objects.get(pk=contract_id)
+			contract = Contract.objects.get(pk=request.data['contract_id'])
 		except:
 			return Response("you dont have a contract with this id")
 
 		#create and save the session into the database
 		session = Session(contract=contract,
-						date=date,
-						start=start,
-						end=end,
-						summary=summary)
+						date=request.data['date'],
+						start=request.data['start'],
+						end=request.data['end'],
+						summary=request.data['summary'])
 		session.save()
 		return Response(SessionSerializer(session, context={'request': request}).data)
 

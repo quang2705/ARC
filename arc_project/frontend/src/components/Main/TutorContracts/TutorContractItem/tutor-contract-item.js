@@ -73,11 +73,13 @@ export default class TutorContractItem extends Component {
 
     let mainInfo = (
       <div className={css.main}>
+        {!this.props.isAdmin &&
         <div className={css.left}>
           <div><span><FontAwesomeIcon icon='user'/></span> {data.tutor}</div>
           <div style={{ fontStyle: 'italic' }}><span><FontAwesomeIcon icon='envelope'/></span> {data.tutor_email}</div>
           <div><span><FontAwesomeIcon icon='phone'/></span> {this.formatString(data.tutor_phone)}</div>
         </div>
+        }
 
         <div className={css.right}>
           <div>

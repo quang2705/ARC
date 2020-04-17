@@ -6,13 +6,14 @@ import ContentContainer from '../DefaultUI/ContentContainer/content-container';
 import TutorContracts from './TutorContracts/tutor-contracts';
 import TutorSessions from './TutorSessions/tutor-sessions';
 import AdminSummary from './AdminSummary/admin-summary';
+import AdminTutors from './AdminTutors/admin-tutors';
 import css from './main.module.css';
 
 export default class Main extends Component {
   constructor(props) {
     super(props);
     this.state = { currentTab: 0 };
-    this.tabs = ['Session', 'Contracts', 'Summary'];
+    this.tabs = ['Session', 'Contracts', 'Summary', 'Tutors'];
   }
 
   onTabChange = (index) => {
@@ -29,6 +30,7 @@ export default class Main extends Component {
             {this.state.currentTab === 0 && <TutorSessions/>}
             {this.state.currentTab === 1 && <TutorContracts/>}
             {this.state.currentTab === 2 && <AdminSummary/>}
+            {this.state.currentTab === 3 && <AdminTutors/>}
 
           </ContentContainer>
         </div>

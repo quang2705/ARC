@@ -44,7 +44,7 @@ export default class TutorSessionItem extends Component {
             <div className={css.verified+' '+css.status}>Verified</div> :
             <div className={css.unverified+' '+css.status}>Unverified</div>
             }
-            {!data.is_verified && <Button text='Send reminder' color='green' className={css.status}/>}
+            {!data.is_verified && !this.props.isAdmin && <Button text='Send reminder' color='green' className={css.status}/>}
           </div>
         </div>
         <div className={css.right}>
