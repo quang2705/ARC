@@ -1,9 +1,9 @@
 from arc_app.models import UserProfile
+from django.db.models import Q
 
 from rest_framework.response import Response
 
 #python class
-from Crypto.Cipher import AES
 import base64
 
 #create a user profile for user if user doesn't have any user profile

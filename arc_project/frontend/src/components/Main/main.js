@@ -7,13 +7,18 @@ import TutorContracts from './TutorContracts/tutor-contracts';
 import TutorSessions from './TutorSessions/tutor-sessions';
 import AdminSummary from './AdminSummary/admin-summary';
 import AdminTutors from './AdminTutors/admin-tutors';
+
 import css from './main.module.css';
 
 export default class Main extends Component {
   constructor(props) {
     super(props);
     this.state = { currentTab: 0 };
-    this.tabs = ['Session', 'Contracts', 'Summary', 'Tutors'];
+
+    if (this.props.auth.isAdmin)
+      this.tabs = ['Summary', 'Tutors'];
+    else
+      this.tabs = ['Session', 'Contracts'];
   }
 
   onTabChange = (index) => {
@@ -27,10 +32,11 @@ export default class Main extends Component {
         <div className={css.contentWrapper}>
           <ContentContainer tabs={this.tabs} onTabChangeCallback={this.onTabChange}
                             className={css.contentContainer} classNameContent={css.content}>
-            {this.state.currentTab === 0 && <TutorSessions/>}
-            {this.state.currentTab === 1 && <TutorContracts/>}
-            {this.state.currentTab === 2 && <AdminSummary/>}
-            {this.state.currentTab === 3 && <AdminTutors/>}
+            {!this.props.auth.isAdmin && this.state.currentTab === 0 && <TutorSessions/>}
+            {!this.props.auth.isAdmin && this.state.currentTab === 1 && <TutorContracts/>}
+
+            {this.props.auth.isAdmin && this.state.currentTab === 0 && <AdminSummary/>}
+            {this.props.auth.isAdmin && this.state.currentTab === 1 && <AdminTutors/>}
 
           </ContentContainer>
         </div>

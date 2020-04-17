@@ -63,9 +63,9 @@ class App extends Component {
           // Successfully retrieved access token for Django server
           auth = { ...auth, access_token: data.access_token };
           console.log("db data ", data);
-          MyAPI.get_user(null, auth.access_token)
+          MyAPI.get_current_user(auth.access_token)
           .then((data) => {
-            this.setState({ auth: { ...auth },
+            this.setState({ auth: { ...auth, isAdmin: data.userprofiles.is_admin },
                             isAuthenticated: true });
           });
         });
@@ -80,7 +80,7 @@ class App extends Component {
   render() {
     const mainComponent = (
       <AuthContext.Provider value={this.state.auth}>
-        <Main/>
+        <Main auth={this.state.auth}/>
       </AuthContext.Provider>
     );
 

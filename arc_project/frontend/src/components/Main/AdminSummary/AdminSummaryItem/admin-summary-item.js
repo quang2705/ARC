@@ -16,9 +16,10 @@ export default class AdminSummaryItem extends Component {
   total_hours = (sessions) => {
       var hours = 0;
       var minutes = 0;
-      if (sessions == undefined) {
-          return [0,0].join(':');
+      if (sessions == undefined || sessions.length === 0) {
+          return [0,'00'].join('.');
       }
+
       sessions.map((session, index) => {
           var start = new Date(session.date + " " + session.start);
           var end = new Date(session.date + " " + session.end);

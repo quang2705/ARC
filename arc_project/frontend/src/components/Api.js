@@ -88,6 +88,19 @@ export default class MyAPI {
 					});;
 	}
 
+	static get_current_user(access_token) {
+		let headers = new Headers();
+		headers.append('Authorization', 'bearer '+access_token);
+			return fetch(USER_URL+'get_current/',
+							{ headers: headers })
+					.then((response) => {
+						return response.json();
+					}).then((data) => {
+						console.log(data);
+						return data;
+					});;
+	}
+
 	static get_contract(index, access_token) {
 		let headers = new Headers();
 		headers.append('Authorization', 'bearer '+access_token);
@@ -303,7 +316,7 @@ export default class MyAPI {
 		headers.append('Accept', 'application/json');
 		headers.append('Content-Type', 'application/json');
 		headers.append('Authorization', 'bearer '+access_token);
-		
+
 		return fetch(this.query(ENCODE_URL, query_params),
 					{headers: headers})
 				.then((response) => {

@@ -110,6 +110,11 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 		else:
 			return User.objects.filter(username=user.username)
 
+	@action(methods=['get'], detail=False)
+	def get_current(self, request):
+		user = self.request.user
+		create_userprofile(user)
+		return Response(UserSerializer(user, context={'request':request}).data)
 #/contracts/
 class ContractViewSet(viewsets.ModelViewSet):
 	#This viewset automatically provides 'list', 'create', 'retrieve',

@@ -29,7 +29,6 @@ export default class AdminTutorsItem extends Component {
 			return response.json();
 		})
     .then(data => {
-        console.log(data);
       this.setState({ contracts: data });
     });
 
