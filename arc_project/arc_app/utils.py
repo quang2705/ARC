@@ -48,13 +48,7 @@ def setup_query(request_params, key_list):
 	return query
 
 def encode_val(text, MASTER_KEY):
-    enc_secret = AES.new(MASTER_KEY[:32])
-    tag_string = (str(text) + (AES.block_size - len(str(text)) % AES.block_size) * "\0")
-    cipher_text = base64.b64encode(enc_secret.encrypt(tag_string))
-    return cipher_text
+	return base64.b64encode(text.encode('utf-8')).decode('utf-8')
 
 def decode_val(cipher_text, MASTER_KEY):
-    dec_secret = AES.new(MASTER_KEY[:32])
-    raw_decrypted = dec_secret.decrypt(base64.b64decode(cipher_text))
-    text = raw_decrypted.decode().rstrip("\0")
-    return text
+	return base64.b64decode(cipher_text.encode('utf-8')).decode('utf-8')

@@ -368,12 +368,13 @@ def encode (request):
 		return JsonResponse({"status": 400})
 
 	cipher_text = encode_val(my_string, MASTER_KEY)
-	return JsonResponse({"encrypted_string": cipher_text.decode('utf-8')})
+	return JsonResponse({"encrypted_string": cipher_text})
 
 
 def verify(request):
 	try:
-		value = request.GET['secret'].encode('utf-8')
+		value = request.GET['secret']
+		print(value)
 	except:
 		return JsonResponse({"status":400})
 	MASTER_KEY="Th1s-1is-@-R3lly-L0ng-M@ster_key-used-to-de%code$ stu##"
