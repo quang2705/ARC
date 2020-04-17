@@ -82,6 +82,17 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 			sessions = [session for contract in contracts for session in contract.sessions.all()]
 		return Response(SessionSerializer(sessions, many=True, context={'request': request}).data)
 
+	@action(methods=['get'], detail=True)
+	def get_contracts(self, request, pk=None):
+		userprofile = UserProfile.objects.get(pk=pk)
+		#if the user is staff return nothing
+		if (userprofile.is_tutor == False and userprofile.is_tutee == False):
+			return Response({"Staff does not have contracts"})
+		else:
+			#get the contracts of this tuktor
+			contracts = userprofile.tutor_contracts.all()
+		return Response(ContractSerializer(contracts, many=True, context={'request': request}).data)
+
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
 	#This viewset automatically provide 'list' and 'detail' action
 	queryset = User.objects.all()

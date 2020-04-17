@@ -96,6 +96,13 @@ export default class MyAPI {
 					{ headers: headers });
 	}
 
+	static get_user_contract(user_id, access_token){
+		let headers = new Headers();
+		headers.append('Authorization', 'bearer '+ access_token);
+		return fetch(this.get(USERPROFILE_URL, user_id) +'get_contracts/',
+					{ headers: headers });
+	}
+
 	static get_contractmeeting(index, access_token) {
 		let headers = new Headers();
 		headers.append('Accept', 'application/json');

@@ -1,3 +1,6 @@
+// This comment tricks Eslint into recognizing gapi as a global variable
+/* global gapi */
+
 import React, { Component } from 'react';
 import { render } from 'react-dom';
 

@@ -1,50 +1,71 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
+
+import MyAPI from '../../Api';
+import AdminTutorsItem from './AdminTutorsItem/admin-tutors-item';
+import AdminTutorsDetails from './admin-tutors-details';
 import { AuthContext } from '../../Auth/auth';
 
 import css from './admin-tutors.module.css';
 
-import MyAPI from '../../Api';
-import AdminTutorsItem from './AdminTutorsItem/admin-tutors-item';
 
 export default class AdminTutors extends Component {
-    static contextType = AuthContext;
-    constructor(props){
-        super(props);
-        this.state = {
-            data : [],
-        }
+  static contextType = AuthContext;
+  constructor(props){
+    super(props);
+    this.state = {
+        data : [],
+        currentTutor: null,
+        currentData: null,
     }
-    componentDidMount(){
-        MyAPI.get_userprofile(null, {'is_tutor': true}, this.context.access_token)
-        .then((response) => {
-            return response.json();
-        }).then((data) => {
-            return this.setState(() => {
-                return {data: data.results};
-            });
+
+    this.tutors = {};
+  }
+
+  componentDidMount(){
+      MyAPI.get_userprofile(null, {'is_tutor': true}, this.context.access_token)
+      .then((response) => {
+        return response.json();
+      }).then((data) => {
+        // Initialize `this.tutors` with key=user_id
+        data.results.forEach(item => {
+          this.tutors[item.id] = {};
+        })
+
+        return this.setState(() => {
+          return {data: data.results};
         });
-    }
-  render() {
-      var userprofiles = this.state.data.map((userprofile, index) => {
-          return (
-              <AdminTutorsItem key={index} tutor={userprofile}/>
-          )
       });
+  }
+
+  showDetails = (index, data) => {
+    this.setState({ currentTutor: index,
+                    currentData: data, });
+  }
+
+  hideDetails = () => {
+    console.log('click hide hide')
+    this.setState({ currentTutor: null });
+  }
+
+  render() {
+    var userprofiles = this.state.data.map((userprofile, index) => {
+        return (
+            <AdminTutorsItem key={index} index={index} tutor={userprofile}
+                             showDetails={this.showDetails}/>
+        )
+    });
+
+    if (this.state.currentTutor)
+      document.body.style.overflow = 'hidden';
+    else
+      document.body.style.overflow = 'auto';
+
     return (
-      <div>
-        <table id ='admin_tutors'>
-            <tbody>
-                <tr>
-                    <th key={0}>{" Tutor First Name "}</th>
-                    <th key={1}>{" Tutor Last Name "}</th>
-                    <th key={2}>{" Tutor Email "}</th>
-                    <th key={3}>{" Tutor Phone "}</th>
-                    <th key={4}>{" See Details "}</th>
-                </tr>
-                {userprofiles}
-            </tbody>
-        </table>
+      <div className={css.container}>
+          {userprofiles}
+          {this.state.currentTutor &&
+          <AdminTutorsDetails tutor={this.state.data[this.state.currentTutor]} data={this.state.currentData} hideDetails={this.hideDetails}/>}
       </div>
     );
   }
