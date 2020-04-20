@@ -2,4 +2,4 @@ django
 gunicorn
 django-heroku
 djangorestframework
-django-rest-framework-social-oauth2
+whitenoise
