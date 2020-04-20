@@ -1,1 +1,1 @@
-web: gunicorn djangoheroku.wsgi
+web: gunicorn arc_project.wsgi
