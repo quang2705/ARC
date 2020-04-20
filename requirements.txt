@@ -2,4 +2,4 @@ django
 gunicorn
 django-heroku
 djangorestframework
-whitenoise
+whitenoise==3.3.1

@@ -3,9 +3,13 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "heroku-prebuild": "cd frontend/ && npm install && npm build && cd .."
     "dev": "webpack --mode development ./src/index.js --output ./static/frontend/main.js --config webpack.config.js",
     "build": "webpack --mode production ./src/index.js --output ./static/frontend/main.js --config webpack.config.js"
   },
+  "cacheDirectories": [
+    "frontend/node_modules"
+    ],
   "keywords": [],
   "author": "",
   "license": "MIT",
