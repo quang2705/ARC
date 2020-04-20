@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'frontend',
     'oauth2_provider',
     'social_django',
-    'rest_framework_social_oauth2',
+    'rest_framework_social_oauth2',s
+    'whitenoise.runserver_nostatic'
 ]
 
 MIDDLEWARE = [
