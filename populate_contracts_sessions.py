@@ -6,6 +6,21 @@ django.setup()
 
 from arc_app.models import UserProfile, Contract, Session, ContractMeeting, Subject
 import datetime
+def create_subject():
+	print("Creating subject...")
+	subject_name_list = ['Astronomy', 'Biology', 'Chemistry', 'Communication',\
+						'Computer Science', 'Data Analytics', 'Economics', \
+						'French', 'German', 'Global Commerce', 'Health Education and Sport Studies', \
+						'Japanese', 'Music', 'Philosophy', 'Physics', 'Psychology', \
+						'Queer Studies', 'Spanish']
+
+	for subject_name in subject_name_list:
+		try:
+			subject = Subject.objects.get(subject_name=subject_name)
+		except:
+			subject = Subject(subject_name=subject_name)
+			subject.save()
+			print("Create a Subject name : ", subject_name)
 
 def create_contract(userprofile):
 	print("Creating contract for user: ", userprofile.email)
@@ -65,6 +80,7 @@ def create_session(userprofile):
 def main():
 	user_email = input("Type your Denison email here: ")
 	print(user_email)
+	create_subject()
 	userprofile = UserProfile.objects.get(email = user_email)
 	userprofile.is_tutor = True
 	create_contract(userprofile)
