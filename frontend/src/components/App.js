@@ -32,7 +32,6 @@ class App extends Component {
                           content: Auth.googleClientId });
 
     this.setState({ loaded: true });
-    console.log(Auth.dbClientId)
   }
 
   addTag = (tag, meta) => {
@@ -63,7 +62,6 @@ class App extends Component {
         .then((data) => {
           // Successfully retrieved access token for Django server
           auth = { ...auth, access_token: data.access_token };
-          console.log("db data ", data);
           MyAPI.get_current_user(auth.access_token)
           .then((data) => {
             this.setState({ auth: { ...auth, isAdmin: data.userprofiles.is_admin },

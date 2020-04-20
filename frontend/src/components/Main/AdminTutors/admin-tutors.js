@@ -37,7 +37,6 @@ export default class AdminTutors extends Component {
   }
 
   hideDetails = () => {
-    console.log('click hide hide')
     this.setState({ currentTutor: null });
   }
 

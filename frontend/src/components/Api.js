@@ -96,7 +96,6 @@ export default class MyAPI {
 					.then((response) => {
 						return response.json();
 					}).then((data) => {
-						console.log(data);
 						return data;
 					});;
 	}

@@ -74,7 +74,6 @@ export default class TutorContractForm extends Component {
     }
 
     removeMeeting = (index) => {
-      console.log('removing',index);
       this.setState(prevState => {
         let meets = prevState.meetings;
         meets.splice(index, 1);
