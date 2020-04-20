@@ -46,7 +46,7 @@ At `arc_projects` folder while in command-line, use `python manage.py runserver`
 #### Debugging
 If encounter issues with `django` or `djangorestframework` package not found, use `pip install django` and `pip install djangorestframework` instead.
 ## REST API
-Our team provide a simple but useful api for working with the database, reference and documentation of the API can be found here [API documentation](https://github.com/quang2705/ARC/blob/develop/arc_project/API_documentation.md/)
+Our team provide a simple but useful api for working with the database, reference and documentation of the API can be found here [API documentation](https://github.com/quang2705/ARC/blob/master/API_documentation.md)
 ## Authors
 Meg Jaffy - jaffy_m1@denison.edu
 
