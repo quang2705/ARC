@@ -32,6 +32,7 @@ class App extends Component {
                           content: Auth.googleClientId });
 
     this.setState({ loaded: true });
+    console.log(Auth.dbClientId)
   }
 
   addTag = (tag, meta) => {
