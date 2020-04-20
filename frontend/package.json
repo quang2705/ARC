@@ -31,7 +31,8 @@
     "react-dom": "^16.12.0",
     "react-router-dom": "^5.1.2",
     "style-loader": "^1.1.3",
-    "webpack-cli": "^3.3.11"
+    "webpack-cli": "^3.3.11",
+    "minimist": ">=1.2.3"
   },
   "devDependencies": {
     "webpack": "^4.42.1"
