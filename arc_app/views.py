@@ -2,6 +2,7 @@
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.http import JsonResponse
+from django.shortcuts import render
 
 #custom Database, Serializer Permission and Utilities class
 from arc_app.models import UserProfile, Contract, Session, ContractMeeting, Subject
@@ -88,6 +89,28 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 			contracts = userprofile.tutor_contracts.all()
 		return Response(ContractSerializer(contracts, many=True, context={'request': request}).data)
 
+	@action(methods=['get'], detail=False)
+	def get_current(self, request):
+		user = self.request.user
+		create_userprofile(user)
+		return Response(UserProfileSerializer(user.userprofiles, context={'request':request}).data)
+
+	@action(methods=['get'], detail=False)
+	def current_position(self, request):
+		user = self.request.user
+		create_userprofile(user)
+		print(user.userprofiles)
+		position = []
+		if (user.userprofiles.is_tutee):
+			position.append('tutee')
+		if (user.userprofiles.is_tutor):
+			position.append('tutor')
+		if (user.userprofiles.is_headtutor):
+			position.append('headtutor')
+		if (user.userprofiles.is_admin):
+			position.append('admin')
+		return Response(position)
+
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
 	#This viewset automatically provide 'list' and 'detail' action
 	queryset = User.objects.all()
@@ -110,11 +133,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 		else:
 			return User.objects.filter(username=user.username)
 
-	@action(methods=['get'], detail=False)
-	def get_current(self, request):
-		user = self.request.user
-		create_userprofile(user)
-		return Response(UserSerializer(user, context={'request':request}).data)
+
 #/contracts/
 class ContractViewSet(viewsets.ModelViewSet):
 	#This viewset automatically provides 'list', 'create', 'retrieve',
@@ -392,10 +411,12 @@ def verify(request):
 		value = request.GET['secret']
 		print(value)
 	except:
-		return JsonResponse({"status":400})
+
+		return render(request, 'frontend/tutee_verify.html', context = {"status":400})
 	MASTER_KEY="Th1s-1is-@-R3lly-L0ng-M@ster_key-used-to-de%code$ stu##"
 	pk = int(decode_val(value, MASTER_KEY))
 	session = Session.objects.get(pk=pk)
 	session.is_verified = True
 	session.save()
-	return JsonResponse({"status":200})
+
+	return render(request, 'frontend/tutee_verify.html', context = {"status":200})

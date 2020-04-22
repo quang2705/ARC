@@ -60,12 +60,16 @@ class App extends Component {
            return res.json();
         })
         .then((data) => {
+            console.log("db data", data)
           // Successfully retrieved access token for Django server
           auth = { ...auth, access_token: data.access_token };
-          MyAPI.get_current_user(auth.access_token)
+          MyAPI.get_current_userprofile(auth.access_token)
           .then((data) => {
-            this.setState({ auth: { ...auth, isAdmin: data.userprofiles.is_admin },
-                            isAuthenticated: true });
+              // Only allow registered admin and tutor to login to our system
+              if (data.is_tutor || data.is_admin) {
+                  this.setState({ auth: { ...auth, isAdmin: data.is_admin },
+                                isAuthenticated: true });
+                }
           });
         });
         // Load Gmail API
