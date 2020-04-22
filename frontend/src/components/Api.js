@@ -88,16 +88,31 @@ export default class MyAPI {
 					});;
 	}
 
-	static get_current_user(access_token) {
+	static get_current_userprofile(access_token) {
 		let headers = new Headers();
 		headers.append('Authorization', 'bearer '+access_token);
-			return fetch(USER_URL+'get_current/',
+			return fetch(USERPROFILE_URL+'get_current/',
 							{ headers: headers })
 					.then((response) => {
 						return response.json();
 					}).then((data) => {
 						return data;
 					});;
+	}
+
+	static get_current_position(access_token) {
+		//get position (tutor, tutee, headtutor, admin) of the current user
+		let headers = new Headers();
+		headers.append('Authorization', 'bearer '+access_token);
+			return fetch(USERPROFILE_URL + 'current_position/',
+									{headers: headers})
+					.then((response) => {
+						return response.json();
+					}).then((data) => {
+						// data is a list of position that this user has
+						// data: ['tutor', 'headtutor']
+						return data;
+					})
 	}
 
 	static get_contract(index, access_token) {
