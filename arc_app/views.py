@@ -361,14 +361,8 @@ class SessionViewSet(viewsets.ModelViewSet):
 		for operator in operators:
 			date = self.request.query_params.get('date[{}]'.format(operator), None)
 			if date is not None:
-				if operator == 'lte':
-					sessions = sessions.filter(date__lte=date)
-				elif operator == 'lt':
-					sessions = sessions.filter(date__lt=date)
-				elif operator == 'gte':
-					sessions = sessions.filter(date__gte=date)
-				elif operator == 'gt':
-					sessions = sessions.filter(date__gt=date)
+				sessions = sessions.filter(**{'date__{}'.format(operator):date})
+
 		return sessions;
 
 	@action(methods=['put'], detail=True)
@@ -392,6 +386,28 @@ class SubjectViewSet(viewsets.ReadOnlyModelViewSet):
 			return []
 		else:
 			return self.queryset
+
+	@action(methods=['get'], detail=True)
+	def get_sessions(self, request, pk=None):
+		subject = Subject.objects.get(pk=pk)
+
+		#get all the sessions of this subject
+		query = Q(id = -1)
+		for contract in subject.contracts.all():
+			for session in contract.sessions.all():
+				query |= Q(id = session.id)
+
+		sessions = Session.objects.filter(query)
+
+		#filter date by lte: less than or equal, gte: greater than or equal
+		#lt: less than, gt: greater than
+		operators = ['lte', 'lt', 'gte', 'gt']
+		for operator in operators:
+			date = request.query_params.get('date[{}]'.format(operator), None)
+			if date is not None:
+				sessions = sessions.filter(**{'date__{}'.format(operator):date})
+
+		return Response(SessionSerializer(sessions, many = True, context={'request': request}).data)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
