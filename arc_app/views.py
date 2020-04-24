@@ -40,10 +40,6 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 		else:
 			return UserProfile.objects.filter(user=user)
 
-	def retrieve(self, request, pk=None):
-		contract_id = self.request.query_params.get('contract_id', None)
-		return super().retrieve(request, pk)
-
 	@action(methods=['get'], detail=True)
 	def get_sessions(self, request, pk=None):
 		userprofile = UserProfile.objects.get(pk=pk)
@@ -76,7 +72,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 					elif operator == 'gt':
 						sessions = sessions.filter(date__gt=date)
 
-		return Response(SessionSerializer(sessions, many=True, context={'request': request}).data)
+				return Response(SessionSerializer(sessions, many=True, context={'request': request}).data)
 
 	@action(methods=['get'], detail=True)
 	def get_contracts(self, request, pk=None):
@@ -87,7 +83,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 		else:
 			#get the contracts of this tuktor
 			contracts = userprofile.tutor_contracts.all()
-		return Response(ContractSerializer(contracts, many=True, context={'request': request}).data)
+			return Response(ContractSerializer(contracts, many=True, context={'request': request}).data)
 
 	@action(methods=['get'], detail=False)
 	def get_current(self, request):
@@ -122,7 +118,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 		create_userprofile(user)
 		if not user.is_authenticated:
 			return []
-			elif user.userprofiles.is_admin:
+		elif user.userprofiles.is_admin:
 			#get the params from url and filter it with
 			#the users objects
 			users = self.queryset

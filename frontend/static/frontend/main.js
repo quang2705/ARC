@@ -630,9 +630,10 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var reac
   !*** ./src/components/Auth/auth.js ***!
   \*************************************/
 /*! exports provided: default, AuthContext */
-/***/ (function(module, exports) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-eval("throw new Error(\"Module build failed (from ./node_modules/babel-loader/lib/index.js):\\nError: ENOENT: no such file or directory, open 'C:\\\\Users\\\\minhq\\\\Documents\\\\code\\\\ARC\\\\frontend\\\\src\\\\components\\\\Auth\\\\auth.js'\");\n\n//# sourceURL=webpack:///./src/components/Auth/auth.js?");
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"AuthContext\", function() { return AuthContext; });\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n\nvar config = {\n  googleClientId: '903588499024-e233icds29no0o6h89n01tgvdv7u5dv4.apps.googleusercontent.com',\n  dbClientId: 'arBUsiJTXZCntw6oY0NXNhGUhDPFtjqIIWSQAdfV',\n  scope: 'https://www.googleapis.com/auth/gmail.send'\n};\nvar AuthContext = react__WEBPACK_IMPORTED_MODULE_0___default.a.createContext();\n/* harmony default export */ __webpack_exports__[\"default\"] = (config);\n\n\n//# sourceURL=webpack:///./src/components/Auth/auth.js?");
 
 /***/ }),
 
