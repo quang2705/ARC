@@ -91,7 +91,7 @@ export default class MyAPI {
 	static get_current_userprofile(access_token) {
 		let headers = new Headers();
 		headers.append('Authorization', 'bearer '+access_token);
-			return fetch(USERPROFILE_URL+'get_current/',
+			return fetch(USERPROFILE_URL+'get_current_userprofile/',
 							{ headers: headers })
 					.then((response) => {
 						return response.json();

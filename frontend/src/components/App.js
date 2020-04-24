@@ -66,7 +66,7 @@ class App extends Component {
           MyAPI.get_current_userprofile(auth.access_token)
           .then((data) => {
               // Only allow registered admin and tutor to login to our system
-              if (data.is_tutor || data.is_admin) {
+              if (data.is_tutor || data.is_admin || data.is_headtutor) {
                   this.setState({ auth: { ...auth, isAdmin: data.is_admin },
                                 isAuthenticated: true });
                 }

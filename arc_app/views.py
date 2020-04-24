@@ -40,10 +40,6 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 		else:
 			return UserProfile.objects.filter(user=user)
 
-	def retrieve(self, request, pk=None):
-		contract_id = self.request.query_params.get('contract_id', None)
-		return super().retrieve(request, pk)
-
 	@action(methods=['get'], detail=True)
 	def get_sessions(self, request, pk=None):
 		userprofile = UserProfile.objects.get(pk=pk)
@@ -67,30 +63,24 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 			for operator in operators:
 				date = self.request.query_params.get('date[{}]'.format(operator), None)
 				if date is not None:
-					if operator == 'lte':
-						sessions = sessions.filter(date__lte=date)
-					elif operator == 'lt':
-						sessions = sessions.filter(date__lt=date)
-					elif operator == 'gte':
-						sessions = sessions.filter(date__gte=date)
-					elif operator == 'gt':
-						sessions = sessions.filter(date__gt=date)
+					sessions = sessions.filter(**{'date__{}'.format(operator):date})
 
-		return Response(SessionSerializer(sessions, many=True, context={'request': request}).data)
+			return Response(SessionSerializer(sessions, many=True, context={'request': request}).data)
 
 	@action(methods=['get'], detail=True)
 	def get_contracts(self, request, pk=None):
 		userprofile = UserProfile.objects.get(pk=pk)
+
 		#if the user is staff return nothing
 		if (userprofile.is_tutor == False and userprofile.is_tutee == False):
 			return Response({"Staff does not have contracts"})
 		else:
-			#get the contracts of this tuktor
+			#get the contracts of this tutor
 			contracts = userprofile.tutor_contracts.all()
-		return Response(ContractSerializer(contracts, many=True, context={'request': request}).data)
+			return Response(ContractSerializer(contracts, many=True, context={'request': request}).data)
 
 	@action(methods=['get'], detail=False)
-	def get_current(self, request):
+	def get_current_userprofile(self, request):
 		user = self.request.user
 		create_userprofile(user)
 		return Response(UserProfileSerializer(user.userprofiles, context={'request':request}).data)
@@ -99,7 +89,6 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 	def current_position(self, request):
 		user = self.request.user
 		create_userprofile(user)
-		print(user.userprofiles)
 		position = []
 		if (user.userprofiles.is_tutee):
 			position.append('tutee')
@@ -185,7 +174,7 @@ class ContractViewSet(viewsets.ModelViewSet):
 		create_userprofile(user)
 		if not user.is_authenticated:
 			return []
-		elif user.userprofiles.is_admin:
+		elif user.userprofiles.is_admin or user.userprofiles.is_headtutor:
 			return self.queryset
 		#get all the params from the url
 		subject = self.request.query_params.get('subject', None)
@@ -284,7 +273,7 @@ class ContractMeetingViewSet(viewsets.ModelViewSet):
 		create_userprofile(user)
 		if not user.is_authenticated:
 			return []
-		elif user.userprofiles.is_admin:
+		elif user.userprofiles.is_admin  or user.userprofiles.is_headtutor:
 			return self.queryset
 		#get all contracts that contract meetings is belong to
 		#based on user that is currently log in
@@ -340,7 +329,7 @@ class SessionViewSet(viewsets.ModelViewSet):
 		create_userprofile(user)
 		if not user.is_authenticated:
 			return []
-		elif user.userprofiles.is_admin:
+		elif user.userprofiles.is_admin or user.userprofiles.is_headtutor:
 			return self.queryset
 
 		#get all contracts that sessions is belong to
