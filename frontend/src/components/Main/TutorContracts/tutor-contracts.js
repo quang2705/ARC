@@ -15,12 +15,17 @@ import cssSession from '../TutorSessions/tutor-sessions.module.css';
 
 export default class TutorContracts extends Component {
   static contextType = AuthContext;
+
   constructor(props) {
     super(props);
     this.state = {
-        showModal: false,
-        data: [], };
+      showModal: false,
+      data: [],
+      showEditContract: false,
+      currentEditContract: null
+    };
   }
+
   componentDidMount() {
 		// Get all the contract of this user, then put it
 		// into this.state.data. Check MyAPI class for more
@@ -39,8 +44,8 @@ export default class TutorContracts extends Component {
   }
 
   toggleModal = () => {
-    this.setState((prevState) => {
-      return { ...prevState, showModal: !prevState.showModal };
+    this.setState(prevState => {
+      return { showModal: !prevState.showModal };
     });
   }
 
@@ -70,13 +75,26 @@ export default class TutorContracts extends Component {
      });
   }
 
+  onEditContract = (data) => {
+    this.setState({ currentEditContract: data,
+                    showEditContract: true });
+  }
+
+  toggleEditContract = () => {
+    this.setState(prevState => {
+      return { showEditContract: !prevState.showEditContract };
+    });
+  }
+
   render() {
 		// Pass the contract data from this.state.data to the TutorContractItem
 		// child, the data can be accessed through this.props.contract in
 		// TutorContractItem
 		let contracts = this.state.data.map((contract, index) => {
 			return(
-				<TutorContractItem key={index} contract={contract} onDeleteContract={this.onDeleteContract}/>
+				<TutorContractItem key={index} contract={contract}
+                           onDeleteContract={this.onDeleteContract}
+                           onEditContract={this.onEditContract}/>
 			);
 		});
 
@@ -87,6 +105,11 @@ export default class TutorContracts extends Component {
       </div>
     );
 
+    if (this.state.showModal || this.state.showEditContract)
+      document.body.style.overflow = 'hidden';
+    else 
+      document.body.style.overflow = 'auto';
+
     return (
       <div className={css.container}>
         <div className={cssSession.buttonWrapper}>
@@ -96,10 +119,17 @@ export default class TutorContracts extends Component {
         </div>
         <Modal isVisible={this.state.showModal} toggle={this.toggleModal}
                title={'Create new contract'}>
-
+          {this.state.showModal &&
           <AuthContext.Consumer>
-              {value => <TutorContractForm auth={value} rerenderContract={this.rerenderContract}/>}
-          </AuthContext.Consumer>
+              {value => <TutorContractForm auth={value} rerenderContract={this.rerenderContract} close={this.toggleModal}/>}
+          </AuthContext.Consumer>}
+        </Modal>
+
+        <Modal isVisible={this.state.showEditContract} toggle={this.toggleEditContract} title={'Edit contract'}>
+          {this.state.showEditContract &&
+          <AuthContext.Consumer>
+              {value => <TutorContractForm auth={value} data={this.state.currentEditContract} close={this.toggleEditContract}/>}
+          </AuthContext.Consumer>}
         </Modal>
 
         <div className={cssSession.list}>

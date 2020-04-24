@@ -46,7 +46,27 @@ export default class TutorContractItem extends Component {
   }
 
   formatString = (s) => {
-   return typeof(s) === typeof('') && s.trim() ? s : 'N/A';
+   return typeof(s) === typeof('') && s.trim() !== '' ? s : 'N/A';
+  }
+
+  onEditContract = () => {
+    let meetings = this.state.meetings.map((item, index) => {
+      return { ...item, day: item.date, start: item.start.substr(0,5), end: item.end.substr(0,5) };
+    });
+
+    let data = {contract_id: this.props.contract.id,
+                tutorPhone: this.props.contract.tutor.phone,
+                tuteeFirstName: this.props.contract.tutee.first_name,
+                tuteeLastName: this.props.contract.tutee.last_name,
+                tuteeEmail: this.props.contract.tutee.email,
+                tuteePhone: this.props.contract.tutee.phone,
+                heademail: '',
+                meetings: meetings,
+                subject: this.props.contract.subject.subject_name,
+                class: this.props.contract.class_name,
+                instructor: this.props.contract.professor_name};
+
+    this.props.onEditContract(data);
   }
 
   render() {
@@ -108,8 +128,12 @@ export default class TutorContractItem extends Component {
         </div>
 
         <div className={css.deleteWrapper}>
-          <Button  text="Delete contract" reverse={true} color='red' className={css.deleteWrapper}
-                   onClick={() => this.props.onDeleteContract(data.contract_id)}/>
+          {!this.props.isAdmin &&
+          <Button  text="Delete contract" reverse={true} color='red' className={css.utilButton}
+                   onClick={() => this.props.onDeleteContract(data.contract_id)}/>}
+          {!this.props.isAdmin &&
+          <Button  text="Edit contract" color='red' className={css.utilButton}
+                  onClick={this.onEditContract}/>}
         </div>
       </>
     );

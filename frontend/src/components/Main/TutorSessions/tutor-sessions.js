@@ -18,6 +18,7 @@ export default class TutorSessions extends Component {
     this.state = {
         data: [],
         showModal: false,
+        sending: {},
        };
   }
 
@@ -67,6 +68,12 @@ export default class TutorSessions extends Component {
   }
 
   onSendVerification = (session_id) => {
+    this.setState(prevState => {
+      let newSending = prevState.sending;
+      newSending[session_id] = 'sending';
+      return { sending: newSending };
+    });
+
     MyAPI.get_session(session_id, this.context.access_token)
     .then((data) => {
         let tutee_email = data.contract.tutee.email;
@@ -83,9 +90,8 @@ export default class TutorSessions extends Component {
                 "From: me \r\n" +
                 `To: ${tutee_email} \r\n` +
                 "Subject: Tutoring Session Verification \r\n\r\n" +
-                `Hi ${tutee_firstname} \n
-                Please verify this session on ${date} from ${start} to ${end} with this link\n
-                ${link}`;
+                `Hi ${tutee_firstname},\n`+
+                `Please verify the tutoring session on ${date} from ${start} to ${end} with this link\n ${link}`;
 
             const encodedMessage = btoa(message).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 
@@ -95,7 +101,13 @@ export default class TutorSessions extends Component {
                     // same response with any of these
                     raw: encodedMessage
                 }
-            }).then(function () { console.log("done!")});
+            }).then((data) => {
+              this.setState(prevState => {
+                let newSending = prevState.sending;
+                newSending[session_id] = 'done';
+                return { sending: newSending };
+              });
+            });
         });
     });
 
@@ -110,10 +122,17 @@ export default class TutorSessions extends Component {
 		let sessions = this.state.data.map((session, index) => {
 			return(
 				<TutorSessionItem key={index} session={session}
-                onDeleteSession={this.onDeleteSession}
-                onSendVerification={this.onSendVerification}/>
+                          onDeleteSession={this.onDeleteSession}
+                          onSendVerification={this.onSendVerification}
+                          sendStatus={this.state.sending[session.id]}/>
 			);
 		});
+
+    if (this.state.showModal)
+      document.body.style.overflow = 'hidden';
+    else
+      document.body.style.overflow = 'auto';
+
     return (
       <div className={css.container}>
         <div className={css.buttonWrapper}>
@@ -122,8 +141,8 @@ export default class TutorSessions extends Component {
         </div>
         <Modal isVisible={this.state.showModal} toggle={this.toggleModal}
                title={'Add a new session'}>
-
-          <TutorSessionForm rerenderSession={this.rerenderSession}/>
+          {this.state.showModal &&
+          <TutorSessionForm rerenderSession={this.rerenderSession}/>}
         </Modal>
 
         <div className={css.list}>

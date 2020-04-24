@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import Collapsible from '../../../DefaultUI/Collapsible/collapsible';
 import Button from '../../../DefaultUI/Button/button';
@@ -35,6 +36,8 @@ export default class TutorSessionItem extends Component {
                 summary: this.props.session.summary
              };
 
+    let loadIcon = <span className={css.loadIcon}><FontAwesomeIcon icon='sync-alt'/></span>
+
     let mainInfo = (
       <div className={css.main}>
         <div className={css.left}>
@@ -46,7 +49,9 @@ export default class TutorSessionItem extends Component {
             <div className={css.verified+' '+css.status}>Verified</div> :
             <div className={css.unverified+' '+css.status}>Unverified</div>
             }
-            {!data.is_verified && !this.props.isAdmin && <Button text='Send reminder' color='green' className={css.status} onClick={() => this.props.onSendVerification(data.session_id)}/>}
+            {!data.is_verified && !this.props.isAdmin &&
+            <Button text={this.props.sendStatus !== 'sending' ? 'Send reminder' : loadIcon} color='green' className={css.status} onClick={() => this.props.onSendVerification(data.session_id)}/>}
+            {this.props.sendStatus === 'done' && <div className={css.statusText}>Verification sent!</div>}
           </div>
         </div>
         <div className={css.right}>
@@ -62,8 +67,9 @@ export default class TutorSessionItem extends Component {
       <div className={css.details}>
         <div><span style={{ fontWeight: 700 }}>Summary: </span>{data.summary}</div>
         <div className={css.deleteWrapper}>
+          {!this.props.isAdmin &&
           <Button text='Delete session' color='red' className={css.deleteButton} reverse={true}
-                  onClick={() => this.props.onDeleteSession(data.session_id)}/>
+                  onClick={() => this.props.onDeleteSession(data.session_id)}/>}
         </div>
       </div>
     )

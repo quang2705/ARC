@@ -13,12 +13,18 @@ import css from './main.module.css';
 export default class Main extends Component {
   constructor(props) {
     super(props);
-    this.state = { currentTab: 0 };
 
-    if (this.props.auth.isAdmin)
-      this.tabs = ['Summary', 'Tutors'];
-    else
-      this.tabs = ['Session', 'Contracts'];
+    let roles = this.props.auth.roles;
+    this.tabs = [];
+
+    if (roles.tutor)
+      this.tabs = this.tabs.concat(['My sessions', 'My contracts']);
+    if (roles.headtutor)
+      this.tabs = this.tabs.concat(['Contracts']);
+    if (roles.admin)
+      this.tabs = this.tabs.concat(['Summary', 'Tutors']);
+
+    this.state = { currentTab: this.tabs[0] };
   }
 
   onTabChange = (index) => {
@@ -32,11 +38,11 @@ export default class Main extends Component {
         <div className={css.contentWrapper}>
           <ContentContainer tabs={this.tabs} onTabChangeCallback={this.onTabChange}
                             className={css.contentContainer} classNameContent={css.content}>
-            {!this.props.auth.isAdmin && this.state.currentTab === 0 && <TutorSessions/>}
-            {!this.props.auth.isAdmin && this.state.currentTab === 1 && <TutorContracts/>}
-
-            {this.props.auth.isAdmin && this.state.currentTab === 0 && <AdminSummary/>}
-            {this.props.auth.isAdmin && this.state.currentTab === 1 && <AdminTutors/>}
+            {this.state.currentTab === 'My sessions' && <TutorSessions/>}
+            {this.state.currentTab === 'My contracts' && <TutorContracts/>}
+            {this.state.currentTab === 'Contracts' && <div>for head tutor</div>}
+            {this.state.currentTab === 'Summary' && <AdminSummary/>}
+            {this.state.currentTab === 'Tutors' && <AdminTutors/>}
 
           </ContentContainer>
         </div>
