@@ -15,11 +15,8 @@ export default class ContractMeeting extends Component {
   }
 
   onTextChangeHandler = (event) => {
+    console.log(event.target.value)
     this.props.onChange({ index: this.props.index, name: event.target.name, value: event.target.value});
-  }
-
-  onTimeChangeHandler = (event) => {
-    this.setState({ [event.target.name]: event.target.value });
   }
 
   render() {

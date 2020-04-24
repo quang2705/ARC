@@ -65,11 +65,11 @@ export default class AdminTutorsItem extends Component {
     return (
       <div className={css.container} onClick={() => this.props.showDetails(this.props.index, { contracts: this.state.contracts, sessions: this.state.sessions })}>
         <div className={css.wrapper}>
-          <div className={css.name}>
+          <div className={css.name} title={tutor_first_name+' '+tutor_last_name}>
             {tutor_first_name+' '+tutor_last_name}
           </div>
           <div className={css.phone}>{tutor_phone}</div>
-          <div className={css.email}>{tutor_email}</div>
+          <div className={css.email} title={tutor_email}>{tutor_email}</div>
           <div className={css.info}>
             <div>Total contracts: {this.state.contracts.length}</div>
           </div>

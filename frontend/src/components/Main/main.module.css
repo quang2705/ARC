@@ -1,5 +1,5 @@
 .container {
-
+  min-width: 800px;
 }
 
 .contentWrapper {
@@ -9,8 +9,7 @@
 
 .contentContainer {
   width: 80%;
-  min-width: 1000px;
-  max-width: 1100px;
+  max-width: 800px;
 }
 
 .content {

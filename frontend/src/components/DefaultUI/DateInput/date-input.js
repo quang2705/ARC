@@ -24,7 +24,6 @@ export default class DateInput extends Component {
 
   render() {
     let color = this.props.color ? this.props.color : 'white';
-    let value = this.props.value !== undefined ? { value: this.props.value } : {};
 
     return (
       <div className={css.container} style={{ borderColor: this.state.isFocus ? '#3697ff' : '#eaeaea' }}>
@@ -34,7 +33,8 @@ export default class DateInput extends Component {
                name={this.props.name}
                onChange={this.props.onChange}
                placeholder={this.props.placeholder}
-               {...value}
+               disabled={this.props.disabled}
+               value={this.props.value}
                onFocus={() => this.setState({ isFocus: true })}
                onBlur={() => this.setState({ isFocus: false })}/>
       </div>
