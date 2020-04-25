@@ -38,11 +38,8 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 		else:
 			return UserProfile.objects.filter(user=user)
 
-<<<<<<< HEAD
 	#get sessions only show the sessions that belongs to the contracts that
 	#the user is a tutor of
-=======
->>>>>>> f21c9f4c5941fcdac1364b89fb5224a2e79e75c1
 	@action(methods=['get'], detail=True)
 	def get_sessions(self, request, pk=None):
 		userprofile = UserProfile.objects.get(pk=pk)
@@ -232,7 +229,7 @@ class ContractViewSet(viewsets.ModelViewSet):
 
 		contract.save()
 		contract.tutee.save()
-		
+
 		return Response(ContractSerializer(contract, context={ 'request': request }).data)
 
 	#Return all the sessions of the current contract
