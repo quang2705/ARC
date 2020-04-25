@@ -29,9 +29,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 	def get_queryset(self):
 		user = self.request.user
 		create_userprofile(user)
-		if not user.is_authenticated:
-			return []
-		elif user.userprofiles.is_admin:
+		if user.userprofiles.is_admin:
 			userprofiles = UserProfile.objects.all()
 			query = setup_query(self.request.query_params, ['first_name', 'last_name', 'email', 'is_tutor'])
 			if query is not None:
@@ -108,9 +106,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 	def get_queryset(self):
 		user = self.request.user
 		create_userprofile(user)
-		if not user.is_authenticated:
-			return []
-		elif user.userprofiles.is_admin:
+		if user.userprofiles.is_admin:
 			#get the params from url and filter it with
 			#the users objects
 			users = self.queryset
@@ -173,9 +169,7 @@ class ContractViewSet(viewsets.ModelViewSet):
 		create_userprofile(user)
 		userprofile = user.userprofiles
 
-		if not user.is_authenticated:
-			return []
-		elif userprofile.is_admin:
+		if userprofile.is_admin:
 			contracts = self.queryset
 		elif userprofile.is_tutor or userprofile.is_headtutor:
 			position = self.request.query_params.get('position', None)
@@ -278,9 +272,7 @@ class ContractMeetingViewSet(viewsets.ModelViewSet):
 		user = self.request.user
 		create_userprofile(user)
 		userprofile = user.userprofiles
-		if not user.is_authenticated:
-			return []
-		elif userprofile.is_admin:
+		if userprofile.is_admin:
 			contracts = Contract.objects.all()
 		elif userprofile.is_tutor or userprofile.is_headtutor:
 			position = self.request.query_params.get('position', None)
@@ -340,9 +332,7 @@ class SessionViewSet(viewsets.ModelViewSet):
 		user = self.request.user
 		create_userprofile(user)
 		userprofile = user.userprofiles
-		if not user.is_authenticated:
-			return []
-		elif userprofile.is_admin:
+		if userprofile.is_admin:
 			contracts = Contract.objects.all()
 		elif userprofile.is_tutor or userprofile.is_headtutor:
 			position = self.request.query_params.get('position', None)
@@ -350,7 +340,7 @@ class SessionViewSet(viewsets.ModelViewSet):
 				contracts = userprofile.tutor_contracts.all()
 			elif userprofile.is_headtutor and position == 'headtutor':
 				contracts = Contract.objects.all()
-				
+
 		query = Q(id = -1)
 		for contract in contracts:
 			for session in contract.sessions.all():
@@ -384,10 +374,7 @@ class SubjectViewSet(viewsets.ReadOnlyModelViewSet):
 
 	def get_queryset(self):
 		user = self.request.user
-		if not user.is_authenticated:
-			return []
-		else:
-			return self.queryset
+		return self.queryset
 
 	@action(methods=['get'], detail=True)
 	def get_sessions(self, request, pk=None):
