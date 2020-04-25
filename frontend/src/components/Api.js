@@ -62,7 +62,7 @@ export default class MyAPI {
 					.then((response) => {
 						return response.json();
 					}).then((data) => {
-						return data.results;
+						return data;
 					});
 
 	}
@@ -286,6 +286,75 @@ export default class MyAPI {
 					});
 				}
 		});
+	}
+
+	static update_contract(contract_data, callback, access_token) {
+		var csrftoken = Cookies.get('csrftoken');
+		var headers = new Headers();
+		headers.append('Accept', 'application/json');
+		headers.append('Content-Type', 'application/json');
+		headers.append('X-CSRFToken', csrftoken);
+		headers.append('Authorization', 'bearer '+ access_token);
+
+		let url = this.get(CONTRACT_URL, contract_data.contract_id);
+		return fetch(url, {
+			method: "put",
+			headers: headers,
+			body: JSON.stringify({
+				"tutor_email": contract_data.tutorEmail,
+				"tutee_email": contract_data.tuteeEmail,
+				"tutee_first_name": contract_data.tuteeFirstName,
+				"tutee_last_name": contract_data.tuteeLastName,
+				"tutee_phone": contract_data.tuteePhone,
+				"tutee_dnumber": contract_data.tuteeDnumber,
+				"class_name": contract_data.class,
+				"professor_name": contract_data.instructor,
+				"subject": contract_data.subject,
+				})
+		}).then((response) => {
+			return response.json();
+		}).then((response_data) => {
+			let count = 0;
+			let contract_id = contract_data.contract_id;
+			if (contract_data.meetings.length === 0)
+				callback(response_data);
+			for (var i = 0; i < contract_data.meetings.length; i++) {
+				let contractMeeting = contract_data.meetings[i]
+				fetch(CONTRACT_MEETING_URL,{
+					method: "post",
+					headers: headers,
+					body: JSON.stringify({
+						"contract_id": contract_id,
+						"week_day": contractMeeting['day'],
+						"start": contractMeeting['start'],
+						"end": contractMeeting['end'],
+						"location": contractMeeting['location'],
+					})
+				}).then(response => {
+						return response.json();
+					}).then((data) => {
+						count +=1;
+						if (count == contract_data.meetings.length) {
+							callback(response_data);
+						}
+					});
+				}
+		});
+	}
+
+	static delete_contract_meeting(index, access_token) {
+		var csrftoken = Cookies.get('csrftoken');
+		var headers = new Headers();
+		headers.append('Accept', 'application/json');
+		headers.append('Content-Type', 'application/json');
+		headers.append('X-CSRFToken', csrftoken);
+		headers.append('Authorization', 'bearer '+ access_token);
+
+		return fetch(this.get(CONTRACT_MEETING_URL, index),
+					{
+						method: 'delete',
+						headers: headers,
+					});
 	}
 
 	static create_session(data, access_token) {

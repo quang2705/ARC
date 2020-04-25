@@ -38,8 +38,11 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 		else:
 			return UserProfile.objects.filter(user=user)
 
+<<<<<<< HEAD
 	#get sessions only show the sessions that belongs to the contracts that
 	#the user is a tutor of
+=======
+>>>>>>> f21c9f4c5941fcdac1364b89fb5224a2e79e75c1
 	@action(methods=['get'], detail=True)
 	def get_sessions(self, request, pk=None):
 		userprofile = UserProfile.objects.get(pk=pk)
@@ -210,6 +213,28 @@ class ContractViewSet(viewsets.ModelViewSet):
 			contracts = contracts.filter(query)
 		return contracts
 
+	def update(self, request, pk=None):
+		key_list = ['tutee_first_name', 'tutee_last_name', 'tutee_email', \
+					'tutee_phone', 'tutee_dnumber', 'class_name', 'professor_name', 'subject']
+		check_for_key(request.data, key_list)
+
+		contract = Contract.objects.get(pk=pk);
+		contract.tutee.first_name = request.data['tutee_first_name']
+		contract.tutee.last_name = request.data['tutee_last_name']
+		contract.tutee.email = request.data['tutee_email']
+		contract.tutee.phone = request.data['tutee_phone']
+		contract.tutee.d_number = request.data['tutee_dnumber']
+		contract.class_name = request.data['class_name']
+		contract.professor_name = request.data['professor_name']
+
+		newSubject = Subject.objects.get(subject_name=request.data['subject'])
+		contract.subject = newSubject
+
+		contract.save()
+		contract.tutee.save()
+		
+		return Response(ContractSerializer(contract, context={ 'request': request }).data)
+
 	#Return all the sessions of the current contract
 	#/contracts/<pk>/get_sesions/
 	@action(methods=['get'], detail=True)
@@ -312,6 +337,8 @@ class ContractMeetingViewSet(viewsets.ModelViewSet):
 		if location is not None:
 			query |= Q(location = location)
 		return ContractMeeting.objects.filter(query)
+
+
 
 #/sessions/
 class SessionViewSet(viewsets.ModelViewSet):

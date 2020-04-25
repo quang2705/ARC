@@ -18,7 +18,7 @@ class MiniContractMeetingSerializer(serializers.ModelSerializer):
 class MiniUserProfileSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = UserProfile
-		fields = ('id', 'url', 'email', 'first_name', 'last_name', 'phone')
+		fields = ('id', 'url', 'email', 'first_name', 'last_name', 'phone', 'd_number')
 
 class MiniContractSerializer(serializers.ModelSerializer):
 	tutee = MiniUserProfileSerializer(many=False, read_only=True)

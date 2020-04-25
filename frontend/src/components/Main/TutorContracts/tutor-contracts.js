@@ -24,24 +24,36 @@ export default class TutorContracts extends Component {
       showEditContract: false,
       currentEditContract: null
     };
+
+    this.getMeetingsFuncs = {};
   }
 
   componentDidMount() {
 		// Get all the contract of this user, then put it
 		// into this.state.data. Check MyAPI class for more
 		// functionality
-		MyAPI.get_contract(null, this.context.access_token,
-                            {'position': this.props.position})
+		this.getContracts();
+  }
+
+  getContracts = (contract_id=null) => {
+    MyAPI.get_contract(null, this.context.access_token,
+                        {'position': this.props.position})
 		.then((response) => {
 			//TODO: check for error response here
 			return response.json();
 		})
 		.then((data) => {
-			//set this.state.data
 			this.setState({
 				data: data.results,
-			});
+			}, () => {
+        if (contract_id)
+          this.getMeetingsFuncs[contract_id]();
+      });
 		});
+  }
+
+  getMeetFunc = (id, func) => {
+    this.getMeetingsFuncs[id] = func;
   }
 
   toggleModal = () => {
@@ -63,16 +75,7 @@ export default class TutorContracts extends Component {
       .then((res) => {
          return res.json();
      }).then((data) => {
-         this.setState(() => {
-             var new_data  = this.state.data.slice();
-             for (let i = 0; i < new_data.length; i++){
-                 if (new_data[i].id === Number(data.id)){
-                     new_data.splice(i, 1);
-                     break;
-                 }
-             }
-             return {data:new_data};
-         })
+         this.getContracts();
      });
   }
 
@@ -92,8 +95,10 @@ export default class TutorContracts extends Component {
 		// child, the data can be accessed through this.props.contract in
 		// TutorContractItem
 		let contracts = this.state.data.map((contract, index) => {
-			return(
+			return (
 				<TutorContractItem key={index} contract={contract}
+                           getMeetFunc={this.getMeetFunc}
+                           originalMeetings={contract.contract_meetings}
                            onDeleteContract={this.onDeleteContract}
                            onEditContract={this.onEditContract}
                            position ={this.props.position}/>
@@ -130,7 +135,7 @@ export default class TutorContracts extends Component {
         <Modal isVisible={this.state.showEditContract} toggle={this.toggleEditContract} title={'Edit contract'}>
           {this.state.showEditContract &&
           <AuthContext.Consumer>
-              {value => <TutorContractForm auth={value} data={this.state.currentEditContract} close={this.toggleEditContract}/>}
+              {value => <TutorContractForm auth={value} data={this.state.currentEditContract} close={this.toggleEditContract} refresh={this.getContracts}/>}
           </AuthContext.Consumer>}
         </Modal>
 

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { AuthContext } from '../../Auth/auth'
+import { AuthContext } from '../../Auth/auth';
 
 import TutorSessionItem from './TutorSessionItem/tutor-session-item';
 import TutorSessionForm from './TutorSessionForm/tutor-session-form';
@@ -26,7 +26,11 @@ export default class TutorSessions extends Component {
 		// Get all the session of this user, then put it
 		// into this.state.data. Check MyAPI class for more
 		// functionality
-		MyAPI.get_session(null, this.context.access_token)
+		this.getSessions();
+  }
+
+  getSessions = () => {
+    MyAPI.get_session(null, this.context.access_token)
 		.then((data) => {
 			//set this.state.data
 			this.setState({
@@ -54,16 +58,7 @@ export default class TutorSessions extends Component {
       .then((res) => {
          return res.json();
      }).then((data) => {
-         this.setState(() => {
-             var new_data  = this.state.data.slice();
-             for (let i = 0; i < new_data.length; i++){
-                 if (new_data[i].id === Number(data.id)){
-                     new_data.splice(i, 1);
-                     break;
-                 }
-             }
-             return {data:new_data};
-         })
+         this.getSessions();
      });
   }
 

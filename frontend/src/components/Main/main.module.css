@@ -2,6 +2,48 @@
   min-width: 800px;
 }
 
+.jumbotron {
+  position: relative;
+  background-color: #c8032b;
+  width: 100%;
+  height: 200px;
+}
+
+.inviBackground {
+  position: fixed;
+  z-index: 2;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: none;
+}
+
+.menu {
+  cursor: pointer;
+  overflow: hidden;
+  position: absolute;
+  z-index: 3;
+  top: 10px;
+  right: 20px;
+  border-radius: 5px;
+}
+
+.menu > div {
+  width: 110px;
+  padding: 5px 0;
+  text-align: center;
+}
+
+.menu > div:hover {
+  background-color: #f0f0f0;
+  color: inherit !important;
+}
+
+.menu span {
+  font-size: 12px;
+}
+
 .contentWrapper {
   display: flex;
   justify-content: center;
