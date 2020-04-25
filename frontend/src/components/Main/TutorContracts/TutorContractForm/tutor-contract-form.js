@@ -8,6 +8,7 @@ import MultiSelectInput from '../../../DefaultUI/MultiSelectInput/multi-select-i
 import Input from '../../../DefaultUI/DateInput/date-input';
 import Textarea from '../../../DefaultUI/Textarea/textarea';
 import Button from '../../../DefaultUI/Button/button';
+import Popup from '../../../DefaultUI/Popup/popup';
 
 import css from './tutor-contract-form.module.css';
 
@@ -17,6 +18,7 @@ export default class TutorContractForm extends Component {
   constructor(props) {
 		super(props);
     this.state = {
+      contract_id: this.props.data ? this.props.data.contract_id : null,
       tutorFirstName: '',
       tutorLastName: '',
       tutorEmail: '',
@@ -33,8 +35,8 @@ export default class TutorContractForm extends Component {
       meetings: this.props.data ? this.props.data.meetings : [],
       tutorSig: this.props.data ? true : false,
       tuteeSig: this.props.data ? true : false,
+      error: null,
     }
-
   }
 
   componentDidMount() {
@@ -53,12 +55,75 @@ export default class TutorContractForm extends Component {
     this.props.close();
   }
 
+  validateInputs = () => {
+    let emptyfield = false;
+    let emptyname = null;
+    let textNames = ['Tutor phone', 'Tutee first name', 'Tutee last name', 'Tutee email', 'Tutee phone', 'Tutee D-number', 'Class name', 'Instructor\'s name'];
+    let textFields = ['tutorPhone', 'tuteeFirstName', 'tuteeLastName', 'tuteeEmail', 'tuteePhone', 'tuteeDnumber', 'class', 'instructor'];
+    textFields.forEach((item, index) => {
+      if (typeof this.state[item] !== typeof '' || this.state[item] === '') {
+        emptyfield = true;
+        emptyname = textNames[index];
+      }
+    });
+
+    let meetingText = { location: 'Location', start: 'Start date', end: 'End date' }
+    this.state.meetings.forEach((item, index) => {
+      Object.keys(item).forEach((key) => {
+        if (item[key] === '') {
+          emptyfield = true;
+          emptyname = meetingText[key] + ' in Meeting ' + (index+1);
+        }
+      });
+    });
+
+    let signed = this.state.tutorSig && this.state.tuteeSig;
+
+    let hasMeeting = this.state.meetings.length > 0;
+
+    if (!emptyfield && signed && hasMeeting)
+      return { isValid: true };
+    else if (emptyfield)
+      return { isValid: false, error: 'Missing input', msg: 'Please enter '+emptyname};
+    else if (!signed)
+      return { isValid: false, error: 'E-signature required', msg: 'Missing e-signatures' };
+    else if (!hasMeeting)
+      return { isValid: false, error: 'Missing meeting', msg: 'You must have at least 1 meeting time' };
+  }
+
+  onEditComplete = (data) => {
+    this.props.refresh(this.props.data.contract_id);
+    this.props.close();
+  }
+
   onSubmitHandler = (event) => {
     event.preventDefault();
-    if (!this.props.data)
-      MyAPI.create_contract(this.state, this.callback, this.props.auth.access_token);
-    else
-      this.props.close();
+    let validation = this.validateInputs();
+    if (validation.isValid) {
+      if (!this.props.data)
+        MyAPI.create_contract(this.state, this.callback, this.props.auth.access_token);
+      else {
+        // Editing contract
+        let count = this.props.data.oldMeetings.length;
+        if (count !== 0)
+          this.props.data.oldMeetings.forEach((item, index) => {
+            MyAPI.delete_contract_meeting(item.id, this.context.access_token)
+            .then(response => response)
+            .then(data => {
+              --count;
+              if (count === 0) {
+                MyAPI.update_contract(this.state, this.onEditComplete, this.context.access_token);
+              }
+            })
+          });
+        else {
+          MyAPI.update_contract(this.state, this.onEditComplete, this.context.access_token);
+        }
+      }
+    }
+    else {
+      this.errorMsgSet(validation);
+    }
   }
 
   onTextChangeHandler = (event) => {
@@ -93,6 +158,14 @@ export default class TutorContractForm extends Component {
       meets.splice(index, 1);
       return { meetings: meets };
     });
+  }
+
+  errorMsgClose = () => {
+    this.setState({ error: null });
+  }
+
+  errorMsgSet = (error) => {
+    this.setState({ error: error });
   }
 
   render() {
@@ -153,6 +226,12 @@ export default class TutorContractForm extends Component {
             <Button type='submit' text={this.props.data ? 'Done' : 'Create'} color='red' onClick={this.onSubmitHandler}/>
           </div>
         </form>
+
+        {this.state.error &&
+        <Popup isVisible={!this.state.error.isValid}
+               toggle={this.errorMsgClose}
+               title={this.state.error.error}
+               message={this.state.error.msg}/>}
 			</div>
 		);
 	}

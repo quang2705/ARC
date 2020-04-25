@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import MyAPI from '../../../Api';
 import Collapsible from '../../../DefaultUI/Collapsible/collapsible';
 import Button from '../../../DefaultUI/Button/button';
+import Popup from '../../../DefaultUI/Popup/popup';
 
 import css from './tutor-contract-item.module.css';
 import cssSession from '../../TutorSessions/TutorSessionItem/tutor-session-item.module.css';
@@ -14,10 +15,17 @@ export default class TutorContractItem extends Component {
   static contextType = AuthContext;
   constructor(props){
     super(props);
-    this.state = { meetings: [] };
+    this.state = { meetings: [],
+                   showDeletePopup: false, };
   }
 
-  componentDidMount(){
+  componentDidMount() {
+    this.getMeetings();
+    this.props.getMeetFunc(this.props.contract.id, this.getMeetings);
+  }
+
+  getMeetings = () => {
+    let newMeetings = [];
     for (var i = 0; i < this.props.contract.contract_meetings.length; i++) {
       var index = this.props.contract.contract_meetings[i].id;
       MyAPI.get_contractmeeting(index, this.context.access_token)
@@ -26,8 +34,6 @@ export default class TutorContractItem extends Component {
         return response.json();
       })
       .then((data) => {
-        //set this.state.data
-        var newMeetings = this.state.meetings;
         newMeetings.push(data);
         this.setState({ meetings: newMeetings });
       });
@@ -50,23 +56,35 @@ export default class TutorContractItem extends Component {
   }
 
   onEditContract = () => {
-    let meetings = this.state.meetings.map((item, index) => {
-      return { ...item, day: item.date, start: item.start.substr(0,5), end: item.end.substr(0,5) };
+    if (this.state.meetings.length === this.props.contract.contract_meetings.length) {
+      let meetings = this.state.meetings.map((item, index) => {
+        return { ...item, day: item.date, start: item.start.substr(0,5), end: item.end.substr(0,5) };
+      });
+      if (this.state.meetings.length === 0)
+        meetings = [];
+
+      let data = {contract_id: this.props.contract.id,
+                  tutorPhone: this.props.contract.tutor.phone,
+                  tuteeFirstName: this.props.contract.tutee.first_name,
+                  tuteeLastName: this.props.contract.tutee.last_name,
+                  tuteeEmail: this.props.contract.tutee.email,
+                  tuteePhone: this.props.contract.tutee.phone,
+                  tuteeDnumber: this.props.contract.tutee.d_number,
+                  heademail: '',
+                  meetings: meetings,
+                  oldMeetings: this.props.originalMeetings,
+                  subject: this.props.contract.subject.subject_name,
+                  class: this.props.contract.class_name,
+                  instructor: this.props.contract.professor_name};
+
+      this.props.onEditContract(data);
+    }
+  }
+
+  toggleDeletePopup = () => {
+    this.setState(prevState => {
+      return { showDeletePopup: !prevState.showDeletePopup };
     });
-
-    let data = {contract_id: this.props.contract.id,
-                tutorPhone: this.props.contract.tutor.phone,
-                tuteeFirstName: this.props.contract.tutee.first_name,
-                tuteeLastName: this.props.contract.tutee.last_name,
-                tuteeEmail: this.props.contract.tutee.email,
-                tuteePhone: this.props.contract.tutee.phone,
-                heademail: '',
-                meetings: meetings,
-                subject: this.props.contract.subject.subject_name,
-                class: this.props.contract.class_name,
-                instructor: this.props.contract.professor_name};
-
-    this.props.onEditContract(data);
   }
 
   render() {
@@ -130,11 +148,19 @@ export default class TutorContractItem extends Component {
         <div className={css.deleteWrapper}>
           {!this.props.isAdmin &&
           <Button  text="Delete contract" reverse={true} color='red' className={css.utilButton}
-                   onClick={() => this.props.onDeleteContract(data.contract_id)}/>}
+                   onClick={this.toggleDeletePopup}/>}
           {!this.props.isAdmin &&
           <Button  text="Edit contract" color='red' className={css.utilButton}
                   onClick={this.onEditContract}/>}
         </div>
+
+        {this.state.showDeletePopup &&
+        <Popup isVisible={true}
+               toggle={this.toggleDeletePopup}
+               title='Delete contract'
+               message='This action is permanent and cannot be undone.'
+               yes={() => this.props.onDeleteContract(data.contract_id)}
+               no={this.toggleDeletePopup}/>}
       </>
     );
 

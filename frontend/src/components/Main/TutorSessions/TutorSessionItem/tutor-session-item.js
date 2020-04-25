@@ -4,10 +4,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import Collapsible from '../../../DefaultUI/Collapsible/collapsible';
 import Button from '../../../DefaultUI/Button/button';
+import Popup from '../../../DefaultUI/Popup/popup';
 
 import css from './tutor-session-item.module.css';
 
 export default class TutorSessionItem extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { showDeletePopup: false };
+  }
 
   getTime = (time) => {
     let timeRegex = /^\d\d\:\d\d/;
@@ -20,6 +25,12 @@ export default class TutorSessionItem extends Component {
     if (min < 10)
         min = time[3]+time[4];
     return hour+':'+min+' '+period;
+  }
+
+  toggleDeletePopup = () => {
+    this.setState(prevState => {
+      return { showDeletePopup: !prevState.showDeletePopup };
+    });
   }
 
   render() {
@@ -69,8 +80,16 @@ export default class TutorSessionItem extends Component {
         <div className={css.deleteWrapper}>
           {!this.props.isAdmin &&
           <Button text='Delete session' color='red' className={css.deleteButton} reverse={true}
-                  onClick={() => this.props.onDeleteSession(data.session_id)}/>}
+                  onClick={this.toggleDeletePopup}/>}
         </div>
+
+        {this.state.showDeletePopup &&
+        <Popup isVisible={true}
+               toggle={this.toggleDeletePopup}
+               title='Delete session'
+               message='This action is permanent and cannot be undone.'
+               yes={() => this.props.onDeleteSession(data.session_id)}
+               no={this.toggleDeletePopup}/>}
       </div>
     )
     return (

@@ -24,7 +24,7 @@ class App extends Component {
   componentDidMount() {
     // Override the default margin of 8px
     document.body.style.margin = '0';
-    document.body.style.fontFamily = '\'Arial\', sans-serif';
+    document.body.style.fontFamily = "'Roboto', sans-serif";
     document.body.style.fontSize = '15px';
 
     // Dynamically add meta with Google App's Client ID to HTML
@@ -52,7 +52,8 @@ class App extends Component {
         let user = { firstName: basicProfile.getGivenName(), lastName: basicProfile.getFamilyName() };
         let auth = { access_token: gapi.client.getToken().access_token,
                      email: email,
-                     user: user };
+                     user: user,
+                     logout: this.onLogout };
 
         // Get access token for Django backend server
         MyAPI.get_db_access_token({ token: auth.access_token,
@@ -86,6 +87,13 @@ class App extends Component {
           this.setState({ emailApiLoaded: true });
         });
       }
+    });
+  }
+
+  onLogout = () => {
+    let auth2 = gapi.auth2.getAuthInstance();
+    auth2.signOut().then(() => {
+      this.setState({ auth: {}, isAuthenticated: false });
     });
   }
 
