@@ -38,6 +38,8 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 		else:
 			return UserProfile.objects.filter(user=user)
 
+	#get sessions only show the sessions that belongs to the contracts that
+	#the user is a tutor of
 	@action(methods=['get'], detail=True)
 	def get_sessions(self, request, pk=None):
 		userprofile = UserProfile.objects.get(pk=pk)
@@ -65,6 +67,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 
 				return Response(SessionSerializer(sessions, many=True, context={'request': request}).data)
 
+	#get contracts only show the contracts that the user is a tutor of
 	@action(methods=['get'], detail=True)
 	def get_contracts(self, request, pk=None):
 		userprofile = UserProfile.objects.get(pk=pk)
@@ -179,7 +182,16 @@ class ContractViewSet(viewsets.ModelViewSet):
 			if (userprofile.is_tutor and (position is None or position == 'tutor')):
 				contracts = userprofile.tutor_contracts.all()
 			elif userprofile.is_headtutor and position == 'headtutor':
+				#only get the contracts from department of the headtutor
 				contracts = self.queryset
+				subjects = userprofile.subjects.all()
+
+				query = Q(subject= -1)
+				for subject in subjects:
+					query |= Q(subject = subject)
+
+				contracts = contracts.filter(query)
+
 
 		#get all the params from the url
 		subject = self.request.query_params.get('subject', None)
@@ -279,7 +291,15 @@ class ContractMeetingViewSet(viewsets.ModelViewSet):
 			if (userprofile.is_tutor and (position is None or position == 'tutor')):
 				contracts = userprofile.tutor_contracts.all()
 			elif (userprofile.is_headtutor and position == 'headtutor'):
+				#only get the contracts from department of the headtutor
 				contracts = Contract.objects.all()
+				subjects = userprofile.subjects.all()
+
+				query = Q(subject= -1)
+				for subject in subjects:
+					query |= Q(subject = subject)
+
+				contracts = contracts.filter(query)
 		#get all contracts if the user request as a headtutor
 		# otherwise get only the owned contracts if the user request as a tutor
 		contract_meetings = [cmeeting for contract in contracts for cmeeting in contract.contract_meetings.all()]
@@ -339,7 +359,16 @@ class SessionViewSet(viewsets.ModelViewSet):
 			if (userprofile.is_tutor and (position is None or position == 'tutor')):
 				contracts = userprofile.tutor_contracts.all()
 			elif userprofile.is_headtutor and position == 'headtutor':
+				#only get the contracts from department of the headtutor
 				contracts = Contract.objects.all()
+
+				subjects = userprofile.subjects.all()
+
+				query = Q(subject= -1)
+				for subject in subjects:
+					query |= Q(subject = subject)
+
+				contracts = contracts.filter(query)
 
 		query = Q(id = -1)
 		for contract in contracts:
