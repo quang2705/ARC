@@ -20,7 +20,8 @@ export default class TutorContractItem extends Component {
   componentDidMount(){
     for (var i = 0; i < this.props.contract.contract_meetings.length; i++) {
       var index = this.props.contract.contract_meetings[i].id;
-      MyAPI.get_contractmeeting(index, this.context.access_token)
+      MyAPI.get_contractmeeting(index, this.context.access_token,
+                                {'position': this.props.position})
       .then((response) => {
         //TODO: check for error response here
         return response.json();

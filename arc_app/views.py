@@ -8,7 +8,7 @@ from django.shortcuts import render
 from arc_app.models import UserProfile, Contract, Session, ContractMeeting, Subject
 from arc_app.serializers import UserSerializer, UserProfileSerializer, ContractSerializer
 from arc_app.serializers import SessionSerializer, ContractMeetingSerializer, SubjectSerializer
-from arc_app.permissions import IsTutorOrIsAdminReadOnly
+from arc_app.permissions import IsTutorOrIsAdminAndHeadTutorReadOnly
 from arc_app.utils import create_userprofile, check_for_key, setup_query, encode_val, decode_val
 #Rest framework class
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -79,7 +79,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 			return Response(ContractSerializer(contracts, many=True, context={'request': request}).data)
 
 	@action(methods=['get'], detail=False)
-	def get_current(self, request):
+	def get_current_userprofile(self, request):
 		user = self.request.user
 		create_userprofile(user)
 		return Response(UserProfileSerializer(user.userprofiles, context={'request':request}).data)
@@ -88,7 +88,6 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 	def current_position(self, request):
 		user = self.request.user
 		create_userprofile(user)
-		print(user.userprofiles)
 		position = []
 		if (user.userprofiles.is_tutee):
 			position.append('tutee')
@@ -129,7 +128,7 @@ class ContractViewSet(viewsets.ModelViewSet):
 	#'update', and 'destroy' actions
 	queryset = Contract.objects.all()
 	serializer_class = ContractSerializer
-	permission_classes = [IsAuthenticated, IsTutorOrIsAdminReadOnly]
+	permission_classes = [IsAuthenticated, IsTutorOrIsAdminAndHeadTutorReadOnly]
 
 	def destroy(self, request, pk=None):
 		super().destroy(request, pk)
@@ -172,19 +171,26 @@ class ContractViewSet(viewsets.ModelViewSet):
 	def get_queryset(self):
 		user = self.request.user
 		create_userprofile(user)
+		userprofile = user.userprofiles
+
 		if not user.is_authenticated:
 			return []
-		elif user.userprofiles.is_admin:
-			return self.queryset
+		elif userprofile.is_admin:
+			contracts = self.queryset
+		elif userprofile.is_tutor or userprofile.is_headtutor:
+			position = self.request.query_params.get('position', None)
+			#query the contracts based on the user loging in
+			#show the contracts belong to tutor if 'position' is None or is 'tutor'
+			#show all contracts if position is 'headtutor'
+			if (userprofile.is_tutor and (position is None or position == 'tutor')):
+				contracts = userprofile.tutor_contracts.all()
+			elif userprofile.is_headtutor and position == 'headtutor':
+				contracts = self.queryset
+
 		#get all the params from the url
 		subject = self.request.query_params.get('subject', None)
 		tutee_email = self.request.query_params.get('tutee_email', None)
 
-		userprofile = user.userprofiles
-		#query the contracts based on the user loging in
-		#right now only show contract if user is a tutor, does not show
-		#contract when the user is a tutee
-		contracts = userprofile.tutor_contracts.all()
 		#if the params is not Null, query it
 		if subject is not None:
 			subject = Subject.objects.get(subject_name=subject)
@@ -199,7 +205,7 @@ class ContractViewSet(viewsets.ModelViewSet):
 		return contracts
 
 	#Return all the sessions of the current contract
-	#/contracts/get_sesions/
+	#/contracts/<pk>/get_sesions/
 	@action(methods=['get'], detail=True)
 	def get_sessions(self, request, pk=None):
 		#get the contract and the sessions that belong to this contract
@@ -245,7 +251,7 @@ class ContractViewSet(viewsets.ModelViewSet):
 class ContractMeetingViewSet(viewsets.ModelViewSet):
 	queryset = ContractMeeting.objects.all()
 	serializer_class = ContractMeetingSerializer
-	permission_classes = [IsAuthenticated, IsTutorOrIsAdminReadOnly]
+	permission_classes = [IsAuthenticated, IsTutorOrIsAdminAndHeadTutorReadOnly]
 
 	def create(self, request):
 		#Get all the required parameters for the POST request
@@ -271,20 +277,26 @@ class ContractMeetingViewSet(viewsets.ModelViewSet):
 	def get_queryset(self):
 		user = self.request.user
 		create_userprofile(user)
+		userprofile = user.userprofiles
 		if not user.is_authenticated:
 			return []
-		elif user.userprofiles.is_admin:
-			return self.queryset
-		#get all contracts that contract meetings is belong to
-		#based on user that is currently log in
-		userprofile = user.userprofiles
-		contracts = userprofile.tutor_contracts.all()
+		elif userprofile.is_admin:
+			contracts = Contract.objects.all()
+		elif userprofile.is_tutor or userprofile.is_headtutor:
+			position = self.request.query_params.get('position', None)
+			if (userprofile.is_tutor and (position is None or position == 'tutor')):
+				contracts = userprofile.tutor_contracts.all()
+			elif (userprofile.is_headtutor and position == 'headtutor'):
+				contracts = Contract.objects.all()
+		#get all contracts if the user request as a headtutor
+		# otherwise get only the owned contracts if the user request as a tutor
 		contract_meetings = [cmeeting for contract in contracts for cmeeting in contract.contract_meetings.all()]
 
 		location = self.request.query_params.get('location', None)
 		query = Q(id = -1)
 		for cmeeting in contract_meetings:
 			query |= Q(id = cmeeting.id)
+
 		if location is not None:
 			query |= Q(location = location)
 		return ContractMeeting.objects.filter(query)
@@ -293,7 +305,7 @@ class ContractMeetingViewSet(viewsets.ModelViewSet):
 class SessionViewSet(viewsets.ModelViewSet):
 	queryset = Session.objects.all()
 	serializer_class = SessionSerializer
-	permission_classes = [IsAuthenticated, IsTutorOrIsAdminReadOnly]
+	permission_classes = [IsAuthenticated, IsTutorOrIsAdminAndHeadTutorReadOnly]
 
 	def destroy(self, request, pk=None):
 		super().destroy(request, pk)
@@ -327,16 +339,18 @@ class SessionViewSet(viewsets.ModelViewSet):
 	def get_queryset(self):
 		user = self.request.user
 		create_userprofile(user)
+		userprofile = user.userprofiles
 		if not user.is_authenticated:
 			return []
-		elif user.userprofiles.is_admin:
-			return self.queryset
-
-		#get all contracts that sessions is belong to
-		#based on user that is currently log in
-		userprofile = self.request.user.userprofiles
-		contracts = userprofile.tutor_contracts.all()
-
+		elif userprofile.is_admin:
+			contracts = Contract.objects.all()
+		elif userprofile.is_tutor or userprofile.is_headtutor:
+			position = self.request.query_params.get('position', None)
+			if (userprofile.is_tutor and (position is None or position == 'tutor')):
+				contracts = userprofile.tutor_contracts.all()
+			elif userprofile.is_headtutor and position == 'headtutor':
+				contracts = Contract.objects.all()
+				
 		query = Q(id = -1)
 		for contract in contracts:
 			for session in contract.sessions.all():

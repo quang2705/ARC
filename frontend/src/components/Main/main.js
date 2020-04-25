@@ -40,7 +40,7 @@ export default class Main extends Component {
                             className={css.contentContainer} classNameContent={css.content}>
             {this.state.currentTab === 'My sessions' && <TutorSessions/>}
             {this.state.currentTab === 'My contracts' && <TutorContracts/>}
-            {this.state.currentTab === 'Contracts' && <div>for head tutor</div>}
+            {this.state.currentTab === 'Contracts' && <TutorContracts position="headtutor"/>}
             {this.state.currentTab === 'Summary' && <AdminSummary/>}
             {this.state.currentTab === 'Tutors' && <AdminTutors/>}
 

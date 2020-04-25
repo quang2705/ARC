@@ -30,7 +30,8 @@ export default class TutorContracts extends Component {
 		// Get all the contract of this user, then put it
 		// into this.state.data. Check MyAPI class for more
 		// functionality
-		MyAPI.get_contract(null, this.context.access_token)
+		MyAPI.get_contract(null, this.context.access_token,
+                            {'position': this.props.position})
 		.then((response) => {
 			//TODO: check for error response here
 			return response.json();
@@ -94,7 +95,8 @@ export default class TutorContracts extends Component {
 			return(
 				<TutorContractItem key={index} contract={contract}
                            onDeleteContract={this.onDeleteContract}
-                           onEditContract={this.onEditContract}/>
+                           onEditContract={this.onEditContract}
+                           position ={this.props.position}/>
 			);
 		});
 
@@ -107,7 +109,7 @@ export default class TutorContracts extends Component {
 
     if (this.state.showModal || this.state.showEditContract)
       document.body.style.overflow = 'hidden';
-    else 
+    else
       document.body.style.overflow = 'auto';
 
     return (

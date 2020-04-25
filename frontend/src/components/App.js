@@ -66,6 +66,8 @@ class App extends Component {
             console.log("db data", data)
           // Successfully retrieved access token for Django server
           auth = { ...auth, access_token: data.access_token };
+          //Call get current userprofile in case there is no userprofile attract to user
+          // get_current_userprofile will create a new userprofile an attract it to user
           MyAPI.get_current_userprofile(auth.access_token)
           .then((data) => {
             // Get user's position/user type

@@ -35,7 +35,7 @@ export default class MyAPI {
 			url += "?";
 			var query_url = []
 			Object.keys(query_params).forEach((key, index) => {
-				if (query_params[key].toString() != '')
+				if (query_params[key] != undefined && query_params[key].toString() != '')
 					query_url.push(key + "=" + query_params[key].toString());
 			});
 			query_url = query_url.join('&')
@@ -115,21 +115,26 @@ export default class MyAPI {
 					})
 	}
 
-	static get_contract(index, access_token) {
+	static get_contract(index, access_token, query_params) {
 		let headers = new Headers();
 		headers.append('Authorization', 'bearer '+access_token);
-		if (!index)
-			return fetch(CONTRACT_URL,
+		if (!index){
+			let url = this.query(CONTRACT_URL, query_params);
+			return fetch(url,
 						{ headers: headers });
-		else
+		}
+		else {
+			let url = this.query(this.get(CONTRACT_URL, index), query_params);
 			return fetch(this.get(CONTRACT_URL, index),
 						{ headers: headers });
+		}
 	}
 
-	static get_session(index, access_token) {
+	static get_session(index, access_token, query_params) {
 		let headers = new Headers();
 		headers.append('Authorization', 'bearer '+ access_token);
-		if (!index)
+		if (!index) {
+			let url = this.query(SESSION_URL, query_params);
 			return fetch(SESSION_URL,
 						{ headers: headers })
 					.then((response) => {
@@ -137,14 +142,17 @@ export default class MyAPI {
 					}).then((data) => {
 						return data.results;
 					});
-		else
-			return fetch(this.get(SESSION_URL, index),
+		}
+		else {
+			let url = this.query(this.get(SESSION_URL, index), query_params);
+			return fetch(ulr,
 						{ headers: headers })
 					.then((response) => {
 						return response.json();
 					}).then((data) => {
 						return data;
 					});
+		}
 	}
 
 	static get_user_session(user_id, access_token, query_params,){
@@ -167,17 +175,23 @@ export default class MyAPI {
 					{ headers: headers });
 	}
 
-	static get_contractmeeting(index, access_token) {
+	static get_contractmeeting(index, access_token, query_params) {
 		let headers = new Headers();
 		headers.append('Accept', 'application/json');
 		headers.append('Content-Type', 'application/json');
 		headers.append('Authorization', 'bearer '+ access_token);
 		if (index === undefined)
-			return fetch(CONTRACT_MEETING_URL,
+		{
+			let url = this.query(CONTRACT_MEETING_URL, query_params);
+			return fetch(url,
 						{ headers: headers });
+		}
 		else
-			return fetch(this.get(CONTRACT_MEETING_URL, index),
+		{
+			let url = this.query(this.get(CONTRACT_MEETING_URL, index), query_params);
+			return fetch(url,
 						{ headers: headers });
+		}
 	}
 
 	static get_subjects(index, access_token){
