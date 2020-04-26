@@ -142,14 +142,13 @@ export default class TutorContractItem extends Component {
           {meetings.length % 2 === 1 && <div className={css.meeting}/>}
         </div>
 
+        {this.props.position === 'tutor' &&
         <div className={css.deleteWrapper}>
-          {!this.props.isAdmin &&
           <Button  text="Delete contract" reverse={true} color='red' className={css.utilButton}
-                   onClick={this.toggleDeletePopup}/>}
-          {!this.props.isAdmin &&
+                   onClick={this.toggleDeletePopup}/>
           <Button  text="Edit contract" color='red' className={css.utilButton}
-                  onClick={this.onEditContract}/>}
-        </div>
+                  onClick={this.onEditContract}/>
+        </div>}
 
         {this.state.showDeletePopup &&
         <Popup isVisible={true}
