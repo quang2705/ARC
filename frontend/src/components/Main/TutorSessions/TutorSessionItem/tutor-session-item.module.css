@@ -34,6 +34,7 @@
 
 .statusBar {
   display: flex;
+  align-items: center;
   margin-top: 10px;
 }
 
@@ -41,7 +42,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 105px;
+  width: 115px;
   color: white;
   padding: 3px 10px !important;
   border-radius: 5px;

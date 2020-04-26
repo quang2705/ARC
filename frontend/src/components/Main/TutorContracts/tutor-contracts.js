@@ -120,8 +120,9 @@ export default class TutorContracts extends Component {
     return (
       <div className={css.container}>
         <div className={cssSession.buttonWrapper}>
+          {this.props.position !== 'headtutor' &&
           <Button onClick={this.toggleModal} color='red'
-                  text={<><FontAwesomeIcon icon='plus'/>&nbsp; new contract</>}/>
+                  text={<><FontAwesomeIcon icon='plus'/>&nbsp; new contract</>}/>}
 
         </div>
         <Modal isVisible={this.state.showModal} toggle={this.toggleModal}
@@ -142,6 +143,10 @@ export default class TutorContracts extends Component {
         <div className={cssSession.list}>
           <Collapsible main={header} hideIcon={true}/>
   			  {contracts}
+          {contracts.length === 0 &&
+          <div style={{ textAlign: 'center', fontSize: 25, color: '#ccc', fontStyle: 'italic', marginTop: 20 }}>
+            No contracts available
+          </div>}
         </div>
       </div>
     );

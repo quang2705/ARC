@@ -155,6 +155,19 @@ export default class MyAPI {
 		}
 	}
 
+	static get_sessions_by_subject(subject_id, access_token, query_params) {
+		let headers = new Headers();
+		headers.append('Authorization', 'bearer '+ access_token);
+		let url = this.get(SUBJECT_URL, subject_id) +'get_sessions/';
+		url = this.query(url, query_params);
+		return fetch(url, { headers: headers })
+				.then((response) => {
+					return response.json();
+				}).then((data) => {
+					return data;
+				});
+	}
+
 	static get_user_session(user_id, access_token, query_params,){
 		let headers = new Headers();
 		headers.append('Authorization', 'bearer '+ access_token);

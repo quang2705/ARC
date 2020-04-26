@@ -86,7 +86,7 @@ export default class TutorContractForm extends Component {
     else if (emptyfield)
       return { isValid: false, error: 'Missing input', msg: 'Please enter '+emptyname};
     else if (!signed)
-      return { isValid: false, error: 'E-signature required', msg: 'Missing e-signatures' };
+      return { isValid: false, error: 'Missing e-signatures', msg: 'Both tutor and tutee are required to e-sign this contract by checking the checkboxes.' };
     else if (!hasMeeting)
       return { isValid: false, error: 'Missing meeting', msg: 'You must have at least 1 meeting time' };
   }

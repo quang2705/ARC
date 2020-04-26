@@ -13,7 +13,7 @@ import css from './tutor-sessions.module.css';
 
 export default class TutorSessions extends Component {
   static contextType = AuthContext;
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
         data: [],
@@ -22,7 +22,7 @@ export default class TutorSessions extends Component {
        };
   }
 
-  componentDidMount(){
+  componentDidMount (){
 		// Get all the session of this user, then put it
 		// into this.state.data. Check MyAPI class for more
 		// functionality
@@ -66,7 +66,7 @@ export default class TutorSessions extends Component {
     let timeRegex = /^\d\d\:\d\d/;
     time = timeRegex.exec(time)[0];
     let hour = parseInt(time[0]+time[1]);
-    let min = parseInt(time[3]+time[4]);
+    let min = time[3]+time[4];
     let period = hour >= 12 ? "pm" : "am";
     if (hour > 12)
       hour = hour % 12;
@@ -149,13 +149,17 @@ export default class TutorSessions extends Component {
                   text={<><FontAwesomeIcon icon='plus'/>&nbsp; new session</>}/>
         </div>
         <Modal isVisible={this.state.showModal} toggle={this.toggleModal}
-               title={'Add a new session'}>
+               title={'Add new session'}>
           {this.state.showModal &&
           <TutorSessionForm rerenderSession={this.rerenderSession}/>}
         </Modal>
 
         <div className={css.list}>
   				{sessions}
+          {sessions.length === 0 &&
+          <div style={{ textAlign: 'center', fontSize: 25, color: '#ccc', fontStyle: 'italic', marginTop: 20 }}>
+            No sessions available
+          </div>}
         </div>
       </div>
     );

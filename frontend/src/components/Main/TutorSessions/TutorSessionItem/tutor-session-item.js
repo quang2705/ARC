@@ -18,12 +18,10 @@ export default class TutorSessionItem extends Component {
     let timeRegex = /^\d\d\:\d\d/;
     time = timeRegex.exec(time)[0];
     let hour = parseInt(time[0]+time[1]);
-    let min = parseInt(time[3]+time[4]);
+    let min = time[3]+time[4];
     let period = hour >= 12 ? "pm" : "am";
     if (hour > 12)
       hour = hour % 12;
-    if (min < 10)
-        min = time[3]+time[4];
     return hour+':'+min+' '+period;
   }
 

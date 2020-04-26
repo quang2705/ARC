@@ -24,13 +24,12 @@ export default class AdminSummaryItem extends Component {
           var start = new Date(session.date + " " + session.start);
           var end = new Date(session.date + " " + session.end);
           var sec = Math.abs(start - end) / 1000;
-          hours += Math.floor(sec/3600);
           minutes += Math.floor(sec/60);
       });
-      hours = hours % 24;
-      minutes = minutes % 60;
-      minutes = minutes / 60;
-      return [hours, minutes.toFixed(2).substr(2)].join('.');
+
+      hours = (minutes/60).toFixed(2);
+      
+      return hours;
   }
 
   get_verified_session = (sessions) => {
@@ -48,6 +47,9 @@ export default class AdminSummaryItem extends Component {
   }
 
   render() {
+    let data;
+
+    if (this.props.tutor) {
       var tutor_first_name = this.props.tutor.first_name;
       var tutor_last_name = this.props.tutor.last_name;
       var tutor_email = this.props.tutor.email;
@@ -57,14 +59,23 @@ export default class AdminSummaryItem extends Component {
       var tutor_verified_sessions = this.get_verified_session(tutor_sessions);
       var total_verified_hours = this.total_hours(tutor_verified_sessions);
 
-      let data = [tutor_first_name, tutor_last_name, tutor_email, total_verified_hours, total_hours];
-      let row = data.map((item, index) => {
-        return (
-          <td key={index} title={item} className={css.dataCell}>
-            {item}
-          </td>
-        );
-      });
+      data = [tutor_first_name, tutor_last_name, tutor_email, total_verified_hours, total_hours];
+    }
+    else if (this.props.subject) {
+      let total = this.total_hours(this.props.sessions);
+      var verified_sessions = this.get_verified_session(this.props.sessions);
+      var total_verified = this.total_hours(verified_sessions);
+      data = [this.props.subject.subject_name, total_verified, total];
+    }
+
+
+    let row = data.map((item, index) => {
+      return (
+        <td key={index} title={item} className={css.dataCell}>
+          {item}
+        </td>
+      );
+    });
 
     return (
         <tr className={css.row}>

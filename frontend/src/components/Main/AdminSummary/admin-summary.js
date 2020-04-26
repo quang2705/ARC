@@ -8,6 +8,7 @@ import MyAPI from '../../Api';
 import AdminSummaryItem from './AdminSummaryItem/admin-summary-item';
 import DateInput from '../../DefaultUI/DateInput/date-input';
 import Button from '../../DefaultUI/Button/button';
+import MultiSelectInput from '../../DefaultUI/MultiSelectInput/multi-select-input';
 
 export default class AdminSummary extends Component {
   static contextType = AuthContext;
@@ -15,44 +16,65 @@ export default class AdminSummary extends Component {
   constructor(props){
       super(props);
       this.state = {
-          data : [],
+          users : [],
+          subjects: [],
           start_date:'',
           end_date:'',
-          sessions: [],
+          sessionsByUser: [],
+          sessionsBySubject: [],
+          currentGroupBy: 'User',
       }
   }
 
-  //getting the list of all the tutor and their sessions
-  //update the date state and the sessions state
-  componentDidMount(){
+  componentDidMount() {
       MyAPI.get_userprofile(null, {'is_tutor': true}, this.context.access_token)
       .then((data) => {
           this.setState(
-              {data: data,
-               sessions: Array(data.length).fill([])},
-              () => {this.createSessions();}
+              {users: data},
+              () => {this.formatSessions();}
           );
+      });
+
+      MyAPI.get_subjects(null, this.context.access_token).then(data => {
+        this.setState({ subjects: data }, this.formatSessions);
       });
   }
 
   //update the sessions state so that it can filter based on
   //the start date and the end date
-  createSessions = (event) => {
+  formatSessions = (event) => {
     if (event && event.preventDefault)
       event.preventDefault();
-    this.state.data.map((userprofile, index) => {
-      let tutor_id = userprofile.id;
-      MyAPI.get_user_session(tutor_id, this.context.access_token,
-                             {'date[gte]':this.state.start_date,
-                              'date[lte]':this.state.end_date,})
-      .then((data) => {
-        this.setState(() => {
-            let new_sessions = this.state.sessions.slice();
-            new_sessions[index] = data;
-            return {sessions: new_sessions};
+
+    if (this.state.currentGroupBy === 'User') {
+      let count = this.state.users.length;
+      let sessions = {};
+      this.state.users.map((userprofile, index) => {
+        let tutor_id = userprofile.id;
+        MyAPI.get_user_session(tutor_id, this.context.access_token,
+                               {'date[gte]':this.state.start_date,
+                                'date[lte]':this.state.end_date,})
+        .then((data) => {
+          --count;
+          sessions[tutor_id] = data;
+          if (count === 0)
+            this.setState({ sessionsByUser: sessions })
         });
       });
-    });
+    }
+    else if (this.state.currentGroupBy === 'Subject') {
+      let count = this.state.subjects.length;
+      let sessions = {};
+      this.state.subjects.map((subject, index) => {
+        let filter = { 'date[gte]':this.state.start_date,
+                       'date[lte]':this.state.end_date }
+        MyAPI.get_sessions_by_subject(subject.id, this.context.access_token, filter).then(data => {
+          --count;
+          sessions[subject.id] = data;
+          this.setState({ sessionsBySubject: sessions });
+        })
+      });
+    }
   }
 
   //updating the start and end date
@@ -60,22 +82,48 @@ export default class AdminSummary extends Component {
       this.setState({[event.target.name]: event.target.value});
   }
 
+  onGroupByChange = (event) => {
+    this.setState({[event.target.name]: event.target.value}, this.formatSessions);
+  }
+
   render() {
-      var colNames = ["Tutor FName", "Tutor LName", "Tutor email", "Total verified hours", "Total hours"];
-      var flex = [2, 2, 3, 2, 1];
+    var colNames;
+    var flex;
+    var summary;
 
-      var userprofiles = this.state.data.map((userprofile, index) => {
-          return (
-              <AdminSummaryItem key={index}
-                                tutor={userprofile}
-                                sessions={this.state.sessions[index]}
-                                flex={flex}/>
-          )
-      });
+    if (this.state.currentGroupBy === 'User') {
+      colNames = ["Tutor FName", "Tutor LName", "Tutor email", "Total verified hours", "Total hours"];
+      flex = [2, 2, 3, 2, 1];
+      summary = this.state.users.map((userprofile, index) => {
+                    return (
+                        <AdminSummaryItem key={index}
+                                          tutor={userprofile}
+                                          sessions={this.state.sessionsByUser[userprofile.id]}/>
+                    )
+                });
+    }
+    else if (this.state.currentGroupBy === 'Subject') {
+      colNames = ['Subject', 'Total verified hours', 'Total hours'];
+      flex = [3, 1, 1];
+      summary = this.state.subjects.map((subject, index) => {
+                    return (
+                        <AdminSummaryItem key={index}
+                                          subject={subject}
+                                          sessions={this.state.sessionsBySubject[subject.id]}/>
+                    )
+                });
+    }
 
-      var header = colNames.map((item, index) => {
-        return <td key={index} style={{ flex: flex[index] }} className={css.headerItem}>{item}</td>
-      });
+    var header = colNames.map((item, index) => {
+      return <td key={index} style={{ flex: flex[index] }} className={css.headerItem}>{item}</td>
+    });
+
+    var groupByOptions = (
+      <>
+        <option>User</option>
+        <option>Subject</option>
+      </>
+    )
 
     return (
       <div className={css.container}>
@@ -92,10 +140,12 @@ export default class AdminSummary extends Component {
             </div>
 
             <div className={css.filterButtonWrapper}>
-              <Button className={css.filterButton} color='red' text='Apply filter' type='submit' onClick={this.createSessions}/>
+              <Button className={css.filterButton} color='red' text='Apply filter' type='submit' onClick={this.formatSessions}/>
             </div>
           </div>
         </form>
+
+        <MultiSelectInput title='Group by' options={groupByOptions} name='currentGroupBy' value={this.state.currentGroupBy} onChange={this.onGroupByChange} classNameContainer={css.groupByInput}/>
 
         <table className={css.table}>
           <thead>
@@ -105,7 +155,7 @@ export default class AdminSummary extends Component {
           </thead>
 
           <tbody>
-            {userprofiles}
+            {summary}
           </tbody>
         </table>
       </div>

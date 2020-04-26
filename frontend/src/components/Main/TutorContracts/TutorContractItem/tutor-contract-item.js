@@ -21,7 +21,8 @@ export default class TutorContractItem extends Component {
 
   componentDidMount() {
     this.getMeetings();
-    this.props.getMeetFunc(this.props.contract.id, this.getMeetings);
+    if (this.props.getMeetFunc)
+      this.props.getMeetFunc(this.props.contract.id, this.getMeetings);
   }
 
   getMeetings = () => {
@@ -45,7 +46,7 @@ export default class TutorContractItem extends Component {
     let timeRegex = /^\d\d\:\d\d/;
     time = timeRegex.exec(time)[0];
     let hour = parseInt(time[0]+time[1]);
-    let min = parseInt(time[3]+time[4]);
+    let min = time[3]+time[4];
     let period = hour >= 12 ? "pm" : "am";
     if (hour > 12)
       hour = hour % 12;
@@ -71,7 +72,6 @@ export default class TutorContractItem extends Component {
                   tuteeEmail: this.props.contract.tutee.email,
                   tuteePhone: this.props.contract.tutee.phone,
                   tuteeDnumber: this.props.contract.tutee.d_number,
-                  heademail: this.props.contract.subject.headtutor.email,
                   meetings: meetings,
                   oldMeetings: this.props.originalMeetings,
                   subject: this.props.contract.subject.subject_name,
@@ -97,7 +97,7 @@ export default class TutorContractItem extends Component {
                 tutee_phone: this.props.contract.tutee.phone,
                 tutee_email: this.props.contract.tutee.email,
                 tutor_email: this.props.contract.tutor.email,
-                heademail: this.props.contract.subject.headtutor.email,
+                heademail: this.props.contract.subject && this.props.contract.subject.headtutor ? this.props.contract.subject.headtutor.email : '',
                 meetings: this.state.meetings,
                 subject: this.props.contract.subject.subject_name,
                 professor_name: this.props.contract.professor_name};
