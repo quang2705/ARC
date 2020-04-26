@@ -68,7 +68,7 @@ export default class Main extends Component {
           <ContentContainer tabs={this.tabs} onTabChangeCallback={this.onTabChange}
                             className={css.contentContainer} classNameContent={css.content}>
             {this.state.currentTab === 'My sessions' && <TutorSessions/>}
-            {this.state.currentTab === 'My contracts' && <TutorContracts/>}
+            {this.state.currentTab === 'My contracts' && <TutorContracts position="tutor"/>}
             {this.state.currentTab === 'Contracts' && <TutorContracts position="headtutor"/>}
             {this.state.currentTab === 'Summary' && <AdminSummary/>}
             {this.state.currentTab === 'Tutors' && <AdminTutors/>}

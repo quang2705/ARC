@@ -96,11 +96,11 @@ export default class TutorContracts extends Component {
 		let contracts = this.state.data.map((contract, index) => {
 			return (
 				<TutorContractItem key={index} contract={contract}
-                           getMeetFunc={this.getMeetFunc}
-                           originalMeetings={contract.contract_meetings}
-                           onDeleteContract={this.onDeleteContract}
-                           onEditContract={this.onEditContract}
-                           position ={this.props.position}/>
+                                   getMeetFunc={this.getMeetFunc}
+                                   originalMeetings={contract.contract_meetings}
+                                   onDeleteContract={this.onDeleteContract}
+                                   onEditContract={this.onEditContract}
+                                   position ={this.props.position}/>
 			);
 		});
 
