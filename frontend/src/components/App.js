@@ -60,9 +60,6 @@ class App extends Component {
                                     client_id: Auth.dbClientId,
                                     grant_type: 'convert_token',
                                     backend: 'google-oauth2' })
-        .then((res) => {
-           return res.json();
-        })
         .then((data) => {
             console.log("db data", data)
           // Successfully retrieved access token for Django server

@@ -76,4 +76,4 @@ class SubjectSerializer(serializers.ModelSerializer):
 	contracts = MiniContractSerializer(many=True, read_only=True)
 	class Meta:
 		model = Subject
-		fields = ('id', 'subject_name', 'contracts')
+		fields = ('id', 'subject_name', 'contracts', 'headtutor')

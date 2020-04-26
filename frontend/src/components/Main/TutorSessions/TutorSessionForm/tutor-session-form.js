@@ -31,18 +31,13 @@ export default class TutorSessionForm extends Component {
 		//into this.state.data. Check MyAPI class for more
 		//functionality
 		MyAPI.get_contract(null, this.context.access_token)
-    .then((response) => {
-			//TODO: check for error response here - checked below
-			return response.json();
-		})
-    .catch(err => err)
 		.then((data) => {
 			//set this.state.data
 			return this.setState(() => {
-        if (data.results.length > 0)
-          return ({contracts: data.results, contract_id: data.results[0].id});
+        if (data.length > 0)
+          return ({contracts: data, contract_id: data[0].id});
         else
-          return ({contracts: data.results});
+          return ({contracts: data});
 			});
 		});
   }
@@ -70,9 +65,7 @@ export default class TutorSessionForm extends Component {
     let validation = this.validateInputs();
     if (validation.isValid && this.state.contracts.length > 0) {
       MyAPI.create_session(this.state, this.context.access_token)
-      .then((response) => {
-       return response.json();
-      }).then((data) => {
+      .then((data) => {
          this.props.rerenderSession(data);
       });
     }
