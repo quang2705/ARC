@@ -21,7 +21,8 @@ export default class TutorContractItem extends Component {
 
   componentDidMount() {
     this.getMeetings();
-    this.props.getMeetFunc(this.props.contract.id, this.getMeetings);
+    if (this.props.getMeetFunc)
+        this.props.getMeetFunc(this.props.contract.id, this.getMeetings);
   }
 
   getMeetings = () => {
@@ -30,10 +31,6 @@ export default class TutorContractItem extends Component {
       var index = this.props.contract.contract_meetings[i].id;
       MyAPI.get_contractmeeting(index, this.context.access_token,
                                 {'position': this.props.position})
-      .then((response) => {
-        //TODO: check for error response here
-        return response.json();
-      })
       .then((data) => {
         newMeetings.push(data);
         this.setState({ meetings: newMeetings });

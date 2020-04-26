@@ -29,11 +29,6 @@ export default class TutorSessionForm extends Component {
 		//into this.state.data. Check MyAPI class for more
 		//functionality
 		MyAPI.get_contract(null, this.context.access_token)
-    .then((response) => {
-			//TODO: check for error response here - checked below
-			return response.json();
-		})
-    .catch(err => err)
 		.then((data) => {
 			//set this.state.data
 			return this.setState(() => {
@@ -48,9 +43,7 @@ export default class TutorSessionForm extends Component {
   onSubmitHandler = (event) => {
     event.preventDefault();
     MyAPI.create_session(this.state, this.context.access_token)
-    .then((response) => {
-     return response.json();
-    }).then((data) => {
+    .then((data) => {
        this.props.rerenderSession(data);
     });
   }

@@ -38,10 +38,6 @@ export default class TutorContracts extends Component {
   getContracts = (contract_id=null) => {
     MyAPI.get_contract(null, this.context.access_token,
                         {'position': this.props.position})
-		.then((response) => {
-			//TODO: check for error response here
-			return response.json();
-		})
 		.then((data) => {
 			this.setState({
 				data: data,

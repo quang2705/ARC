@@ -25,12 +25,9 @@ export default class AdminTutorsItem extends Component {
 		// into this.state.data. Check MyAPI class for more
 		// functionality
 		MyAPI.get_user_contract(this.props.tutor.id, this.context.access_token)
-		.then((response) => {
-			return response.json();
-		})
-    .then(data => {
-      this.setState({ contracts: data });
-    });
+        .then(data => {
+          this.setState({ contracts: data });
+        });
 
     MyAPI.get_user_session(this.props.tutor.id, this.context.access_token)
 		.then((response) => {
