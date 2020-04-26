@@ -54,7 +54,7 @@ export default class MyAPI {
 					.then((response) => {
 						return response.json();
 					}).then((data) => {
-						return data.results;
+						return data;
 					});
 		else
 			return fetch(this.get(USERPROFILE_URL, index),
@@ -76,7 +76,7 @@ export default class MyAPI {
 					.then((response) => {
 						return response.json();
 					}).then((data) => {
-						return data.results;
+						return data;
 					});
 		else
 			return fetch(this.get(USER_URL, index),
@@ -84,7 +84,7 @@ export default class MyAPI {
 					.then((response) => {
 						return response.json();
 					}).then((data) => {
-						return data.results;
+						return data;
 					});;
 	}
 
@@ -140,7 +140,7 @@ export default class MyAPI {
 					.then((response) => {
 						return response.json();
 					}).then((data) => {
-						return data.results;
+						return data;
 					});
 		}
 		else {
@@ -203,7 +203,7 @@ export default class MyAPI {
 			.then((res) => {
 				return res.json();
 			}).then((data) => {
-				subjects.push(...data.results);
+				subjects.push(...data);
 				let data_next = data.next;
 				if (data_next != null)
 				{
@@ -211,7 +211,7 @@ export default class MyAPI {
 					.then((res) => {
 						return res.json();
 					}).then((data) => {
-						subjects.push(...data.results);
+						subjects.push(...data);
 						data_next = data.next;
 					});
 				}
@@ -224,7 +224,7 @@ export default class MyAPI {
 					.then((res) => {
 						return res.json();
 					}).then((data) => {
-						subjects.push(...data.results);
+						subjects.push(...data);
 						return subjects;
 					});
 		}

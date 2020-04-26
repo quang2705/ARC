@@ -44,7 +44,7 @@ export default class TutorContracts extends Component {
 		})
 		.then((data) => {
 			this.setState({
-				data: data.results,
+				data: data,
 			}, () => {
         if (contract_id)
           this.getMeetingsFuncs[contract_id]();

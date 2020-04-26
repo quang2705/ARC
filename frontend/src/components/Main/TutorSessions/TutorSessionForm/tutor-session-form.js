@@ -37,10 +37,10 @@ export default class TutorSessionForm extends Component {
 		.then((data) => {
 			//set this.state.data
 			return this.setState(() => {
-        if (data.results.length > 0)
-          return ({contracts: data.results, contract_id: data.results[0].id});
+        if (data.length > 0)
+          return ({contracts: data, contract_id: data[0].id});
         else
-          return ({contracts: data.results});
+          return ({contracts: data});
 			});
 		});
   }

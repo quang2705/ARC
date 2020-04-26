@@ -154,7 +154,6 @@ class ContractViewSet(viewsets.ModelViewSet):
 									is_tutee=True)
 				tutee.save()
 		except Exception as e:
-			print(e)
 			return Response("Your information about tutor or tutee is not correct, check the parameter again")
 		subject = Subject.objects.get(subject_name=request.data['subject'])
 		contract = Contract(tutor=tutor, tutee=tutee,
@@ -467,7 +466,6 @@ def encode (request):
 def verify(request):
 	try:
 		value = request.GET['secret']
-		print(value)
 	except:
 
 		return render(request, 'frontend/tutee_verify.html', context = {"status":400})
