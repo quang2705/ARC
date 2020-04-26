@@ -10,10 +10,14 @@ const SUBJECT_URL = '/api/subjects/'
 const ENCODE_URL = '/encode/'
 export default class MyAPI {
 
-	static get(url, index) {
+	//join the url with the index
+	//eg: url = /api/userprofiles/, index = 1
+	//return : /api/userprofiles/1/
+	static concat(url, index) {
 		return url + index.toString()+"/";
 	}
 
+	//called api/auth/convert-token/ to get the access token of the database
 	static get_db_access_token(query_params) {
 		var csrftoken = Cookies.get('csrftoken');
 		let headers = new Headers();
@@ -23,10 +27,18 @@ export default class MyAPI {
 		return fetch(CONVERT_TOKEN_URL, { method: "post",
 							 headers: headers,
 							 body: JSON.stringify(query_params)
-							});
+							})
+				.then((response) => {
+					return response.json();
+				}).then(data => {
+					return data;
+				});
 	}
 
-	static query(url, query_params) {
+	//join the url with query parameter
+	//url = api/userprofiles/ , query_params = {'position': 'headtutor', 'first_name': 'quang'}
+	//return api/userprofiles?position=headtutor&first_name=quang
+	static get_query_url(url, query_params) {
 		if (query_params === undefined)
 			return url;
 		else if (Object.keys(query_params).length == 0)
@@ -35,7 +47,7 @@ export default class MyAPI {
 			url += "?";
 			var query_url = []
 			Object.keys(query_params).forEach((key, index) => {
-				if (query_params[key].toString() != '')
+				if (query_params[key] != undefined && query_params[key].toString() != '')
 					query_url.push(key + "=" + query_params[key].toString());
 			});
 			query_url = query_url.join('&')
@@ -43,100 +55,118 @@ export default class MyAPI {
 		}
 	}
 
+	//return the response for either /api/userprofiles/ or /api/userprofiles/<index>/
 	static get_userprofile(index, query_params, access_token){
 		let headers = new Headers();
 		headers.append('Authorization', 'bearer '+access_token);
-
-		if (!index)
-			return fetch(this.query(USERPROFILE_URL,
-									query_params),
-								{ headers: headers })
-					.then((response) => {
-						return response.json();
-					}).then((data) => {
-						return data.results;
-					});
-		else
-			return fetch(this.get(USERPROFILE_URL, index),
-								{headers: headers })
-					.then((response) => {
-						return response.json();
-					}).then((data) => {
-						return data.results;
-					});
+		let url;
+		if (!index) {
+			url = this.get_query_url(USERPROFILE_URL, query_params);
+		}
+		else {
+			url = this.concat(USERPROFILE_URL, index);
+		}
+		return fetch(url, {headers: headers })
+				.then((response) => {
+					return response.json();
+				}).then((data) => {
+					return data;
+				});
 
 	}
 
+	//return the response for either /api/users/ or /api/users/<index>/
 	static get_user(index, access_token) {
 		let headers = new Headers();
 		headers.append('Authorization', 'bearer '+access_token);
-
-		if (!index)
-			return fetch(USER_URL, { headers: headers })
-					.then((response) => {
-						return response.json();
-					}).then((data) => {
-						return data.results;
-					});
-		else
-			return fetch(this.get(USER_URL, index),
-							{ headers: headers })
-					.then((response) => {
-						return response.json();
-					}).then((data) => {
-						return data.results;
-					});;
+		let url;
+		if (!index) {
+			url = USER_URL;
+		}
+		else {
+			url = this.concat(USER_URL, index);
+		}
+		return fetch(url,{ headers: headers })
+				.then((response) => {
+					return response.json();
+				}).then((data) => {
+					return data;
+				});
 	}
 
-	static get_current_user(access_token) {
+	//return response for /api/userprofiles/get_current_userprofile
+	static get_current_userprofile(access_token) {
 		let headers = new Headers();
 		headers.append('Authorization', 'bearer '+access_token);
-			return fetch(USER_URL+'get_current/',
-							{ headers: headers })
-					.then((response) => {
-						return response.json();
-					}).then((data) => {
-						return data;
-					});;
+		return fetch(USERPROFILE_URL+'get_current_userprofile/',
+						{ headers: headers })
+				.then((response) => {
+					return response.json();
+				}).then((data) => {
+					return data;
+				});;
 	}
 
-	static get_contract(index, access_token) {
+	//return response for /api/userprofiles/get_current_position
+	static get_current_position(access_token) {
+		//get position (tutor, tutee, headtutor, admin) of the current user
 		let headers = new Headers();
 		headers.append('Authorization', 'bearer '+access_token);
-		if (!index)
-			return fetch(CONTRACT_URL,
-						{ headers: headers });
-		else
-			return fetch(this.get(CONTRACT_URL, index),
-						{ headers: headers });
+		return fetch(USERPROFILE_URL + 'current_position/',
+								{headers: headers})
+				.then((response) => {
+					return response.json();
+				}).then((data) => {
+					// data is a list of position that this user has
+					// data: ['tutor', 'headtutor']
+					return data;
+				});
 	}
 
-	static get_session(index, access_token) {
+	//return response for /api/contracts/ or /api/contracts/<index>
+	static get_contract(index, access_token, query_params) {
 		let headers = new Headers();
-		headers.append('Authorization', 'bearer '+ access_token);
-		if (!index)
-			return fetch(SESSION_URL,
-						{ headers: headers })
-					.then((response) => {
-						return response.json();
-					}).then((data) => {
-						return data.results;
-					});
-		else
-			return fetch(this.get(SESSION_URL, index),
-						{ headers: headers })
-					.then((response) => {
-						return response.json();
-					}).then((data) => {
-						return data;
-					});
+		headers.append('Authorization', 'bearer '+access_token);
+		let url;
+		if (!index) {
+			url = this.get_query_url(CONTRACT_URL, query_params);
+		}
+		else {
+			url = this.get_query_url(this.concat(CONTRACT_URL, index), query_params);
+		}
+		return fetch(url, { headers: headers })
+				.then((response) => {
+					return response.json();
+				}).then((data) => {
+					return data;
+				});
+
 	}
 
-	static get_user_session(user_id, access_token, query_params,){
+	//return response for /api/sessions/ or /api/sessions/<index>
+	static get_session(index, access_token, query_params) {
 		let headers = new Headers();
 		headers.append('Authorization', 'bearer '+ access_token);
-		let url = this.get(USERPROFILE_URL, user_id) +'get_sessions/';
-		url = this.query(url, query_params);
+		let url;
+		if (!index) {
+			url = this.get_query_url(SESSION_URL, query_params);
+		}
+		else {
+			url = this.get_query_url(this.concat(SESSION_URL, index), query_params);
+		}
+		return fetch(url,{ headers: headers })
+				.then((response) => {
+					return response.json();
+				}).then((data) => {
+					return data;
+				});
+	}
+
+	static get_sessions_by_subject(subject_id, access_token, query_params) {
+		let headers = new Headers();
+		headers.append('Authorization', 'bearer '+ access_token);
+		let url = this.concat(SUBJECT_URL, subject_id) +'get_sessions/';
+		url = this.get_query_url(url, query_params);
 		return fetch(url, { headers: headers })
 				.then((response) => {
 					return response.json();
@@ -145,61 +175,74 @@ export default class MyAPI {
 				});
 	}
 
+	//return response for /api/userprofiles/<user_id>/get_user_sessions/
+	static get_user_session(user_id, access_token, query_params,){
+		let headers = new Headers();
+		headers.append('Authorization', 'bearer '+ access_token);
+		let url = this.concat(USERPROFILE_URL, user_id) +'get_sessions/';
+		url = this.get_query_url(url, query_params);
+		return fetch(url, { headers: headers })
+				.then((response) => {
+					return response.json();
+				}).then((data) => {
+					return data;
+				});
+	}
+
+	//return response for /api/userprofiles/<user_id>/get_user_contracts/
 	static get_user_contract(user_id, access_token){
 		let headers = new Headers();
 		headers.append('Authorization', 'bearer '+ access_token);
-		return fetch(this.get(USERPROFILE_URL, user_id) +'get_contracts/',
-					{ headers: headers });
+		return fetch(this.concat(USERPROFILE_URL, user_id) +'get_contracts/',
+					{ headers: headers })
+				.then((response) => {
+					return response.json();
+				}).then((data) => {
+					return data;
+				});
 	}
 
-	static get_contractmeeting(index, access_token) {
+	//return response for /api/contract_meetings/ or /api/contract_meetings/<index>
+	static get_contractmeeting(index, access_token, query_params) {
 		let headers = new Headers();
 		headers.append('Accept', 'application/json');
 		headers.append('Content-Type', 'application/json');
 		headers.append('Authorization', 'bearer '+ access_token);
-		if (index === undefined)
-			return fetch(CONTRACT_MEETING_URL,
-						{ headers: headers });
-		else
-			return fetch(this.get(CONTRACT_MEETING_URL, index),
-						{ headers: headers });
+		let url;
+		if (index === undefined) {
+			url = this.get_query_url(CONTRACT_MEETING_URL, query_params);
+		}
+		else {
+			url = this.get_query_url(this.concat(CONTRACT_MEETING_URL, index), query_params);
+		}
+		return fetch(url,{ headers: headers })
+				.then((response) => {
+					return response.json();
+				}).then((data) => {
+					return data;
+				});
 	}
 
+	// return response for /api/subjects/ or /api/subjects/<index>
 	static get_subjects(index, access_token){
 		let headers = new Headers();
 		headers.append('Authorization', 'bearer '+ access_token);
 		let subjects = [];
+		let url;
 		if (!index) {
-			return fetch(SUBJECT_URL, { headers: headers })
-			.then((res) => {
-				return res.json();
-			}).then((data) => {
-				subjects.push(...data.results);
-				let data_next = data.next;
-				if (data_next != null)
-				{
-					fetch(data_next, { headers: headers })
-					.then((res) => {
-						return res.json();
-					}).then((data) => {
-						subjects.push(...data.results);
-						data_next = data.next;
-					});
-				}
-				return subjects;
-			});
+			url = SUBJECT_URL;
 		}
 		else {
-			 return fetch(this.get(SUBJECT_URL, index),
-						{ headers: headers })
-					.then((res) => {
-						return res.json();
-					}).then((data) => {
-						subjects.push(...data.results);
-						return subjects;
-					});
+			url = this.concat(SUBJECT_URL, index);
 		}
+		return fetch(url,{ headers: headers })
+				.then((response) => {
+					return response.json();
+				}).then((data) => {
+					return data;
+				});
 	}
+
 
 	static create_contract(contract_data, callback, access_token) {
 		//TODO: create contrains for not adding contract meetings for contract
@@ -259,6 +302,75 @@ export default class MyAPI {
 		});
 	}
 
+	static update_contract(contract_data, callback, access_token) {
+		var csrftoken = Cookies.get('csrftoken');
+		var headers = new Headers();
+		headers.append('Accept', 'application/json');
+		headers.append('Content-Type', 'application/json');
+		headers.append('X-CSRFToken', csrftoken);
+		headers.append('Authorization', 'bearer '+ access_token);
+
+		let url = this.concat(CONTRACT_URL, contract_data.contract_id);
+		return fetch(url, {
+			method: "put",
+			headers: headers,
+			body: JSON.stringify({
+				"tutor_email": contract_data.tutorEmail,
+				"tutee_email": contract_data.tuteeEmail,
+				"tutee_first_name": contract_data.tuteeFirstName,
+				"tutee_last_name": contract_data.tuteeLastName,
+				"tutee_phone": contract_data.tuteePhone,
+				"tutee_dnumber": contract_data.tuteeDnumber,
+				"class_name": contract_data.class,
+				"professor_name": contract_data.instructor,
+				"subject": contract_data.subject,
+				})
+		}).then((response) => {
+			return response.json();
+		}).then((response_data) => {
+			let count = 0;
+			let contract_id = contract_data.contract_id;
+			if (contract_data.meetings.length === 0)
+				callback(response_data);
+			for (var i = 0; i < contract_data.meetings.length; i++) {
+				let contractMeeting = contract_data.meetings[i]
+				fetch(CONTRACT_MEETING_URL,{
+					method: "post",
+					headers: headers,
+					body: JSON.stringify({
+						"contract_id": contract_id,
+						"week_day": contractMeeting['day'],
+						"start": contractMeeting['start'],
+						"end": contractMeeting['end'],
+						"location": contractMeeting['location'],
+					})
+				}).then(response => {
+						return response.json();
+					}).then((data) => {
+						count +=1;
+						if (count == contract_data.meetings.length) {
+							callback(response_data);
+						}
+					});
+				}
+		});
+	}
+
+	static delete_contract_meeting(index, access_token) {
+		var csrftoken = Cookies.get('csrftoken');
+		var headers = new Headers();
+		headers.append('Accept', 'application/json');
+		headers.append('Content-Type', 'application/json');
+		headers.append('X-CSRFToken', csrftoken);
+		headers.append('Authorization', 'bearer '+ access_token);
+
+		return fetch(this.concat(CONTRACT_MEETING_URL, index),
+					{
+						method: 'delete',
+						headers: headers,
+					});
+	}
+
 	static create_session(data, access_token) {
 		var csrftoken = Cookies.get('csrftoken');
 		var headers = new Headers();
@@ -278,7 +390,13 @@ export default class MyAPI {
 					'end': data.sessEnd,
 					'summary': data.sessSummary,
 				})
-    });
+    	})
+		.then((response) => {
+			return response.json();
+		}).then((data) => {
+
+			return data;
+		});
 	}
 
 	static delete_session(index, access_token){
@@ -289,7 +407,7 @@ export default class MyAPI {
 		headers.append('X-CSRFToken', csrftoken);
 		headers.append('Authorization', 'bearer '+ access_token);
 
-		return fetch(this.get(SESSION_URL, index),
+		return fetch(this.concat(SESSION_URL, index),
 					{
 						method: 'delete',
 						headers: headers,
@@ -304,7 +422,7 @@ export default class MyAPI {
 		headers.append('X-CSRFToken', csrftoken);
 		headers.append('Authorization', 'bearer '+access_token);
 
-		return fetch(this.get(CONTRACT_URL, index),
+		return fetch(this.concat(CONTRACT_URL, index),
 					{
 						method: 'delete',
 						headers: headers,
@@ -316,7 +434,7 @@ export default class MyAPI {
 		headers.append('Content-Type', 'application/json');
 		headers.append('Authorization', 'bearer '+access_token);
 
-		return fetch(this.query(ENCODE_URL, query_params),
+		return fetch(this.get_query_url(ENCODE_URL, query_params),
 					{headers: headers})
 				.then((response) => {
 					return response.json();

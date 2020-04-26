@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { AuthContext } from '../../Auth/auth'
+import { AuthContext } from '../../Auth/auth';
 
 import TutorSessionItem from './TutorSessionItem/tutor-session-item';
 import TutorSessionForm from './TutorSessionForm/tutor-session-form';
@@ -13,19 +13,24 @@ import css from './tutor-sessions.module.css';
 
 export default class TutorSessions extends Component {
   static contextType = AuthContext;
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
         data: [],
         showModal: false,
+        sending: {},
        };
   }
 
-  componentDidMount(){
+  componentDidMount (){
 		// Get all the session of this user, then put it
 		// into this.state.data. Check MyAPI class for more
 		// functionality
-		MyAPI.get_session(null, this.context.access_token)
+		this.getSessions();
+  }
+
+  getSessions = () => {
+    MyAPI.get_session(null, this.context.access_token)
 		.then((data) => {
 			//set this.state.data
 			this.setState({
@@ -53,27 +58,36 @@ export default class TutorSessions extends Component {
       .then((res) => {
          return res.json();
      }).then((data) => {
-         this.setState(() => {
-             var new_data  = this.state.data.slice();
-             for (let i = 0; i < new_data.length; i++){
-                 if (new_data[i].id === Number(data.id)){
-                     new_data.splice(i, 1);
-                     break;
-                 }
-             }
-             return {data:new_data};
-         })
+         this.getSessions();
      });
   }
 
+  getTime = (time) => {
+    let timeRegex = /^\d\d\:\d\d/;
+    time = timeRegex.exec(time)[0];
+    let hour = parseInt(time[0]+time[1]);
+    let min = time[3]+time[4];
+    let period = hour >= 12 ? "pm" : "am";
+    if (hour > 12)
+      hour = hour % 12;
+    return hour+':'+min+' '+period;
+  }
+
   onSendVerification = (session_id) => {
+    this.setState(prevState => {
+      let newSending = prevState.sending;
+      newSending[session_id] = 'sending';
+      return { sending: newSending };
+    });
+
     MyAPI.get_session(session_id, this.context.access_token)
     .then((data) => {
         let tutee_email = data.contract.tutee.email;
         let tutee_firstname = data.contract.tutee.first_name;
         let date = data.date;
-        let start = data.start;
-        let end = data.end;
+        let start = this.getTime(data.start);
+        let end = this.getTime(data.end);
+        let summary = data.summary;
 
         MyAPI.get_encrypted_string({'encode_string': session_id}, this.context.access_token)
         .then((data) =>{
@@ -83,9 +97,10 @@ export default class TutorSessions extends Component {
                 "From: me \r\n" +
                 `To: ${tutee_email} \r\n` +
                 "Subject: Tutoring Session Verification \r\n\r\n" +
-                `Hi ${tutee_firstname} \n
-                Please verify this session on ${date} from ${start} to ${end} with this link\n
-                ${link}`;
+                `Hi ${tutee_firstname},\n`+
+                `Please verify this tutoring session by following this link: ${link}\n` +
+                `\t Date: ${date}\n\t Time: ${start} - ${end}\n` +
+                `\t Summary: ${summary}`;
 
             const encodedMessage = btoa(message).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 
@@ -95,7 +110,13 @@ export default class TutorSessions extends Component {
                     // same response with any of these
                     raw: encodedMessage
                 }
-            }).then(function () { console.log("done!")});
+            }).then((data) => {
+              this.setState(prevState => {
+                let newSending = prevState.sending;
+                newSending[session_id] = 'done';
+                return { sending: newSending };
+              });
+            });
         });
     });
 
@@ -110,10 +131,17 @@ export default class TutorSessions extends Component {
 		let sessions = this.state.data.map((session, index) => {
 			return(
 				<TutorSessionItem key={index} session={session}
-                onDeleteSession={this.onDeleteSession}
-                onSendVerification={this.onSendVerification}/>
+                          onDeleteSession={this.onDeleteSession}
+                          onSendVerification={this.onSendVerification}
+                          sendStatus={this.state.sending[session.id]}/>
 			);
 		});
+
+    if (this.state.showModal)
+      document.body.style.overflow = 'hidden';
+    else
+      document.body.style.overflow = 'auto';
+
     return (
       <div className={css.container}>
         <div className={css.buttonWrapper}>
@@ -121,13 +149,17 @@ export default class TutorSessions extends Component {
                   text={<><FontAwesomeIcon icon='plus'/>&nbsp; new session</>}/>
         </div>
         <Modal isVisible={this.state.showModal} toggle={this.toggleModal}
-               title={'Add a new session'}>
-
-          <TutorSessionForm rerenderSession={this.rerenderSession}/>
+               title={'Add new session'}>
+          {this.state.showModal &&
+          <TutorSessionForm rerenderSession={this.rerenderSession}/>}
         </Modal>
 
         <div className={css.list}>
   				{sessions}
+          {sessions.length === 0 &&
+          <div style={{ textAlign: 'center', fontSize: 25, color: '#ccc', fontStyle: 'italic', marginTop: 20 }}>
+            No sessions available
+          </div>}
         </div>
       </div>
     );

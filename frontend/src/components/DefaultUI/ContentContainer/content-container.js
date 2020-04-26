@@ -28,15 +28,16 @@ export default class ContentContainer extends Component {
     let newIndex = parseInt(event.target.getAttribute('index'));
     this.setState({ currentTab: newIndex });
 
+    let tab = event.target.getAttribute('tabname');
     if (this.props.onTabChangeCallback)
-      this.props.onTabChangeCallback(newIndex);
+      this.props.onTabChangeCallback(tab);
   }
 
   render() {
     let tabs = this.props.tabs.map((tab, index) => {
       let selectedTabStyle = this.state.currentTab === index ? css.selectedTab+' '+this.props.classNameSelectedTab : '';
       return (
-        <span key={index} onClick={this.onTabClickHandler} index={index}
+        <span key={index} onClick={this.onTabClickHandler} index={index} tabname={tab}
               className={css.tab+' '+selectedTabStyle+' '+this.props.classNameTab}>
           {tab}
         </span>

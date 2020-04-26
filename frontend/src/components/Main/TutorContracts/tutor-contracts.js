@@ -15,32 +15,46 @@ import cssSession from '../TutorSessions/tutor-sessions.module.css';
 
 export default class TutorContracts extends Component {
   static contextType = AuthContext;
+
   constructor(props) {
     super(props);
     this.state = {
-        showModal: false,
-        data: [], };
+      showModal: false,
+      data: [],
+      showEditContract: false,
+      currentEditContract: null
+    };
+
+    this.getMeetingsFuncs = {};
   }
+
   componentDidMount() {
 		// Get all the contract of this user, then put it
 		// into this.state.data. Check MyAPI class for more
 		// functionality
-		MyAPI.get_contract(null, this.context.access_token)
-		.then((response) => {
-			//TODO: check for error response here
-			return response.json();
-		})
+		this.getContracts();
+  }
+
+  getContracts = (contract_id=null) => {
+    MyAPI.get_contract(null, this.context.access_token,
+                        {'position': this.props.position})
 		.then((data) => {
-			//set this.state.data
 			this.setState({
-				data: data.results,
-			});
+				data: data,
+			}, () => {
+        if (contract_id)
+          this.getMeetingsFuncs[contract_id]();
+      });
 		});
   }
 
+  getMeetFunc = (id, func) => {
+    this.getMeetingsFuncs[id] = func;
+  }
+
   toggleModal = () => {
-    this.setState((prevState) => {
-      return { ...prevState, showModal: !prevState.showModal };
+    this.setState(prevState => {
+      return { showModal: !prevState.showModal };
     });
   }
 
@@ -57,17 +71,19 @@ export default class TutorContracts extends Component {
       .then((res) => {
          return res.json();
      }).then((data) => {
-         this.setState(() => {
-             var new_data  = this.state.data.slice();
-             for (let i = 0; i < new_data.length; i++){
-                 if (new_data[i].id === Number(data.id)){
-                     new_data.splice(i, 1);
-                     break;
-                 }
-             }
-             return {data:new_data};
-         })
+         this.getContracts();
      });
+  }
+
+  onEditContract = (data) => {
+    this.setState({ currentEditContract: data,
+                    showEditContract: true });
+  }
+
+  toggleEditContract = () => {
+    this.setState(prevState => {
+      return { showEditContract: !prevState.showEditContract };
+    });
   }
 
   render() {
@@ -75,8 +91,13 @@ export default class TutorContracts extends Component {
 		// child, the data can be accessed through this.props.contract in
 		// TutorContractItem
 		let contracts = this.state.data.map((contract, index) => {
-			return(
-				<TutorContractItem key={index} contract={contract} onDeleteContract={this.onDeleteContract}/>
+			return (
+				<TutorContractItem key={index} contract={contract}
+                                   getMeetFunc={this.getMeetFunc}
+                                   originalMeetings={contract.contract_meetings}
+                                   onDeleteContract={this.onDeleteContract}
+                                   onEditContract={this.onEditContract}
+                                   position ={this.props.position}/>
 			);
 		});
 
@@ -87,24 +108,41 @@ export default class TutorContracts extends Component {
       </div>
     );
 
+    if (this.state.showModal || this.state.showEditContract)
+      document.body.style.overflow = 'hidden';
+    else
+      document.body.style.overflow = 'auto';
+
     return (
       <div className={css.container}>
         <div className={cssSession.buttonWrapper}>
+          {this.props.position !== 'headtutor' &&
           <Button onClick={this.toggleModal} color='red'
-                  text={<><FontAwesomeIcon icon='plus'/>&nbsp; new contract</>}/>
+                  text={<><FontAwesomeIcon icon='plus'/>&nbsp; new contract</>}/>}
 
         </div>
         <Modal isVisible={this.state.showModal} toggle={this.toggleModal}
                title={'Create new contract'}>
-
+          {this.state.showModal &&
           <AuthContext.Consumer>
-              {value => <TutorContractForm auth={value} rerenderContract={this.rerenderContract}/>}
-          </AuthContext.Consumer>
+              {value => <TutorContractForm auth={value} rerenderContract={this.rerenderContract} close={this.toggleModal}/>}
+          </AuthContext.Consumer>}
+        </Modal>
+
+        <Modal isVisible={this.state.showEditContract} toggle={this.toggleEditContract} title={'Edit contract'}>
+          {this.state.showEditContract &&
+          <AuthContext.Consumer>
+              {value => <TutorContractForm auth={value} data={this.state.currentEditContract} close={this.toggleEditContract} refresh={this.getContracts}/>}
+          </AuthContext.Consumer>}
         </Modal>
 
         <div className={cssSession.list}>
           <Collapsible main={header} hideIcon={true}/>
   			  {contracts}
+          {contracts.length === 0 &&
+          <div style={{ textAlign: 'center', fontSize: 25, color: '#ccc', fontStyle: 'italic', marginTop: 20 }}>
+            No contracts available
+          </div>}
         </div>
       </div>
     );

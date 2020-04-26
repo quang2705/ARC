@@ -2,12 +2,13 @@
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.http import JsonResponse
+from django.shortcuts import render
 
 #custom Database, Serializer Permission and Utilities class
 from arc_app.models import UserProfile, Contract, Session, ContractMeeting, Subject
 from arc_app.serializers import UserSerializer, UserProfileSerializer, ContractSerializer
 from arc_app.serializers import SessionSerializer, ContractMeetingSerializer, SubjectSerializer
-from arc_app.permissions import IsTutorOrIsAdminReadOnly
+from arc_app.permissions import IsTutorOrIsAdminAndHeadTutorReadOnly
 from arc_app.utils import create_userprofile, check_for_key, setup_query, encode_val, decode_val
 #Rest framework class
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -28,9 +29,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 	def get_queryset(self):
 		user = self.request.user
 		create_userprofile(user)
-		if not user.is_authenticated:
-			return []
-		elif user.userprofiles.is_admin:
+		if user.userprofiles.is_admin:
 			userprofiles = UserProfile.objects.all()
 			query = setup_query(self.request.query_params, ['first_name', 'last_name', 'email', 'is_tutor'])
 			if query is not None:
@@ -39,10 +38,8 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 		else:
 			return UserProfile.objects.filter(user=user)
 
-	def retrieve(self, request, pk=None):
-		contract_id = self.request.query_params.get('contract_id', None)
-		return super().retrieve(request, pk)
-
+	#get sessions only show the sessions that belongs to the contracts that
+	#the user is a tutor of
 	@action(methods=['get'], detail=True)
 	def get_sessions(self, request, pk=None):
 		userprofile = UserProfile.objects.get(pk=pk)
@@ -66,17 +63,11 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 			for operator in operators:
 				date = self.request.query_params.get('date[{}]'.format(operator), None)
 				if date is not None:
-					if operator == 'lte':
-						sessions = sessions.filter(date__lte=date)
-					elif operator == 'lt':
-						sessions = sessions.filter(date__lt=date)
-					elif operator == 'gte':
-						sessions = sessions.filter(date__gte=date)
-					elif operator == 'gt':
-						sessions = sessions.filter(date__gt=date)
+					sessions = sessions.filter(**{'date__{}'.format(operator):date})
 
-		return Response(SessionSerializer(sessions, many=True, context={'request': request}).data)
+				return Response(SessionSerializer(sessions, many=True, context={'request': request}).data)
 
+	#get contracts only show the contracts that the user is a tutor of
 	@action(methods=['get'], detail=True)
 	def get_contracts(self, request, pk=None):
 		userprofile = UserProfile.objects.get(pk=pk)
@@ -86,7 +77,28 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 		else:
 			#get the contracts of this tuktor
 			contracts = userprofile.tutor_contracts.all()
-		return Response(ContractSerializer(contracts, many=True, context={'request': request}).data)
+			return Response(ContractSerializer(contracts, many=True, context={'request': request}).data)
+
+	@action(methods=['get'], detail=False)
+	def get_current_userprofile(self, request):
+		user = self.request.user
+		create_userprofile(user)
+		return Response(UserProfileSerializer(user.userprofiles, context={'request':request}).data)
+
+	@action(methods=['get'], detail=False)
+	def current_position(self, request):
+		user = self.request.user
+		create_userprofile(user)
+		position = []
+		if (user.userprofiles.is_tutee):
+			position.append('tutee')
+		if (user.userprofiles.is_tutor):
+			position.append('tutor')
+		if (user.userprofiles.is_headtutor):
+			position.append('headtutor')
+		if (user.userprofiles.is_admin):
+			position.append('admin')
+		return Response(position)
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
 	#This viewset automatically provide 'list' and 'detail' action
@@ -97,9 +109,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 	def get_queryset(self):
 		user = self.request.user
 		create_userprofile(user)
-		if not user.is_authenticated:
-			return []
-		elif user.userprofiles.is_admin:
+		if user.userprofiles.is_admin:
 			#get the params from url and filter it with
 			#the users objects
 			users = self.queryset
@@ -110,18 +120,14 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 		else:
 			return User.objects.filter(username=user.username)
 
-	@action(methods=['get'], detail=False)
-	def get_current(self, request):
-		user = self.request.user
-		create_userprofile(user)
-		return Response(UserSerializer(user, context={'request':request}).data)
+
 #/contracts/
 class ContractViewSet(viewsets.ModelViewSet):
 	#This viewset automatically provides 'list', 'create', 'retrieve',
 	#'update', and 'destroy' actions
 	queryset = Contract.objects.all()
 	serializer_class = ContractSerializer
-	permission_classes = [IsAuthenticated, IsTutorOrIsAdminReadOnly]
+	permission_classes = [IsAuthenticated, IsTutorOrIsAdminAndHeadTutorReadOnly]
 
 	def destroy(self, request, pk=None):
 		super().destroy(request, pk)
@@ -148,7 +154,6 @@ class ContractViewSet(viewsets.ModelViewSet):
 									is_tutee=True)
 				tutee.save()
 		except Exception as e:
-			print(e)
 			return Response("Your information about tutor or tutee is not correct, check the parameter again")
 		subject = Subject.objects.get(subject_name=request.data['subject'])
 		contract = Contract(tutor=tutor, tutee=tutee,
@@ -164,19 +169,33 @@ class ContractViewSet(viewsets.ModelViewSet):
 	def get_queryset(self):
 		user = self.request.user
 		create_userprofile(user)
-		if not user.is_authenticated:
-			return []
-		elif user.userprofiles.is_admin:
-			return self.queryset
+		userprofile = user.userprofiles
+
+		if userprofile.is_admin:
+			contracts = self.queryset
+		elif userprofile.is_tutor or userprofile.is_headtutor:
+			position = self.request.query_params.get('position', None)
+			#query the contracts based on the user loging in
+			#show the contracts belong to tutor if 'position' is None or is 'tutor'
+			#show all contracts if position is 'headtutor'
+			if (userprofile.is_tutor and (position is None or position == 'tutor')):
+				contracts = userprofile.tutor_contracts.all()
+			elif userprofile.is_headtutor and position == 'headtutor':
+				#only get the contracts from department of the headtutor
+				contracts = self.queryset
+				subjects = userprofile.subjects.all()
+
+				query = Q(subject= -1)
+				for subject in subjects:
+					query |= Q(subject = subject)
+
+				contracts = contracts.filter(query)
+
+
 		#get all the params from the url
 		subject = self.request.query_params.get('subject', None)
 		tutee_email = self.request.query_params.get('tutee_email', None)
 
-		userprofile = user.userprofiles
-		#query the contracts based on the user loging in
-		#right now only show contract if user is a tutor, does not show
-		#contract when the user is a tutee
-		contracts = userprofile.tutor_contracts.all()
 		#if the params is not Null, query it
 		if subject is not None:
 			subject = Subject.objects.get(subject_name=subject)
@@ -190,8 +209,30 @@ class ContractViewSet(viewsets.ModelViewSet):
 			contracts = contracts.filter(query)
 		return contracts
 
+	def update(self, request, pk=None):
+		key_list = ['tutee_first_name', 'tutee_last_name', 'tutee_email', \
+					'tutee_phone', 'tutee_dnumber', 'class_name', 'professor_name', 'subject']
+		check_for_key(request.data, key_list)
+
+		contract = Contract.objects.get(pk=pk);
+		contract.tutee.first_name = request.data['tutee_first_name']
+		contract.tutee.last_name = request.data['tutee_last_name']
+		contract.tutee.email = request.data['tutee_email']
+		contract.tutee.phone = request.data['tutee_phone']
+		contract.tutee.d_number = request.data['tutee_dnumber']
+		contract.class_name = request.data['class_name']
+		contract.professor_name = request.data['professor_name']
+
+		newSubject = Subject.objects.get(subject_name=request.data['subject'])
+		contract.subject = newSubject
+
+		contract.save()
+		contract.tutee.save()
+
+		return Response(ContractSerializer(contract, context={ 'request': request }).data)
+
 	#Return all the sessions of the current contract
-	#/contracts/get_sesions/
+	#/contracts/<pk>/get_sesions/
 	@action(methods=['get'], detail=True)
 	def get_sessions(self, request, pk=None):
 		#get the contract and the sessions that belong to this contract
@@ -237,7 +278,7 @@ class ContractViewSet(viewsets.ModelViewSet):
 class ContractMeetingViewSet(viewsets.ModelViewSet):
 	queryset = ContractMeeting.objects.all()
 	serializer_class = ContractMeetingSerializer
-	permission_classes = [IsAuthenticated, IsTutorOrIsAdminReadOnly]
+	permission_classes = [IsAuthenticated, IsTutorOrIsAdminAndHeadTutorReadOnly]
 
 	def create(self, request):
 		#Get all the required parameters for the POST request
@@ -263,29 +304,43 @@ class ContractMeetingViewSet(viewsets.ModelViewSet):
 	def get_queryset(self):
 		user = self.request.user
 		create_userprofile(user)
-		if not user.is_authenticated:
-			return []
-		elif user.userprofiles.is_admin:
-			return self.queryset
-		#get all contracts that contract meetings is belong to
-		#based on user that is currently log in
 		userprofile = user.userprofiles
-		contracts = userprofile.tutor_contracts.all()
+		if userprofile.is_admin:
+			contracts = Contract.objects.all()
+		elif userprofile.is_tutor or userprofile.is_headtutor:
+			position = self.request.query_params.get('position', None)
+			if (userprofile.is_tutor and (position is None or position == 'tutor')):
+				contracts = userprofile.tutor_contracts.all()
+			elif (userprofile.is_headtutor and position == 'headtutor'):
+				#only get the contracts from department of the headtutor
+				contracts = Contract.objects.all()
+				subjects = userprofile.subjects.all()
+
+				query = Q(subject= -1)
+				for subject in subjects:
+					query |= Q(subject = subject)
+
+				contracts = contracts.filter(query)
+		#get all contracts if the user request as a headtutor
+		# otherwise get only the owned contracts if the user request as a tutor
 		contract_meetings = [cmeeting for contract in contracts for cmeeting in contract.contract_meetings.all()]
 
 		location = self.request.query_params.get('location', None)
 		query = Q(id = -1)
 		for cmeeting in contract_meetings:
 			query |= Q(id = cmeeting.id)
+
 		if location is not None:
 			query |= Q(location = location)
 		return ContractMeeting.objects.filter(query)
+
+
 
 #/sessions/
 class SessionViewSet(viewsets.ModelViewSet):
 	queryset = Session.objects.all()
 	serializer_class = SessionSerializer
-	permission_classes = [IsAuthenticated, IsTutorOrIsAdminReadOnly]
+	permission_classes = [IsAuthenticated, IsTutorOrIsAdminAndHeadTutorReadOnly]
 
 	def destroy(self, request, pk=None):
 		super().destroy(request, pk)
@@ -319,15 +374,24 @@ class SessionViewSet(viewsets.ModelViewSet):
 	def get_queryset(self):
 		user = self.request.user
 		create_userprofile(user)
-		if not user.is_authenticated:
-			return []
-		elif user.userprofiles.is_admin:
-			return self.queryset
+		userprofile = user.userprofiles
+		if userprofile.is_admin:
+			contracts = Contract.objects.all()
+		elif userprofile.is_tutor or userprofile.is_headtutor:
+			position = self.request.query_params.get('position', None)
+			if (userprofile.is_tutor and (position is None or position == 'tutor')):
+				contracts = userprofile.tutor_contracts.all()
+			elif userprofile.is_headtutor and position == 'headtutor':
+				#only get the contracts from department of the headtutor
+				contracts = Contract.objects.all()
 
-		#get all contracts that sessions is belong to
-		#based on user that is currently log in
-		userprofile = self.request.user.userprofiles
-		contracts = userprofile.tutor_contracts.all()
+				subjects = userprofile.subjects.all()
+
+				query = Q(subject= -1)
+				for subject in subjects:
+					query |= Q(subject = subject)
+
+				contracts = contracts.filter(query)
 
 		query = Q(id = -1)
 		for contract in contracts:
@@ -342,14 +406,7 @@ class SessionViewSet(viewsets.ModelViewSet):
 		for operator in operators:
 			date = self.request.query_params.get('date[{}]'.format(operator), None)
 			if date is not None:
-				if operator == 'lte':
-					sessions = sessions.filter(date__lte=date)
-				elif operator == 'lt':
-					sessions = sessions.filter(date__lt=date)
-				elif operator == 'gte':
-					sessions = sessions.filter(date__gte=date)
-				elif operator == 'gt':
-					sessions = sessions.filter(date__gt=date)
+				sessions = sessions.filter(**{'date__{}'.format(operator):date})
 		return sessions;
 
 	@action(methods=['put'], detail=True)
@@ -369,10 +426,29 @@ class SubjectViewSet(viewsets.ReadOnlyModelViewSet):
 
 	def get_queryset(self):
 		user = self.request.user
-		if not user.is_authenticated:
-			return []
-		else:
-			return self.queryset
+		return self.queryset
+
+	@action(methods=['get'], detail=True)
+	def get_sessions(self, request, pk=None):
+		subject = Subject.objects.get(pk=pk)
+
+		#get all the sessions of this subject
+		query = Q(id = -1)
+		for contract in subject.contracts.all():
+			for session in contract.sessions.all():
+				query |= Q(id = session.id)
+
+		sessions = Session.objects.filter(query)
+
+		#filter date by lte: less than or equal, gte: greater than or equal
+		#lt: less than, gt: greater than
+		operators = ['lte', 'lt', 'gte', 'gt']
+		for operator in operators:
+			date = request.query_params.get('date[{}]'.format(operator), None)
+			if date is not None:
+				sessions = sessions.filter(**{'date__{}'.format(operator):date})
+
+		return Response(SessionSerializer(sessions, many = True, context={'request': request}).data)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -390,12 +466,13 @@ def encode (request):
 def verify(request):
 	try:
 		value = request.GET['secret']
-		print(value)
 	except:
-		return JsonResponse({"status":400})
+
+		return render(request, 'frontend/tutee_verify.html', context = {"status":400})
 	MASTER_KEY="Th1s-1is-@-R3lly-L0ng-M@ster_key-used-to-de%code$ stu##"
 	pk = int(decode_val(value, MASTER_KEY))
 	session = Session.objects.get(pk=pk)
 	session.is_verified = True
 	session.save()
-	return JsonResponse({"status":200})
+
+	return render(request, 'frontend/tutee_verify.html', context = {"status":200})

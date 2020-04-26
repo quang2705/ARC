@@ -1,0 +1,64 @@
+#USERPROFILES
+/api/userprofiles/:
+    - admin: get all userprofiles - read
+    - headtutor: get all userprofiles - read
+    - tutor: get his userprofile - read, write
+/api/userprofiles/<pk>/:
+    - admin: get userprofile pk - read
+    - headtutor: get userprofile pk - read
+    - tutor: if pk == tutor.id, get userprofile pk - read, write
+/api/userprofiles/<pk>/get_sessions:
+    - admin: None
+    - headtutor: get all sessions - read
+    - tutor: get sessions belongs to tutor - read, write
+/api/userprofiles/<pk>/get_contracts:
+    - admin: None
+    - headtutor: get all contracts - read
+    - tutor: get contracts belongs to tutor - read, write
+/api/userprofiles/get_current_userprofile:
+    - admin: None
+    - headtutor: return user userprofile - read, write
+    - tutor: return user userprofile - read, write
+/api/userprofiles/current_position:
+    - admin: return list of positions - read
+    - headtutor: return list of positions - read
+    - tutor: return list of positions - read
+
+#CONTRACTS:
+/api/contracts/:
+    - admin: get all contracts - read
+    - headtutor: get all contracts - read
+    - tutor: get contracts belongs to tutor - read, write
+/api/contracts/<pk>/:
+    - admin: get contract pk - read
+    - headtutor: get contract pk - read
+    - tutor: if contract pk belong to tutor, get contract pk
+/api/contracts/<pk>/get_sessions/:
+    - admin: get all the sessions of contract pk
+    - headtutor: get all the sessions of contract pk
+    - tutor: if contract pk belong to tutor, get sessions of contract pk
+/api/contracts/<pk>/get_contractmeetings/:
+    - admin: get all the contractmeetings of contract pk
+    - headtutor: get all the contractmeetings of contract pk
+    - tutor: if contract pk belong to tutor, get contracmeetings of contract pk
+
+#CONTRACTMEETINGS:
+/api/contractmeetings/:
+    - admin: get all contract meetings - read
+    - headtutor: get all contract meetings - read
+    - tutor: get contract meetings belongs to tutor - read, write
+/api/contractmeetings/<pk>/:
+    - admin: get contract meeting pk - read
+    - headtutor: get contract meeting pk - read
+    - tutor: if contract meeting pk belong to tutor, get contract meeting pk
+
+
+#SESSIONS:
+/api/sessions/:
+    - admin: get all sessions - read
+    - headtutor: get all sessions - read
+    - tutor: get sessions belongs to tutor - read, write
+/api/sessison/<pk>/:
+    - admin: get session pk - read
+    - headtutor: get session pk - read
+    - tutor: if session pk belong to tutor, get session pk

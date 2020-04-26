@@ -47,5 +47,9 @@
 .deleteWrapper {
   display: flex;
   justify-content: center;
-  margin-top: 10px;
+  margin-top: 20px;
+}
+
+.utilButton {
+  margin: 0 10px;
 }

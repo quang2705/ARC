@@ -56,6 +56,11 @@ export default class AdminTutors extends Component {
     return (
       <div className={css.container}>
           {userprofiles}
+          {userprofiles.length % 3 === 2 && <div style={{ width: '30%' }}/>}
+          {userprofiles.length === 0 &&
+          <div style={{ width: '100%', textAlign: 'center', fontSize: 25, color: '#ccc', fontStyle: 'italic', marginTop: 20 }}>
+            No tutors available
+          </div>}
           {this.state.currentTutor !== null &&
           <AdminTutorsDetails tutor={this.state.data[this.state.currentTutor]} data={this.state.currentData} hideDetails={this.hideDetails}/>}
       </div>

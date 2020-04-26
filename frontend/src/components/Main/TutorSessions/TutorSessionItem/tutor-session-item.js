@@ -1,24 +1,34 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import Collapsible from '../../../DefaultUI/Collapsible/collapsible';
 import Button from '../../../DefaultUI/Button/button';
+import Popup from '../../../DefaultUI/Popup/popup';
 
 import css from './tutor-session-item.module.css';
 
 export default class TutorSessionItem extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { showDeletePopup: false };
+  }
 
   getTime = (time) => {
     let timeRegex = /^\d\d\:\d\d/;
     time = timeRegex.exec(time)[0];
     let hour = parseInt(time[0]+time[1]);
-    let min = parseInt(time[3]+time[4]);
+    let min = time[3]+time[4];
     let period = hour >= 12 ? "pm" : "am";
     if (hour > 12)
       hour = hour % 12;
-    if (min < 10)
-        min = time[3]+time[4];
     return hour+':'+min+' '+period;
+  }
+
+  toggleDeletePopup = () => {
+    this.setState(prevState => {
+      return { showDeletePopup: !prevState.showDeletePopup };
+    });
   }
 
   render() {
@@ -35,6 +45,8 @@ export default class TutorSessionItem extends Component {
                 summary: this.props.session.summary
              };
 
+    let loadIcon = <span className={css.loadIcon}><FontAwesomeIcon icon='sync-alt'/></span>
+
     let mainInfo = (
       <div className={css.main}>
         <div className={css.left}>
@@ -46,7 +58,9 @@ export default class TutorSessionItem extends Component {
             <div className={css.verified+' '+css.status}>Verified</div> :
             <div className={css.unverified+' '+css.status}>Unverified</div>
             }
-            {!data.is_verified && !this.props.isAdmin && <Button text='Send reminder' color='green' className={css.status} onClick={() => this.props.onSendVerification(data.session_id)}/>}
+            {!data.is_verified && !this.props.isAdmin &&
+            <Button text={this.props.sendStatus !== 'sending' ? 'Send reminder' : loadIcon} color='green' className={css.status} onClick={() => this.props.onSendVerification(data.session_id)}/>}
+            {this.props.sendStatus === 'done' && <div className={css.statusText}>Verification sent!</div>}
           </div>
         </div>
         <div className={css.right}>
@@ -62,9 +76,18 @@ export default class TutorSessionItem extends Component {
       <div className={css.details}>
         <div><span style={{ fontWeight: 700 }}>Summary: </span>{data.summary}</div>
         <div className={css.deleteWrapper}>
+          {!this.props.isAdmin &&
           <Button text='Delete session' color='red' className={css.deleteButton} reverse={true}
-                  onClick={() => this.props.onDeleteSession(data.session_id)}/>
+                  onClick={this.toggleDeletePopup}/>}
         </div>
+
+        {this.state.showDeletePopup &&
+        <Popup isVisible={true}
+               toggle={this.toggleDeletePopup}
+               title='Delete session'
+               message='This action is permanent and cannot be undone.'
+               yes={() => this.props.onDeleteSession(data.session_id)}
+               no={this.toggleDeletePopup}/>}
       </div>
     )
     return (

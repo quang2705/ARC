@@ -18,10 +18,6 @@ export default class ContractMeeting extends Component {
     this.props.onChange({ index: this.props.index, name: event.target.name, value: event.target.value});
   }
 
-  onTimeChangeHandler = (event) => {
-    this.setState({ [event.target.name]: event.target.value });
-  }
-
   render() {
     let dayOptions = (
       <>

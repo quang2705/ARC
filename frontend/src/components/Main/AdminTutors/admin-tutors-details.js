@@ -13,6 +13,8 @@ export default class AdminTutorsDetails extends Component {
   constructor(props) {
     super(props);
     this.state = { currentSection: 'sessions' };
+
+    this.indicatorLeft = { sessions: 0, contracts: 120 };
   }
 
   clickedSession = (event) => {
@@ -28,7 +30,7 @@ export default class AdminTutorsDetails extends Component {
       return <TutorSessionItem key={index} session={session} isAdmin={true}/>;
     })
 
-    let selectedStyle = { borderBottom: 'solid 4px #3697ff' };
+    let selectedStyle = { backgroundColor: 'rgba(54, 151, 255, 0.1)' };
 
     return (
       <div className={css.detailsContainer}>
@@ -40,11 +42,14 @@ export default class AdminTutorsDetails extends Component {
             <div className={css.name}>
               {this.props.tutor.first_name+' '+this.props.tutor.last_name}
             </div>
-            <div className={css.phone}>{this.props.tutor.phone}</div>
-            <div className={css.email}>{this.props.tutor.email}</div>
+            <div className={css.email}><span><FontAwesomeIcon icon='envelope'/></span> {this.props.tutor.email}</div>
+            <div className={css.phone}><span><FontAwesomeIcon icon='phone'/></span> {this.props.tutor.phone}</div>
           </div>
           <div className={css.menu}>
-            <div section='sessions' onClick={this.clickedSession} style={this.state.currentSection === 'sessions' ? selectedStyle : null}>Sessions</div>
+            <div section='sessions' onClick={this.clickedSession} style={this.state.currentSection === 'sessions' ? selectedStyle : null}>
+              Sessions
+              <div className={css.indicator} style={{ left: this.indicatorLeft[this.state.currentSection] }}/>
+            </div>
             <div section='contracts' onClick={this.clickedSession} style={this.state.currentSection === 'contracts' ? selectedStyle : null}>Contracts</div>
           </div>
 
@@ -60,6 +65,7 @@ export default class AdminTutorsDetails extends Component {
           </div>
           }
 
+          <div style={{ height: 100 }}/>
         </div>
       </div>
     );

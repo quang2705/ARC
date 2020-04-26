@@ -9,7 +9,7 @@
   },
   "cacheDirectories": [
     "frontend/node_modules"
-    ],
+  ],
   "keywords": [],
   "author": "",
   "license": "MIT",

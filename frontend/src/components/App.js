@@ -24,7 +24,7 @@ class App extends Component {
   componentDidMount() {
     // Override the default margin of 8px
     document.body.style.margin = '0';
-    document.body.style.fontFamily = '\'Arial\', sans-serif';
+    document.body.style.fontFamily = "'Roboto', sans-serif";
     document.body.style.fontSize = '15px';
 
     // Dynamically add meta with Google App's Client ID to HTML
@@ -47,25 +47,38 @@ class App extends Component {
     gapi.load('client:auth2', () => {
       const auth2 = gapi.auth2.init();
       if (auth2.isSignedIn.get()) {
-        let email = auth2.currentUser.get().getBasicProfile().getEmail();
+        let basicProfile = auth2.currentUser.get().getBasicProfile();
+        let email = basicProfile.getEmail();
+        let user = { firstName: basicProfile.getGivenName(), lastName: basicProfile.getFamilyName() };
         let auth = { access_token: gapi.client.getToken().access_token,
-                     email: email };
+                     email: email,
+                     user: user,
+                     logout: this.onLogout };
 
         // Get access token for Django backend server
         MyAPI.get_db_access_token({ token: auth.access_token,
                                     client_id: Auth.dbClientId,
                                     grant_type: 'convert_token',
                                     backend: 'google-oauth2' })
-        .then((res) => {
-           return res.json();
-        })
         .then((data) => {
+            console.log("db data", data)
           // Successfully retrieved access token for Django server
           auth = { ...auth, access_token: data.access_token };
-          MyAPI.get_current_user(auth.access_token)
+          //Call get current userprofile in case there is no userprofile attract to user
+          // get_current_userprofile will create a new userprofile an attract it to user
+          MyAPI.get_current_userprofile(auth.access_token)
           .then((data) => {
-            this.setState({ auth: { ...auth, isAdmin: data.userprofiles.is_admin },
-                            isAuthenticated: true });
+            // Get user's position/user type
+            MyAPI.get_current_position(auth.access_token).then(data => {
+              let roles = {};
+              data.forEach((item, index) => {
+                roles[item] = true;
+              });
+              auth.roles = roles;
+              if (roles.tutor || roles.headtutor || roles.admin)
+                this.setState({ auth: { ...auth },
+                                isAuthenticated: true });
+            });
           });
         });
         // Load Gmail API
@@ -73,6 +86,13 @@ class App extends Component {
           this.setState({ emailApiLoaded: true });
         });
       }
+    });
+  }
+
+  onLogout = () => {
+    let auth2 = gapi.auth2.getAuthInstance();
+    auth2.signOut().then(() => {
+      this.setState({ auth: {}, isAuthenticated: false });
     });
   }
 
@@ -100,7 +120,8 @@ export default App;
 
 // Add FontAwesome icons into FontAwesome's library for ease of use
 import { faTimes, faSortDown, faChevronDown,
-         faPlus, faUser, faEnvelope, faPhone } from '@fortawesome/free-solid-svg-icons'
+         faPlus, faUser, faEnvelope, faPhone,
+         faSyncAlt } from '@fortawesome/free-solid-svg-icons'
 library.add(
   faTimes,
   faSortDown,
@@ -108,7 +129,8 @@ library.add(
   faPlus,
   faUser,
   faEnvelope,
-  faPhone
+  faPhone,
+  faSyncAlt,
 );
 
 const container = document.getElementById("app");

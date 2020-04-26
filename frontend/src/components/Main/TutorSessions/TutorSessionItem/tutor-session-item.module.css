@@ -12,11 +12,8 @@
   flex-wrap: nowrap;
 }
 
-.main > div {
-  flex: 1;
-}
-
 .left {
+  flex: 1;
   display: flex;
   flex-direction: column;
 }
@@ -37,6 +34,7 @@
 
 .statusBar {
   display: flex;
+  align-items: center;
   margin-top: 10px;
 }
 
@@ -44,10 +42,26 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 115px;
   color: white;
   padding: 3px 10px !important;
   border-radius: 5px;
   margin-left: 5px;
+}
+
+.statusText {
+  line-height: 24px;
+  font-size: 12px;
+  font-style: italic;
+  margin-left: 5px;
+}
+
+.loadIcon {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% { transform: rotate(360deg); }
 }
 
 .status:first-child {
