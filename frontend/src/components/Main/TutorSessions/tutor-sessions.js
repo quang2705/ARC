@@ -29,13 +29,16 @@ export default class TutorSessions extends Component {
 		this.getSessions();
   }
 
-  getSessions = () => {
+  getSessions = (callback=null) => {
     MyAPI.get_session(null, this.context.access_token)
 		.then((data) => {
 			//set this.state.data
 			this.setState({
 				data: data,
 			});
+
+      if (callback)
+        callback();
 		});
   }
 
@@ -43,14 +46,6 @@ export default class TutorSessions extends Component {
     this.setState((prevState) => {
       return { showModal: !prevState.showModal };
     });
-  }
-
-  rerenderSession = (data) => {
-      this.setState(() => {
-          var new_data = this.state.data.slice();
-          new_data.push(data);
-          return { data: new_data, showModal: false };
-      });
   }
 
   onDeleteSession = (session_id) => {
@@ -151,7 +146,7 @@ export default class TutorSessions extends Component {
         <Modal isVisible={this.state.showModal} toggle={this.toggleModal}
                title={'Add new session'}>
           {this.state.showModal &&
-          <TutorSessionForm rerenderSession={this.rerenderSession}/>}
+          <TutorSessionForm refresh={this.getSessions} close={this.toggleModal}/>}
         </Modal>
 
         <div className={css.list}>

@@ -35,7 +35,7 @@ export default class TutorContracts extends Component {
 		this.getContracts();
   }
 
-  getContracts = (contract_id=null) => {
+  getContracts = (contract_id=null, callback=null) => {
     MyAPI.get_contract(null, this.context.access_token,
                         {'position': this.props.position})
 		.then((data) => {
@@ -44,6 +44,9 @@ export default class TutorContracts extends Component {
 			}, () => {
         if (contract_id)
           this.getMeetingsFuncs[contract_id]();
+
+        if (callback)
+          callback();
       });
 		});
   }
@@ -125,7 +128,7 @@ export default class TutorContracts extends Component {
                title={'Create new contract'}>
           {this.state.showModal &&
           <AuthContext.Consumer>
-              {value => <TutorContractForm auth={value} rerenderContract={this.rerenderContract} close={this.toggleModal}/>}
+              {value => <TutorContractForm auth={value} refresh={this.getContracts} close={this.toggleModal}/>}
           </AuthContext.Consumer>}
         </Modal>
 

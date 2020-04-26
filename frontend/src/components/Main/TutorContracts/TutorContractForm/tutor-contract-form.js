@@ -36,6 +36,7 @@ export default class TutorContractForm extends Component {
       tutorSig: this.props.data ? true : false,
       tuteeSig: this.props.data ? true : false,
       error: null,
+      isCreating: false,
     }
   }
 
@@ -51,8 +52,7 @@ export default class TutorContractForm extends Component {
   }
 
   callback = (data) => {
-    this.props.rerenderContract(data);
-    this.props.close();
+    this.props.refresh(null, this.props.close);
   }
 
   validateInputs = () => {
@@ -92,7 +92,7 @@ export default class TutorContractForm extends Component {
   }
 
   onEditComplete = (data) => {
-    this.props.refresh(this.props.data.contract_id);
+    this.props.refresh();
     this.props.close();
   }
 
@@ -100,26 +100,31 @@ export default class TutorContractForm extends Component {
     event.preventDefault();
     let validation = this.validateInputs();
     if (validation.isValid) {
-      if (!this.props.data)
-        MyAPI.create_contract(this.state, this.callback, this.props.auth.access_token);
-      else {
-        // Editing contract
-        let count = this.props.data.oldMeetings.length;
-        if (count !== 0)
-          this.props.data.oldMeetings.forEach((item, index) => {
-            MyAPI.delete_contract_meeting(item.id, this.context.access_token)
-            .then(response => response)
-            .then(data => {
-              --count;
-              if (count === 0) {
-                MyAPI.update_contract(this.state, this.onEditComplete, this.context.access_token);
-              }
-            })
-          });
-        else {
-          MyAPI.update_contract(this.state, this.onEditComplete, this.context.access_token);
-        }
-      }
+      if (!this.state.isCreating)
+        // ------------------------------------------------------
+        this.setState({ isCreating: true }, () => {
+          if (!this.props.data)
+            MyAPI.create_contract(this.state, this.callback, this.props.auth.access_token);
+          else {
+            // Editing contract
+            let count = this.props.data.oldMeetings.length;
+            if (count !== 0)
+              this.props.data.oldMeetings.forEach((item, index) => {
+                MyAPI.delete_contract_meeting(item.id, this.context.access_token)
+                .then(response => response)
+                .then(data => {
+                  --count;
+                  if (count === 0) {
+                    MyAPI.update_contract(this.state, this.onEditComplete, this.context.access_token);
+                  }
+                })
+              });
+            else {
+              MyAPI.update_contract(this.state, this.onEditComplete, this.context.access_token);
+            }
+          }
+        });
+        // ------------------------------------------------------
     }
     else {
       this.errorMsgSet(validation);
