@@ -62,6 +62,17 @@ export default class TutorSessions extends Component {
      });
   }
 
+  getTime = (time) => {
+    let timeRegex = /^\d\d\:\d\d/;
+    time = timeRegex.exec(time)[0];
+    let hour = parseInt(time[0]+time[1]);
+    let min = parseInt(time[3]+time[4]);
+    let period = hour >= 12 ? "pm" : "am";
+    if (hour > 12)
+      hour = hour % 12;
+    return hour+':'+min+' '+period;
+  }
+
   onSendVerification = (session_id) => {
     this.setState(prevState => {
       let newSending = prevState.sending;
@@ -74,8 +85,9 @@ export default class TutorSessions extends Component {
         let tutee_email = data.contract.tutee.email;
         let tutee_firstname = data.contract.tutee.first_name;
         let date = data.date;
-        let start = data.start;
-        let end = data.end;
+        let start = this.getTime(data.start);
+        let end = this.getTime(data.end);
+        let summary = data.summary;
 
         MyAPI.get_encrypted_string({'encode_string': session_id}, this.context.access_token)
         .then((data) =>{
@@ -86,7 +98,9 @@ export default class TutorSessions extends Component {
                 `To: ${tutee_email} \r\n` +
                 "Subject: Tutoring Session Verification \r\n\r\n" +
                 `Hi ${tutee_firstname},\n`+
-                `Please verify the tutoring session on ${date} from ${start} to ${end} with this link\n ${link}`;
+                `Please verify this tutoring session by following this link: ${link}\n` +
+                `\t Date: ${date}\n\t Time: ${start} - ${end}\n` +
+                `\t Summary: ${summary}`;
 
             const encodedMessage = btoa(message).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 

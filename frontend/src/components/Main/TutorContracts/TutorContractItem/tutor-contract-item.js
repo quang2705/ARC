@@ -71,7 +71,7 @@ export default class TutorContractItem extends Component {
                   tuteeEmail: this.props.contract.tutee.email,
                   tuteePhone: this.props.contract.tutee.phone,
                   tuteeDnumber: this.props.contract.tutee.d_number,
-                  heademail: '',
+                  heademail: this.props.contract.subject.headtutor.email,
                   meetings: meetings,
                   oldMeetings: this.props.originalMeetings,
                   subject: this.props.contract.subject.subject_name,
@@ -97,7 +97,7 @@ export default class TutorContractItem extends Component {
                 tutee_phone: this.props.contract.tutee.phone,
                 tutee_email: this.props.contract.tutee.email,
                 tutor_email: this.props.contract.tutor.email,
-                heademail: ' ',
+                heademail: this.props.contract.subject.headtutor.email,
                 meetings: this.state.meetings,
                 subject: this.props.contract.subject.subject_name,
                 professor_name: this.props.contract.professor_name};

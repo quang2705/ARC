@@ -145,7 +145,7 @@ export default class MyAPI {
 		}
 		else {
 			let url = this.query(this.get(SESSION_URL, index), query_params);
-			return fetch(ulr,
+			return fetch(url,
 						{ headers: headers })
 					.then((response) => {
 						return response.json();

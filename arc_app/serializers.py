@@ -27,9 +27,10 @@ class MiniContractSerializer(serializers.ModelSerializer):
 		fields = ('id', 'url', 'class_name', 'tutee')
 
 class MiniSubjectSerializer(serializers.ModelSerializer):
+	headtutor = MiniUserProfileSerializer(many=False, read_only=True)
 	class Meta:
 		model = Subject
-		fields = ('id', 'subject_name')
+		fields = ('id', 'subject_name', 'headtutor')
 
 class UserProfileSerializer(serializers.HyperlinkedModelSerializer):
 	tutor_contracts = MiniContractSerializer(many=True, read_only=True)
