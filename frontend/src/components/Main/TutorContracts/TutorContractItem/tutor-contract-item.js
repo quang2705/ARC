@@ -154,7 +154,7 @@ export default class TutorContractItem extends Component {
         <Popup isVisible={true}
                toggle={this.toggleDeletePopup}
                title='Delete contract'
-               message='This action is permanent and cannot be undone.'
+               message='This will also delete all sessions associated with this contract. This action is permanent and cannot be undone.'
                yes={() => this.props.onDeleteContract(data.contract_id)}
                no={this.toggleDeletePopup}/>}
       </>
