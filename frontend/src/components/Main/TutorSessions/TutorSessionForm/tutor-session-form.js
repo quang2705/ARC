@@ -17,12 +17,13 @@ export default class TutorSessionForm extends Component {
 		super(props);
     this.state = {
       contracts: [],
-      contract_id:'',
+      contract_id: null,
       sessDate: '',
       sessStart: '',
       sessEnd: '',
       sessSummary:'',
       error: null,
+      isCreating: false,
     };
 	}
 
@@ -49,25 +50,31 @@ export default class TutorSessionForm extends Component {
     let textNames = ['Date', 'Start time', 'End time', 'Summary'];
     textFields.forEach((item, index) => {
       if (typeof this.state[item] !== typeof '' || this.state[item] === '') {
+        console.log(item,this.state[item])
         emptyfield = true;
         emptyname = textNames[index];
       }
     });
 
-    if (!emptyfield)
+    if (!emptyfield && this.state.contract_id)
       return { isValid: true };
     else if (emptyfield)
-      return { isValid: false, error: 'Missing input', msg: 'Please enter '+emptyname};
+      return { isValid: false, error: 'Missing input', msg: 'Please enter '+emptyname };
+    else if (!this.state.contract_id)
+      return { isValid: false, error: 'Missing input', msg: 'Please select a tutee' };
   }
 
   onSubmitHandler = (event) => {
     event.preventDefault();
     let validation = this.validateInputs();
     if (validation.isValid && this.state.contracts.length > 0) {
-      MyAPI.create_session(this.state, this.context.access_token)
-      .then((data) => {
-         this.props.rerenderSession(data);
-      });
+      if (!this.state.isCreating)
+        this.setState({ isCreating: true }, () => {
+          MyAPI.create_session(this.state, this.context.access_token)
+          .then((data) => {
+             this.props.refresh(this.props.close);
+          });
+        });
     }
     else {
       this.setState({ error: validation });
