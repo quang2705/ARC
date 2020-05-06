@@ -61,7 +61,6 @@ class App extends Component {
                                     grant_type: 'convert_token',
                                     backend: 'google-oauth2' })
         .then((data) => {
-            console.log("db data", data)
           // Successfully retrieved access token for Django server
           auth = { ...auth, access_token: data.access_token };
           //Call get current userprofile in case there is no userprofile attract to user

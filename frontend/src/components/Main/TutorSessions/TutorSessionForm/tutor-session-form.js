@@ -50,7 +50,6 @@ export default class TutorSessionForm extends Component {
     let textNames = ['Date', 'Start time', 'End time', 'Summary'];
     textFields.forEach((item, index) => {
       if (typeof this.state[item] !== typeof '' || this.state[item] === '') {
-        console.log(item,this.state[item])
         emptyfield = true;
         emptyname = textNames[index];
       }
