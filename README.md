@@ -20,7 +20,7 @@ Download `git` for Windows [here](https://gitforwindows.org/) if needed. Unix an
 #### Clone the repository
 Go to the directory you want to clone the project into and type `git clone https://github.com/quang2705/ARC.git` in the command-line. Then `cd ARC` and switch to `develop` branch using `git checkout develop`.
 #### Setting up virtual environment for python packages
-This is optional. If you skip this section, please use `pip install` to install a python package for this project.
+This is optional. If you skip this section, please use `pip install -r requirements.txt` to install a python package for this project.
 
 <b>For Windows.</b> Create an environment called `ARC` for our project using `conda create -n ARC`. Then activate it with `conda activate ARC`. From now on, whenever we install a package from `pip`, it will install it for the `ARC` environment only instead of global by default. This way we can avoid conflicts between packages.
 
