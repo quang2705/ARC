@@ -2,8 +2,8 @@
 <html lang="en" dir="ltr">
     <head>
         <meta charset="utf-8">
-        <link href="./all.min.css" rel="stylesheet">
-        <script defer src="./all.min.js"></script>
+        <link href="../../static/frontend/all.min.css" rel="stylesheet">
+        <script defer src="../../static/frontend/all.min.js"></script>
         <title>Verifying session</title>
     </head>
     <style>
@@ -21,7 +21,12 @@
       }
     </style>
     <body>
-        <div class="icon"><i class="fas fa-check-circle"></i></div>
-        <div class="msg">Thank you for verifying your tutoring session!</div>
+        {% if status == 200 %}
+            <div class="icon"><i class="fas fa-check-circle"></i></div>
+            <div class="msg">Thank you for verifying your tutoring session!</div>
+        {%else%}
+            <div class="msg">Opps! Something went wrong.</div>
+        {%endif%}
+
     </body>
 </html>
