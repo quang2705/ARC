@@ -44,9 +44,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 	def get_sessions(self, request, pk=None):
 		userprofile = UserProfile.objects.get(pk=pk)
 		#if the user is staff return nothing
-		if (userprofile.is_tutor == False and userprofile.is_tutee == False):
-			return Response({"Staff does not have sessions"})
-		else:
+		if (userprofile.is_tutor or userprofile.is_headtutor):
 			#get the contracts of this tutor
 			contracts = userprofile.tutor_contracts.all()
 
@@ -65,16 +63,14 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 				if date is not None:
 					sessions = sessions.filter(**{'date__{}'.format(operator):date})
 
-				return Response(SessionSerializer(sessions, many=True, context={'request': request}).data)
+			return Response(SessionSerializer(sessions, many=True, context={'request': request}).data)
 
 	#get contracts only show the contracts that the user is a tutor of
 	@action(methods=['get'], detail=True)
 	def get_contracts(self, request, pk=None):
 		userprofile = UserProfile.objects.get(pk=pk)
 		#if the user is staff return nothing
-		if (userprofile.is_tutor == False and userprofile.is_tutee == False):
-			return Response({"Staff does not have contracts"})
-		else:
+		if (userprofile.is_tutor or userprofile.is_headtutor):
 			#get the contracts of this tuktor
 			contracts = userprofile.tutor_contracts.all()
 			return Response(ContractSerializer(contracts, many=True, context={'request': request}).data)
